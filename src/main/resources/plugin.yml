@@ -1,0 +1,16 @@
+main: at.srsyntax.farmingworld.FarmingWorldPlugin
+name: FarmingWorld
+version: ${version}
+api-version: 1.18
+
+author: SrSyntaxAT
+website: https://srsyntax.at/
+
+commands:
+  farming:
+    aliases:
+      - farm
+      - farmworld
+      - farmingworld
+      - farmwelt
+    description: Teleport you to a farming world.
