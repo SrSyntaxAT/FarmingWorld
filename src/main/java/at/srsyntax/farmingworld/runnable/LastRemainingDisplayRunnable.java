@@ -36,31 +36,34 @@ public class LastRemainingDisplayRunnable implements Runnable {
 
   private final FarmingWorldPlugin plugin;
   private final FarmingWorldConfig farmingWorld;
-  @Getter @Setter
-  private BukkitTask task;
-
-  public LastRemainingDisplayRunnable(FarmingWorldPlugin plugin, FarmingWorldConfig farmingWorld) {
+  private final FarmingWorldCheckRunnable runnable;
+  
+  public LastRemainingDisplayRunnable(FarmingWorldPlugin plugin, FarmingWorldConfig farmingWorld, FarmingWorldCheckRunnable runnable) {
     this.plugin = plugin;
     this.farmingWorld = farmingWorld;
+    this.runnable = runnable;
   }
 
   @Override
   public void run() {
     farmingWorld.updateRemainingDisplay();
 
-    if (farmingWorld.needReset()) {
-      World nextWorld = farmingWorld.getNextWorld();
-      if (nextWorld == null)
-        nextWorld = FarmingWorldPlugin.getApi().generateFarmingWorld(farmingWorld);
-
-      farmingWorld.display(new Message(plugin.getPluginConfig().getMessage().getReset()).replace());
-
-      farmingWorld.newWorld(nextWorld);
-      farmingWorld.setNextWorld(null);
-
-      Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, farmingWorld::updateRemainingDisplay, 40L);
-
-      Bukkit.getScheduler().cancelTask(task.getTaskId());
-    }
+    if (farmingWorld.needReset())
+      resetWorld();
+  }
+  
+  private void resetWorld() {
+    World nextWorld = farmingWorld.getNextWorld();
+    if (nextWorld == null)
+      nextWorld = FarmingWorldPlugin.getApi().generateFarmingWorld(farmingWorld);
+  
+    farmingWorld.display(new Message(plugin.getPluginConfig().getMessage().getReset()).replace());
+  
+    farmingWorld.newWorld(nextWorld);
+    farmingWorld.setNextWorld(null);
+  
+    Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, farmingWorld::updateRemainingDisplay, 40L);
+  
+    runnable.cancelLastRemainingDisplayRunnable();
   }
 }

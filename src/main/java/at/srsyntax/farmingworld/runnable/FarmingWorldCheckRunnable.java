@@ -1,7 +1,7 @@
 package at.srsyntax.farmingworld.runnable;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
-import lombok.AllArgsConstructor;
+import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -30,24 +30,39 @@ import java.util.concurrent.TimeUnit;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
 public class FarmingWorldCheckRunnable implements Runnable {
 
   private final FarmingWorldPlugin plugin;
-
+  
+  private LastRemainingDisplayRunnable runnable;
+  private int lastRemainingTaskId;
+  
+  public FarmingWorldCheckRunnable(FarmingWorldPlugin plugin) {
+    this.plugin = plugin;
+  }
+  
   @Override
   public void run() {
     plugin.getPluginConfig().getFarmingWorlds().forEach(farmingWorld -> {
       farmingWorld.updateRemainingDisplay();
 
       if (farmingWorld.getRemaining() <= TimeUnit.MINUTES.toMillis(2)) {
-        final LastRemainingDisplayRunnable runnable = new LastRemainingDisplayRunnable(plugin, farmingWorld);
-        final BukkitTask task = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, runnable, 20L, 20L);
-        runnable.setTask(task);
-
+        checkNextRunnable(farmingWorld);
+        
         if (farmingWorld.getNextWorld() == null)
           Bukkit.getScheduler().runTask(plugin, () -> farmingWorld.setNextWorld(FarmingWorldPlugin.getApi().generateFarmingWorld(farmingWorld)));
       }
     });
+  }
+  
+  private void checkNextRunnable(FarmingWorldConfig farmingWorld) {
+    if (this.runnable != null) return;
+    this.runnable = new LastRemainingDisplayRunnable(this.plugin, farmingWorld, this);
+    final BukkitTask task = this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(this.plugin, runnable, 20L, 20L);
+    this.lastRemainingTaskId = task.getTaskId();
+  }
+  
+  public void cancelLastRemainingDisplayRunnable() {
+    Bukkit.getScheduler().cancelTask(lastRemainingTaskId);
   }
 }
