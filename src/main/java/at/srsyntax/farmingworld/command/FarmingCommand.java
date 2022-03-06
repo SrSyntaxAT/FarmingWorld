@@ -70,12 +70,20 @@ public class FarmingCommand implements CommandExecutor, TabCompleter {
 
   @Nullable
   @Override
-  public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-    if (commandSender instanceof Player player) {
-      if (strings.length == 0)
-        return farmingWorlds(player);
+  public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+    final List<String> result = new ArrayList<>();
+    
+    if (commandSender instanceof Player player && args.length == 1) {
+      final String arg = args[0];
+  
+      for (FarmingWorld world : this.api.getFarmingWorlds()) {
+        boolean hasPermission = world.getPermission() == null || player.hasPermission(world.getPermission());
+        if (world.getName().startsWith(arg) && hasPermission)
+          result.add(world.getName());
+      }
     }
-    return new ArrayList<>();
+    
+    return result;
   }
 
   private boolean listAllFarmingWorlds(Player player) {
