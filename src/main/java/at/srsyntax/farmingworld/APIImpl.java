@@ -173,22 +173,22 @@ public final class APIImpl implements API {
     boolean showSeconds = true;
 
     if (days != 0) {
-      stringBuilder.append(days == 1 ? days + " <day>" : days + " <days>");
+      stringBuilder.append(days == 1 ? days + " <day> " : days + " <days> ");
       showSeconds = false;
     }
 
     if (hours != 0) {
-      stringBuilder.append(hours == 1 ? hours + " <hour>" : hours + " <hours>");
+      stringBuilder.append(hours == 1 ? hours + " <hour> " : hours + " <hours> ");
       showSeconds = false;
     }
 
     if (minutes != 0) {
-      stringBuilder.append(minutes == 1 ? minutes + " <minute>" : minutes + " <minutes>");
+      stringBuilder.append(minutes == 1 ? minutes + " <minute> " : minutes + " <minutes> ");
       showSeconds = false;
     }
 
     if (seconds != 0 && showSeconds)
-      stringBuilder.append(seconds == 1 ? seconds + " <second>" : seconds + " <seconds>");
+      stringBuilder.append(seconds == 1 ? seconds + " <second> " : seconds + " <seconds> ");
 
     return stringBuilder.toString();
   }
