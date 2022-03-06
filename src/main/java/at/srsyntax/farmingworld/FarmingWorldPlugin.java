@@ -43,6 +43,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class FarmingWorldPlugin extends JavaPlugin {
 
+  private static final int BSTATS_ID = 14550;
+  
   @Getter private static API api;
 
   @Getter private PluginConfig pluginConfig;
@@ -52,6 +54,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
     try {
       pluginConfig = loadConfig();
       api = new APIImpl(this);
+      new Metrics(this, BSTATS_ID);
       loadFarmingWorlds();
       startScheduler();
 
