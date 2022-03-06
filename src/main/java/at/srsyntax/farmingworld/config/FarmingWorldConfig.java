@@ -2,7 +2,7 @@ package at.srsyntax.farmingworld.config;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.FarmingWorld;
-import at.srsyntax.farmingworld.api.Message;
+import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.api.RemainingDisplay;
 import at.srsyntax.farmingworld.api.event.ReplacedFarmingWorldEvent;
 import lombok.Getter;

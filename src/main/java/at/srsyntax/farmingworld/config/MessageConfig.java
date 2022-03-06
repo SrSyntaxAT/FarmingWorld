@@ -39,5 +39,7 @@ public class MessageConfig {
   private final String minute, minutes;
   private final String hour, hours;
   private final String day, days;
+  
+  private final String noWorlds, dateFormat;
 
 }

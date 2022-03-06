@@ -1,13 +1,10 @@
 package at.srsyntax.farmingworld.runnable;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
-import at.srsyntax.farmingworld.api.Message;
+import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.scheduler.BukkitTask;
 
 /*
  * MIT License

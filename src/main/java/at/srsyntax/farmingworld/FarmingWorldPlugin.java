@@ -2,6 +2,8 @@ package at.srsyntax.farmingworld;
 
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.RemainingDisplay;
+import at.srsyntax.farmingworld.command.FarmingCommand;
+import at.srsyntax.farmingworld.command.FarmingWorldInfoCommand;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.config.LocationConfig;
 import at.srsyntax.farmingworld.config.MessageConfig;
@@ -57,6 +59,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListeners(api), this);
 
       getCommand("farming").setExecutor(new FarmingCommand(api, this));
+      getCommand("farmingworldinfo").setExecutor(new FarmingWorldInfoCommand(api, this.pluginConfig.getMessage()));
 
     } catch (Exception exception) {
       getLogger().severe("Plugin could not be loaded successfully!");
@@ -135,7 +138,9 @@ public class FarmingWorldPlugin extends JavaPlugin {
                 "second", "seconds",
                 "minute", "minutes",
                 "hour", "hours",
-                "day", "days"
+                "day", "days",
+              "&cNo worlds found!",
+              "dd.MM.yyyy - HH:mm:ss"
             )
         )
     );

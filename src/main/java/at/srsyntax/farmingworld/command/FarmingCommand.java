@@ -1,8 +1,9 @@
-package at.srsyntax.farmingworld;
+package at.srsyntax.farmingworld.command;
 
+import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;
-import at.srsyntax.farmingworld.api.Message;
+import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.Command;
@@ -15,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /*
  * MIT License

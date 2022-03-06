@@ -14,3 +14,7 @@ commands:
       - farmingworld
       - farmwelt
     description: Teleport you to a farming world.
+  farmingworldinfo:
+    aliases:
+      - fwi
+    description: Show current information of the FarmingWorld.

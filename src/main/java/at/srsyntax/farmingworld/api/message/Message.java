@@ -1,6 +1,7 @@
-package at.srsyntax.farmingworld.api;
+package at.srsyntax.farmingworld.api.message;
 
-import java.util.HashMap;
+import lombok.Setter;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -29,13 +30,16 @@ import java.util.Map;
  */
 public class Message {
 
-  private String message;
+  @Setter private String message;
   private final Map<String, String> replaces = new LinkedHashMap<>();
 
   public Message(String message) {
     this.message = message;
   }
-
+  
+  public Message() {
+  }
+  
   public Message add(String key, String value) {
     this.replaces.put(key, value);
     return this;
