@@ -9,11 +9,15 @@ import lombok.AllArgsConstructor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /*
  * CONFIDENTIAL
@@ -35,7 +39,7 @@ import java.util.Date;
  * MANUFACTURE, USE, OR SELL ANYTHING THAT IT  MAY DESCRIBE, IN WHOLE OR IN PART.
  */
 @AllArgsConstructor
-public class FarmingWorldInfoCommand implements CommandExecutor {
+public class FarmingWorldInfoCommand implements CommandExecutor, TabCompleter {
   
   private final API api;
   private final MessageConfig messageConfig;
@@ -105,5 +109,22 @@ public class FarmingWorldInfoCommand implements CommandExecutor {
   private String getDate(long date) {
     final DateFormat format = new SimpleDateFormat(this.messageConfig.getDateFormat());
     return format.format(new Date(date));
+  }
+  
+  @Nullable
+  @Override
+  public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+    final List<String> result = new ArrayList<>(this.api.getFarmingWorlds().size());
+    
+    if (args.length == 1) {
+      final String arg = args[0];
+      
+      for (FarmingWorld world : this.api.getFarmingWorlds()) {
+        if (world.getName().startsWith(arg))
+          result.add(world.getName());
+      }
+    }
+    
+    return result;
   }
 }
