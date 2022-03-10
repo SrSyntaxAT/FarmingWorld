@@ -1,4 +1,4 @@
-package at.srsyntax.farmingworld.runnable;
+package at.srsyntax.farmingworld.runnable.remaining;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
@@ -30,21 +30,21 @@ import java.util.concurrent.TimeUnit;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class FarmingWorldCheckRunnable implements Runnable {
+public class RemainingRunnable implements Runnable {
 
   private final FarmingWorldPlugin plugin;
   
   private LastRemainingDisplayRunnable runnable;
   private int lastRemainingTaskId;
   
-  public FarmingWorldCheckRunnable(FarmingWorldPlugin plugin) {
+  public RemainingRunnable(FarmingWorldPlugin plugin) {
     this.plugin = plugin;
   }
   
   @Override
   public void run() {
     plugin.getPluginConfig().getFarmingWorlds().forEach(farmingWorld -> {
-      farmingWorld.updateRemainingDisplay();
+      farmingWorld.updateDisplay();
 
       if (farmingWorld.getRemaining() <= TimeUnit.MINUTES.toMillis(2)) {
         checkNextRunnable(farmingWorld);

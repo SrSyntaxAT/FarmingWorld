@@ -2,7 +2,6 @@ package at.srsyntax.farmingworld.api;
 
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +37,8 @@ public interface FarmingWorld {
     long getReset();
     boolean needReset();
     long getRemaining();
-    void updateRemainingDisplay();
+    void updateDisplay();
+    void updateDisplay(Player player);
 
     @Nullable World getWorld();
     void newWorld(@NotNull World world);

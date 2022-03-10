@@ -1,11 +1,8 @@
-package at.srsyntax.farmingworld.api;
+package at.srsyntax.farmingworld.runnable.date;
 
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
+import at.srsyntax.farmingworld.api.API;
+import at.srsyntax.farmingworld.api.FarmingWorld;
+import lombok.AllArgsConstructor;
 
 /*
  * MIT License
@@ -30,23 +27,13 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface API {
+@AllArgsConstructor
+public class DateDisplayRunnable implements Runnable {
 
-  @NotNull List<? extends FarmingWorld> getFarmingWorlds();
-  @Nullable FarmingWorld getFarmingWorld(String name);
-  @Nullable FarmingWorld getFarmingWorld(World world);
-  boolean isFarmingWorld(World world);
+  private final API api;
 
-  @NotNull World loadFarmingWorld(String name, World.Environment environment);
-  @NotNull World generateFarmingWorld(FarmingWorld farmingWorld);
-  void deleteFarmingWorld(FarmingWorld farmingWorld, World world);
-  void deleteFarmingWorld(FarmingWorld farmingWorld);
-
-  @NotNull String getRemainingTime(long time);
-
-  void randomTeleport(Player player, World world);
-
-  String getDate(long date);
-  String getDate();
-
+  @Override
+  public void run() {
+    api.getFarmingWorlds().forEach(FarmingWorld::updateDisplay);
+  }
 }

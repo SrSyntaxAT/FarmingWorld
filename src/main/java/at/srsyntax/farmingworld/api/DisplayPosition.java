@@ -1,12 +1,5 @@
 package at.srsyntax.farmingworld.api;
 
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-
 /*
  * MIT License
  *
@@ -30,23 +23,6 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface API {
-
-  @NotNull List<? extends FarmingWorld> getFarmingWorlds();
-  @Nullable FarmingWorld getFarmingWorld(String name);
-  @Nullable FarmingWorld getFarmingWorld(World world);
-  boolean isFarmingWorld(World world);
-
-  @NotNull World loadFarmingWorld(String name, World.Environment environment);
-  @NotNull World generateFarmingWorld(FarmingWorld farmingWorld);
-  void deleteFarmingWorld(FarmingWorld farmingWorld, World world);
-  void deleteFarmingWorld(FarmingWorld farmingWorld);
-
-  @NotNull String getRemainingTime(long time);
-
-  void randomTeleport(Player player, World world);
-
-  String getDate(long date);
-  String getDate();
-
+public enum DisplayPosition {
+  BOSS_BAR, ACTION_BAR, NOT
 }

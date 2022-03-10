@@ -1,13 +1,7 @@
 package at.srsyntax.farmingworld.config;
 
-import at.srsyntax.farmingworld.api.DisplayPosition;
-import at.srsyntax.farmingworld.api.DisplayType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import org.bukkit.boss.BarColor;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -16,7 +10,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
-import java.util.List;
 
 /*
  * MIT License
@@ -41,22 +34,32 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-@Getter @Setter
-public class PluginConfig extends ConfigLoader {
+public class ConfigLoader {
 
-  private final LocationConfig fallback;
-  private final int rtpArenaSize;
+  private static final String CONFIG_FILE_NAME = "config.json";
 
-  private final DisplayPosition displayPosition;
-  private final DisplayType displayType;
-  private final int dateRefresh;
+  public static PluginConfig load(Plugin plugin, PluginConfig defaultConfig) throws IOException {
+    if (!plugin.getDataFolder().exists())
+      plugin.getDataFolder().mkdirs();
 
-  private final BarColor barColor;
+    final File file = new File(plugin.getDataFolder(), CONFIG_FILE_NAME);
+    if (file.exists())
+      return new Gson().fromJson(new FileReader(file), PluginConfig.class);
 
-  private final String defaultFarmingWorld;
-  private final List<FarmingWorldConfig> farmingWorlds;
+    defaultConfig.save(plugin);
+    return defaultConfig;
+  }
 
-  private final MessageConfig message;
+  public void save(Plugin plugin) throws IOException {
+    final File file = new File(plugin.getDataFolder(), CONFIG_FILE_NAME);
+    if (!file.exists())
+      file.createNewFile();
 
+    final String content = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(this);
+    Files.write(
+        file.toPath(),
+        Arrays.asList(content.split("\n")),
+        StandardCharsets.UTF_8
+    );
+  }
 }

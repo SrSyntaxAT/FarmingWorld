@@ -1,4 +1,4 @@
-package at.srsyntax.farmingworld.runnable;
+package at.srsyntax.farmingworld.runnable.remaining;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.message.Message;
@@ -33,9 +33,9 @@ public class LastRemainingDisplayRunnable implements Runnable {
 
   private final FarmingWorldPlugin plugin;
   private final FarmingWorldConfig farmingWorld;
-  private final FarmingWorldCheckRunnable runnable;
+  private final RemainingRunnable runnable;
   
-  public LastRemainingDisplayRunnable(FarmingWorldPlugin plugin, FarmingWorldConfig farmingWorld, FarmingWorldCheckRunnable runnable) {
+  public LastRemainingDisplayRunnable(FarmingWorldPlugin plugin, FarmingWorldConfig farmingWorld, RemainingRunnable runnable) {
     this.plugin = plugin;
     this.farmingWorld = farmingWorld;
     this.runnable = runnable;
@@ -43,7 +43,7 @@ public class LastRemainingDisplayRunnable implements Runnable {
 
   @Override
   public void run() {
-    farmingWorld.updateRemainingDisplay();
+    farmingWorld.updateDisplay();
 
     if (farmingWorld.needReset())
       resetWorld();
@@ -59,7 +59,7 @@ public class LastRemainingDisplayRunnable implements Runnable {
     farmingWorld.newWorld(nextWorld);
     farmingWorld.setNextWorld(null);
   
-    Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, farmingWorld::updateRemainingDisplay, 40L);
+    Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> farmingWorld.updateDisplay(), 40L);
   
     runnable.cancelLastRemainingDisplayRunnable();
   }

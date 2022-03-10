@@ -14,6 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -76,6 +79,11 @@ public final class APIImpl implements API {
     });
 
     Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> deleteFolder(world.getWorldFolder()), 60L);
+  }
+
+  @Override
+  public void deleteFarmingWorld(FarmingWorld farmingWorld) {
+    deleteFarmingWorld(farmingWorld, farmingWorld.getWorld());
   }
 
   private boolean deleteFolder(File folder) {
@@ -254,5 +262,14 @@ public final class APIImpl implements API {
   private int random(int current, int size) {
     size/=2;
     return ThreadLocalRandom.current().nextInt(current - size, current + size);
+  }
+
+  public String getDate(long date) {
+    final DateFormat format = new SimpleDateFormat(this.plugin.getPluginConfig().getMessage().getDateFormat());
+    return format.format(new Date(date));
+  }
+
+  public String getDate() {
+    return getDate(System.currentTimeMillis());
   }
 }

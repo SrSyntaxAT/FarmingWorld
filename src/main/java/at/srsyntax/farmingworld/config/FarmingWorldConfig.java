@@ -1,9 +1,10 @@
 package at.srsyntax.farmingworld.config;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
+import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.message.Message;
-import at.srsyntax.farmingworld.api.RemainingDisplay;
+import at.srsyntax.farmingworld.api.DisplayPosition;
 import at.srsyntax.farmingworld.api.event.ReplacedFarmingWorldEvent;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -83,15 +84,27 @@ public class FarmingWorldConfig implements FarmingWorld {
   }
 
   @Override
-  public void updateRemainingDisplay() {
+  public void updateDisplay() {
+    final String message = getUpdateMessage();
+    getWorld().getPlayers().forEach(player -> display(player, message));
+  }
+
+  @Override
+  public void updateDisplay(Player player) {
+    display(player, getUpdateMessage());
+  }
+
+  private String getUpdateMessage() {
     final MessageConfig messageConfig = plugin.getPluginConfig().getMessage();
 
     long reset = getReset();
     if (getRemaining() > TimeUnit.SECONDS.toMillis(60))
       reset+=TimeUnit.SECONDS.toMillis(60);
 
+    final API api = FarmingWorldPlugin.getApi();
     final Message message = new Message(messageConfig.getRemaining())
-        .add("<remaining>", FarmingWorldPlugin.getApi().getRemainingTime(reset))
+        .add("<remaining>", api.getRemainingTime(reset))
+        .add("<date>", api.getDate(getReset()))
         .add("<second>", messageConfig.getSecond())
         .add("<seconds>", messageConfig.getSeconds())
         .add("<minute>", messageConfig.getMinute())
@@ -101,7 +114,7 @@ public class FarmingWorldConfig implements FarmingWorld {
         .add("<day>", messageConfig.getDay())
         .add("<days>", messageConfig.getDays());
 
-    display(message.replace());
+    return message.replace();
   }
 
   public void checkBossbar(String message) {
@@ -113,10 +126,14 @@ public class FarmingWorldConfig implements FarmingWorld {
   }
 
   public void display(String message) {
-    if (plugin.getPluginConfig().getRemainingDisplay() == RemainingDisplay.BOSS_BAR)
+    getWorld().getPlayers().forEach(player -> display(player, message));
+  }
+
+  public void display(Player player, String message) {
+    if (plugin.getPluginConfig().getDisplayPosition() == DisplayPosition.BOSS_BAR)
       displayBossBar(message);
     else
-      displayActionBar(message);
+      displayActionBar(player, message);
   }
 
   private void displayBossBar(String message) {
@@ -124,9 +141,9 @@ public class FarmingWorldConfig implements FarmingWorld {
     bossBar.setTitle(message);
   }
 
-  private void displayActionBar(String message) {
+  private void displayActionBar(Player player, String message) {
     final TextComponent textComponent = new TextComponent(message);
-    getWorld().getPlayers().forEach(player -> player.spigot().sendMessage(ChatMessageType.ACTION_BAR, textComponent));
+    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, textComponent);
   }
 
   @Override

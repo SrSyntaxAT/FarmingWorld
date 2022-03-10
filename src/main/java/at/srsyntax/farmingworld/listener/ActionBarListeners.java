@@ -1,11 +1,14 @@
-package at.srsyntax.farmingworld.api;
+package at.srsyntax.farmingworld.listener;
 
+import at.srsyntax.farmingworld.api.API;
+import at.srsyntax.farmingworld.api.FarmingWorld;
+import lombok.AllArgsConstructor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 /*
  * MIT License
@@ -30,23 +33,25 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface API {
+@AllArgsConstructor
+public class ActionBarListeners implements Listener {
 
-  @NotNull List<? extends FarmingWorld> getFarmingWorlds();
-  @Nullable FarmingWorld getFarmingWorld(String name);
-  @Nullable FarmingWorld getFarmingWorld(World world);
-  boolean isFarmingWorld(World world);
+  private final API api;
 
-  @NotNull World loadFarmingWorld(String name, World.Environment environment);
-  @NotNull World generateFarmingWorld(FarmingWorld farmingWorld);
-  void deleteFarmingWorld(FarmingWorld farmingWorld, World world);
-  void deleteFarmingWorld(FarmingWorld farmingWorld);
+  @EventHandler
+  public void onPlayerJoinEvent(PlayerJoinEvent event) {
+    display(event.getPlayer());
+  }
 
-  @NotNull String getRemainingTime(long time);
+  @EventHandler
+  public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent event) {
+    display(event.getPlayer());
+  }
 
-  void randomTeleport(Player player, World world);
+  public void display(Player player) {
+    final FarmingWorld farmingWorld = api.getFarmingWorld(player.getWorld());
+    if (farmingWorld == null) return;
 
-  String getDate(long date);
-  String getDate();
-
+    farmingWorld.updateDisplay(player);
+  }
 }

@@ -1,4 +1,10 @@
-package at.srsyntax.farmingworld.api;
+package at.srsyntax.farmingworld.runnable.date;
+
+import at.srsyntax.farmingworld.api.API;
+import at.srsyntax.farmingworld.api.FarmingWorld;
+import lombok.AllArgsConstructor;
+
+import java.util.TimerTask;
 
 /*
  * MIT License
@@ -23,6 +29,15 @@ package at.srsyntax.farmingworld.api;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public enum RemainingDisplay {
-  BOSS_BAR, ACTION_BAR, NOT
+@AllArgsConstructor
+public class DateCheckRunnable extends TimerTask {
+
+  private final API api;
+  private final FarmingWorld farmingWorld;
+
+  @Override
+  public void run() {
+    if (farmingWorld.getNextWorld() == null)
+      farmingWorld.setNextWorld(api.generateFarmingWorld(farmingWorld));
+  }
 }

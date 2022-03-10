@@ -1,21 +1,31 @@
 package at.srsyntax.farmingworld;
 
 import at.srsyntax.farmingworld.api.API;
-import at.srsyntax.farmingworld.api.RemainingDisplay;
+import at.srsyntax.farmingworld.api.DisplayPosition;
+import at.srsyntax.farmingworld.api.DisplayType;
 import at.srsyntax.farmingworld.command.FarmingCommand;
 import at.srsyntax.farmingworld.command.FarmingWorldInfoCommand;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.config.LocationConfig;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import at.srsyntax.farmingworld.config.PluginConfig;
-import at.srsyntax.farmingworld.runnable.FarmingWorldCheckRunnable;
+import at.srsyntax.farmingworld.listener.ActionBarListeners;
+import at.srsyntax.farmingworld.listener.BossBarListeners;
+import at.srsyntax.farmingworld.runnable.date.DateCheckRunnable;
+import at.srsyntax.farmingworld.runnable.date.DateDisplayRunnable;
+import at.srsyntax.farmingworld.runnable.date.DateRunnable;
+import at.srsyntax.farmingworld.runnable.remaining.RemainingRunnable;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.boss.BarColor;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Date;
+import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -48,6 +58,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
   @Getter private static API api;
 
   @Getter private PluginConfig pluginConfig;
+  private Timer timer;
 
   @Override
   public void onEnable() {
@@ -56,13 +67,10 @@ public class FarmingWorldPlugin extends JavaPlugin {
       api = new APIImpl(this);
       new Metrics(this, BSTATS_ID);
       loadFarmingWorlds();
+
       startScheduler();
-
-      if (pluginConfig.getRemainingDisplay() == RemainingDisplay.BOSS_BAR)
-        getServer().getPluginManager().registerEvents(new PlayerListeners(api), this);
-
-      getCommand("farming").setExecutor(new FarmingCommand(api, this));
-      getCommand("farmingworldinfo").setExecutor(new FarmingWorldInfoCommand(api, this.pluginConfig.getMessage()));
+      registerListeners();
+      registerCommands();
 
     } catch (Exception exception) {
       getLogger().severe("Plugin could not be loaded successfully!");
@@ -72,24 +80,57 @@ public class FarmingWorldPlugin extends JavaPlugin {
 
   @Override
   public void onDisable() {
-    try {
-      pluginConfig.save(this);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    if (this.timer != null)
+      this.timer.purge();
+  }
+
+  private void registerCommands() {
+    getCommand("farming").setExecutor(new FarmingCommand(api, this));
+    getCommand("farmingworldinfo").setExecutor(new FarmingWorldInfoCommand(api, this.pluginConfig.getMessage()));
+  }
+
+  private void registerListeners() {
+    final PluginManager pluginManager = getServer().getPluginManager();
+    if (pluginConfig.getDisplayPosition() == DisplayPosition.BOSS_BAR)
+      pluginManager.registerEvents(new BossBarListeners(api), this);
+    else if (pluginConfig.getDisplayPosition() == DisplayPosition.ACTION_BAR)
+      pluginManager.registerEvents(new ActionBarListeners(api), this);
   }
 
   private void startScheduler() {
-    final Runnable runnable = new FarmingWorldCheckRunnable(this);
+    if (pluginConfig.getDisplayType() == DisplayType.REMAINING)
+      startRemainingScheduler();
+    else
+      startDateScheduler();
+  }
+
+  private void startRemainingScheduler() {
+    final Runnable runnable = new RemainingRunnable(this);
     getServer().getScheduler().runTaskTimerAsynchronously(this, runnable, 90L, 1200L);
   }
 
+  private void startDateScheduler() {
+    this.timer = new Timer();
+    api.getFarmingWorlds().forEach(farmingWorld -> {
+      final Date checkDate = new Date(farmingWorld.getReset() - TimeUnit.SECONDS.toMillis(5));
+      this.timer.schedule(new DateCheckRunnable(api, farmingWorld), checkDate);
+      this.timer.schedule(new DateRunnable(api, farmingWorld), new Date(farmingWorld.getReset()));
+
+      farmingWorld.updateDisplay();
+    });
+  }
+
   private void loadFarmingWorlds() {
-    pluginConfig.getFarmingWorlds().forEach(farmingWorld -> {
+    this.pluginConfig.getFarmingWorlds().forEach(farmingWorld -> {
       farmingWorld.setPlugin(this);
       checkCurrentWorld(farmingWorld);
       checkNextWorld(farmingWorld);
     });
+
+    if (this.pluginConfig.getDateRefresh() > 0) {
+      final long time = this.pluginConfig.getDateRefresh() * 20L;
+      Bukkit.getScheduler().runTaskTimerAsynchronously(this, new DateDisplayRunnable(api), time, time);
+    }
   }
 
   private void checkCurrentWorld(FarmingWorldConfig farmingWorld) {
@@ -127,7 +168,9 @@ public class FarmingWorldPlugin extends JavaPlugin {
         new PluginConfig(
             new LocationConfig("world", 0D, 100D, 0D, (short) 0, (short) 0),
             5000,
-            RemainingDisplay.BOSS_BAR,
+            DisplayPosition.BOSS_BAR,
+            DisplayType.REMAINING,
+            30*60,
             BarColor.BLUE,
             farmingWorldTemplate.getName(),
             Collections.singletonList(farmingWorldTemplate),

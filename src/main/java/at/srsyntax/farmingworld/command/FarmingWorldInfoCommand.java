@@ -13,10 +13,7 @@ import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /*
@@ -94,8 +91,8 @@ public class FarmingWorldInfoCommand implements CommandExecutor, TabCompleter {
     final MessageBuilder builder = new MessageBuilder()
       .addLine("§6" + farmingWorld.getName() + " §eInfos§8:")
       .addLine("&eCurrent World&8: &7" + farmingWorld.getWorld().getName())
-      .addLine("§eCreated§8: §7" + getDate(farmingWorld.getCreated()))
-      .addLine("§eReset§8: §7" + getDate(farmingWorld.getReset()))
+      .addLine("§eCreated§8: §7" + this.api.getDate(farmingWorld.getCreated()))
+      .addLine("§eReset§8: §7" + this.api.getDate(farmingWorld.getReset()))
       .addLine("§ePlayers§8: §7" + farmingWorld.getWorld().getPlayers().size());
     
     if (farmingWorld.getPermission() != null)
@@ -109,11 +106,7 @@ public class FarmingWorldInfoCommand implements CommandExecutor, TabCompleter {
     if (farmingWorld == null) throw new FarmingWorldNotFoundException();
     return farmingWorld;
   }
-  
-  private String getDate(long date) {
-    final DateFormat format = new SimpleDateFormat(this.messageConfig.getDateFormat());
-    return format.format(new Date(date));
-  }
+
   
   @Nullable
   @Override

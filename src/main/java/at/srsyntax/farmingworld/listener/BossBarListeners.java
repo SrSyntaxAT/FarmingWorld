@@ -1,7 +1,6 @@
-package at.srsyntax.farmingworld;
+package at.srsyntax.farmingworld.listener;
 
 import at.srsyntax.farmingworld.api.API;
-import at.srsyntax.farmingworld.api.RemainingDisplay;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import lombok.AllArgsConstructor;
 import org.bukkit.World;
@@ -36,7 +35,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
  * SOFTWARE.
  */
 @AllArgsConstructor
-public class PlayerListeners implements Listener {
+public class BossBarListeners implements Listener {
 
   private final API api;
 
