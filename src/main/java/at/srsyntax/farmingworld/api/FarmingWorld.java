@@ -44,6 +44,7 @@ public interface FarmingWorld {
     void newWorld(@NotNull World world);
     void setNextWorld(@Nullable World world);
     @Nullable World getNextWorld();
+    boolean hasNext();
 
     void teleport(@NotNull Player player);
 

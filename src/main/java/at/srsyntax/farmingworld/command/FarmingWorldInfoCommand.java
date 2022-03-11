@@ -4,6 +4,7 @@ import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.api.message.MessageBuilder;
+import at.srsyntax.farmingworld.command.exception.FarmingWorldNotFoundException;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.Command;
@@ -13,7 +14,6 @@ import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -40,7 +40,7 @@ import java.util.List;
  * SOFTWARE.
  */
 @AllArgsConstructor
-public class FarmingWorldInfoCommand implements CommandExecutor, TabCompleter {
+public class FarmingWorldInfoCommand implements AdminCommand {
   
   private final API api;
   private final MessageConfig messageConfig;
@@ -50,7 +50,7 @@ public class FarmingWorldInfoCommand implements CommandExecutor, TabCompleter {
   public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
     if (commandSender.hasPermission("farmingworld.info")) {
       if (args.length == 0)
-        sendAllowedWorlds(commandSender);
+        sendAllowedWorlds(this.api, this.messageConfig, commandSender);
       else {
         try {
           sendFarmingWorldInfo(commandSender, args[0]);
@@ -62,27 +62,6 @@ public class FarmingWorldInfoCommand implements CommandExecutor, TabCompleter {
       commandSender.sendMessage(new Message(this.messageConfig.getNoPermission()).replace());
     }
     return false;
-  }
-  
-  private void sendAllowedWorlds(CommandSender sender) {
-    final Message message;
-    
-    if (this.api.getFarmingWorlds().isEmpty())
-      message = new Message(this.messageConfig.getNoWorlds());
-    else
-      message = new Message(this.messageConfig.getFarmingWorldList()).add("<list>", listWorlds());
-    
-    sender.sendMessage(message.replace());
-  }
-  
-  private String listWorlds() {
-    final StringBuilder builder = new StringBuilder();
-    for (FarmingWorld farmingWorld : this.api.getFarmingWorlds()) {
-      if (!builder.isEmpty())
-        builder.append("&8, ");
-      builder.append("&7").append(farmingWorld.getName());
-    }
-    return builder.toString();
   }
   
   private void sendFarmingWorldInfo(CommandSender sender, String name) throws FarmingWorldNotFoundException {
@@ -111,17 +90,6 @@ public class FarmingWorldInfoCommand implements CommandExecutor, TabCompleter {
   @Nullable
   @Override
   public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-    final List<String> result = new ArrayList<>(this.api.getFarmingWorlds().size());
-    
-    if (args.length == 1) {
-      final String arg = args[0];
-      
-      for (FarmingWorld world : this.api.getFarmingWorlds()) {
-        if (world.getName().startsWith(arg))
-          result.add(world.getName());
-      }
-    }
-    
-    return result;
+    return DefaultTabCompleter.onTabComplete(this.api, args, 0);
   }
 }

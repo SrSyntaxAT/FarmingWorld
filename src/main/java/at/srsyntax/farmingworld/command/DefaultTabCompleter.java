@@ -1,5 +1,13 @@
 package at.srsyntax.farmingworld.command;
 
+import at.srsyntax.farmingworld.api.API;
+import at.srsyntax.farmingworld.api.FarmingWorld;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /*
  * MIT License
  *
@@ -23,5 +31,21 @@ package at.srsyntax.farmingworld.command;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class FarmingWorldNotFoundException extends Exception {
+public class DefaultTabCompleter {
+
+  public static List<String> onTabComplete(API api, String[] args, int pos) {
+    final List<String> result = new ArrayList<>(api.getFarmingWorlds().size());
+
+    if (args.length == pos + 1) {
+      final String arg = args[pos];
+
+      for (FarmingWorld world : api.getFarmingWorlds()) {
+        if (world.getName().startsWith(arg))
+          result.add(world.getName());
+      }
+    }
+
+    return result;
+  }
+
 }

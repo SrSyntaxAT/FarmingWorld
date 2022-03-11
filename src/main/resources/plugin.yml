@@ -18,3 +18,7 @@ commands:
     aliases:
       - fwi
     description: Show current information of the FarmingWorld.
+  farmingworldreset:
+    aliases:
+      - fwr
+    description: Reset a Farming World.

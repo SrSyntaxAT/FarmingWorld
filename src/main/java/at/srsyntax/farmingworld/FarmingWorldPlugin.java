@@ -5,27 +5,34 @@ import at.srsyntax.farmingworld.api.DisplayPosition;
 import at.srsyntax.farmingworld.api.DisplayType;
 import at.srsyntax.farmingworld.command.FarmingCommand;
 import at.srsyntax.farmingworld.command.FarmingWorldInfoCommand;
+import at.srsyntax.farmingworld.command.FarmingWorldResetCommand;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.config.LocationConfig;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import at.srsyntax.farmingworld.config.PluginConfig;
 import at.srsyntax.farmingworld.listener.ActionBarListeners;
 import at.srsyntax.farmingworld.listener.BossBarListeners;
+import at.srsyntax.farmingworld.listener.ConfirmListener;
 import at.srsyntax.farmingworld.runnable.date.DateCheckRunnable;
 import at.srsyntax.farmingworld.runnable.date.DateDisplayRunnable;
 import at.srsyntax.farmingworld.runnable.date.DateRunnable;
 import at.srsyntax.farmingworld.runnable.remaining.RemainingRunnable;
+import at.srsyntax.farmingworld.util.ResetData;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.boss.BarColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Map;
 import java.util.Timer;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -59,6 +66,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
 
   @Getter private PluginConfig pluginConfig;
   private Timer timer;
+  @Getter private final Map<CommandSender, ResetData> needConfirm = new ConcurrentHashMap<>();
 
   @Override
   public void onEnable() {
@@ -87,6 +95,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
   private void registerCommands() {
     getCommand("farming").setExecutor(new FarmingCommand(api, this));
     getCommand("farmingworldinfo").setExecutor(new FarmingWorldInfoCommand(api, this.pluginConfig.getMessage()));
+    getCommand("farmingworldreset").setExecutor(new FarmingWorldResetCommand(api, this));
   }
 
   private void registerListeners() {
@@ -95,6 +104,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
       pluginManager.registerEvents(new BossBarListeners(api), this);
     else if (pluginConfig.getDisplayPosition() == DisplayPosition.ACTION_BAR)
       pluginManager.registerEvents(new ActionBarListeners(api), this);
+    pluginManager.registerEvents(new ConfirmListener(this), this);
   }
 
   private void startScheduler() {
@@ -176,7 +186,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
             Collections.singletonList(farmingWorldTemplate),
 
             new MessageConfig(
-                "&eFarming world&8: <list>",
+                "&eFarming worlds&8: <list>",
                 "&cYou have no rights to do that!",
                 "&cFarming world not found!",
                 "&4The world is reset.",
@@ -186,7 +196,11 @@ public class FarmingWorldPlugin extends JavaPlugin {
                 "hour", "hours",
                 "day", "days",
               "&cNo worlds found!",
-              "dd.MM.yyyy - HH:mm:ss"
+              "dd.MM.yyyy - HH:mm:ss",
+                "&aFarming world has been reset.",
+                "&cYou didn't want to reset a world, so you can't confirm anything.",
+                "&cThe time to confirm has expired.",
+                "&fConfirm your intention in the next &a10 seconds&f with the command \"&a/fwr confirm&f\"."
             )
         )
     );

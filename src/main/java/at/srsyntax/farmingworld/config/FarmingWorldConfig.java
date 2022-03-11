@@ -186,6 +186,11 @@ public class FarmingWorldConfig implements FarmingWorld {
   }
 
   @Override
+  public boolean hasNext() {
+    return getNextWorld() != null;
+  }
+
+  @Override
   public void teleport(@NotNull Player player) {
     Bukkit.getScheduler().runTask(plugin, () -> FarmingWorldPlugin.getApi().randomTeleport(player, getWorld()));
   }

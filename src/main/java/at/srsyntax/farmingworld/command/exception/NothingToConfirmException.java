@@ -1,7 +1,4 @@
-package at.srsyntax.farmingworld.config;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+package at.srsyntax.farmingworld.command.exception;
 
 /*
  * MIT License
@@ -26,22 +23,5 @@ import lombok.Getter;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-@Getter
-public class MessageConfig {
-
-  private final String farmingWorldList;
-  private final String noPermission, worldNotFound;
-  private final String reset;
-  private final String remaining;
-
-  private final String second, seconds;
-  private final String minute, minutes;
-  private final String hour, hours;
-  private final String day, days;
-  
-  private final String noWorlds, dateFormat;
-
-  private final String worldDeleted, nothingToConfirm, confirmExpired, confirm;
-
+public class NothingToConfirmException extends Exception {
 }

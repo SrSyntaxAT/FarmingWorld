@@ -66,6 +66,7 @@ public class BossBarListeners implements Listener {
       farmingWorld.checkBossbar(null);
       if (farmingWorld.getBossBar() != null)
         farmingWorld.getBossBar().addPlayer(player);
+      farmingWorld.updateDisplay(player);
     }
   }
 

@@ -1,7 +1,8 @@
-package at.srsyntax.farmingworld.config;
+package at.srsyntax.farmingworld.util;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import at.srsyntax.farmingworld.api.FarmingWorld;
+
+import java.util.concurrent.TimeUnit;
 
 /*
  * MIT License
@@ -26,22 +27,11 @@ import lombok.Getter;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-@Getter
-public class MessageConfig {
+public record ResetData(FarmingWorld farmingWorld, long timestamp) {
 
-  private final String farmingWorldList;
-  private final String noPermission, worldNotFound;
-  private final String reset;
-  private final String remaining;
+  public static final long EXPIRED = TimeUnit.SECONDS.toMillis(10);
 
-  private final String second, seconds;
-  private final String minute, minutes;
-  private final String hour, hours;
-  private final String day, days;
-  
-  private final String noWorlds, dateFormat;
-
-  private final String worldDeleted, nothingToConfirm, confirmExpired, confirm;
-
+  public boolean isExpired() {
+    return System.currentTimeMillis() - timestamp > EXPIRED;
+  }
 }

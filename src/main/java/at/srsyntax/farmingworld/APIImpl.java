@@ -76,9 +76,9 @@ public final class APIImpl implements API {
       world.getForceLoadedChunks().forEach(chunk -> chunk.unload(false));
 
       Bukkit.unloadWorld(world, false);
-    });
 
-    Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> deleteFolder(world.getWorldFolder()), 60L);
+      Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> deleteFolder(world.getWorldFolder()), 60L);
+    });
   }
 
   @Override

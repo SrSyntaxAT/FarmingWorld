@@ -1,7 +1,10 @@
-package at.srsyntax.farmingworld.config;
+package at.srsyntax.farmingworld.listener;
 
+import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 /*
  * MIT License
@@ -27,21 +30,13 @@ import lombok.Getter;
  * SOFTWARE.
  */
 @AllArgsConstructor
-@Getter
-public class MessageConfig {
+public class ConfirmListener implements Listener {
 
-  private final String farmingWorldList;
-  private final String noPermission, worldNotFound;
-  private final String reset;
-  private final String remaining;
+  private final FarmingWorldPlugin plugin;
 
-  private final String second, seconds;
-  private final String minute, minutes;
-  private final String hour, hours;
-  private final String day, days;
-  
-  private final String noWorlds, dateFormat;
-
-  private final String worldDeleted, nothingToConfirm, confirmExpired, confirm;
+  @EventHandler
+  public void onPlayerQuitEvent(PlayerQuitEvent event) {
+    this.plugin.getNeedConfirm().remove(event.getPlayer());
+  }
 
 }

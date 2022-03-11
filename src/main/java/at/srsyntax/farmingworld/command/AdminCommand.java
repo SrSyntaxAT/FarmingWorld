@@ -1,7 +1,12 @@
-package at.srsyntax.farmingworld.config;
+package at.srsyntax.farmingworld.command;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import at.srsyntax.farmingworld.api.API;
+import at.srsyntax.farmingworld.api.FarmingWorld;
+import at.srsyntax.farmingworld.api.message.Message;
+import at.srsyntax.farmingworld.config.MessageConfig;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 
 /*
  * MIT License
@@ -26,22 +31,27 @@ import lombok.Getter;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-@Getter
-public class MessageConfig {
+public interface AdminCommand extends CommandExecutor, TabCompleter {
 
-  private final String farmingWorldList;
-  private final String noPermission, worldNotFound;
-  private final String reset;
-  private final String remaining;
+  default void sendAllowedWorlds(API api, MessageConfig messageConfig, CommandSender sender) {
+    final Message message;
 
-  private final String second, seconds;
-  private final String minute, minutes;
-  private final String hour, hours;
-  private final String day, days;
-  
-  private final String noWorlds, dateFormat;
+    if (api.getFarmingWorlds().isEmpty())
+      message = new Message(messageConfig.getNoWorlds());
+    else
+      message = new Message(messageConfig.getFarmingWorldList()).add("<list>", listWorlds(api));
 
-  private final String worldDeleted, nothingToConfirm, confirmExpired, confirm;
+    sender.sendMessage(message.replace());
+  }
+
+  default String listWorlds(API api) {
+    final StringBuilder builder = new StringBuilder();
+    for (FarmingWorld farmingWorld : api.getFarmingWorlds()) {
+      if (!builder.isEmpty())
+        builder.append("&8, ");
+      builder.append("&7").append(farmingWorld.getName());
+    }
+    return builder.toString();
+  }
 
 }
