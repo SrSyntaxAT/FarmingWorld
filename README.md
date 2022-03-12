@@ -37,6 +37,7 @@ You can create multiple farm worlds that will be automatically deleted and gener
 | created          | This is the time when the current world was created. This value should never be changed.                                                                                       |
 | timer            | This is the time in minutes when the world should be deleted.                                                                                                                  |
 | environment      | The world type with which the world is generated. Available types: **NORMAL, NETHER, THE_END**                                                                                     |
+
 **When you add a new farm world, you should not specify created, currentWorldName and nextWorldName.**
 
 ---
