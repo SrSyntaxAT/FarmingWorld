@@ -6,7 +6,7 @@ You can create multiple farm worlds that will be automatically deleted and gener
 
 ## Useful links
 
-* [Download]()
+* [Download](https://www.spigotmc.org/resources/farmingworld.100640/)
 * [Discord](http://discord.gg/tvEFd4j)
 * [Issues](https://github.com/SrSyntaxAT/FarmingWorld/issues)
 
