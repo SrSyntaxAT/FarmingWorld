@@ -23,5 +23,11 @@ package at.srsyntax.farmingworld.command.exception;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class NothingToConfirmException extends Exception {
+public class NothingToConfirmException extends FarmingWorldException {
+  public NothingToConfirmException(String message) {
+    super(message);
+  }
+
+  public NothingToConfirmException() {
+  }
 }

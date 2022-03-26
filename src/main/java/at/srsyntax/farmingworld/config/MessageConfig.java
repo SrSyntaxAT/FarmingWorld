@@ -31,7 +31,8 @@ import lombok.Getter;
 public class MessageConfig {
 
   private final String farmingWorldList;
-  private final String noPermission, worldNotFound;
+  private final String noPermission, worldNotFound, usage;
+  private final String targetNotFound, targetNoPermission, targetTeleported;
   private final String reset;
   private final String remaining;
 

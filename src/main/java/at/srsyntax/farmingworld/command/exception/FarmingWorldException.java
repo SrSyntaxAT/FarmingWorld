@@ -23,11 +23,12 @@ package at.srsyntax.farmingworld.command.exception;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class FarmingWorldNotFoundException extends FarmingWorldException {
-  public FarmingWorldNotFoundException(String message) {
+public class FarmingWorldException extends Exception {
+
+  public FarmingWorldException(String message) {
     super(message);
   }
 
-  public FarmingWorldNotFoundException() {
+  public FarmingWorldException() {
   }
 }

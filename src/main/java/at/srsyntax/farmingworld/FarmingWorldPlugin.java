@@ -6,6 +6,7 @@ import at.srsyntax.farmingworld.api.DisplayType;
 import at.srsyntax.farmingworld.command.FarmingCommand;
 import at.srsyntax.farmingworld.command.FarmingWorldInfoCommand;
 import at.srsyntax.farmingworld.command.FarmingWorldResetCommand;
+import at.srsyntax.farmingworld.command.TeleportFarmingWorldCommand;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.config.LocationConfig;
 import at.srsyntax.farmingworld.config.MessageConfig;
@@ -96,6 +97,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
     getCommand("farming").setExecutor(new FarmingCommand(api, this));
     getCommand("farmingworldinfo").setExecutor(new FarmingWorldInfoCommand(api, this.pluginConfig.getMessage()));
     getCommand("farmingworldreset").setExecutor(new FarmingWorldResetCommand(api, this));
+    getCommand("teleportfarmingworld").setExecutor(new TeleportFarmingWorldCommand(api, this));
   }
 
   private void registerListeners() {
@@ -189,6 +191,10 @@ public class FarmingWorldPlugin extends JavaPlugin {
                 "&eFarming worlds&8: <list>",
                 "&cYou have no rights to do that!",
                 "&cFarming world not found!",
+                "&cUsage&8:&f /<usage>",
+                "&cPlayer not found!",
+                "&cThe player does not have the rights to be teleported to the farmworld!",
+                "&e<player> &awas teleported to farmworld &e<farmingworld>&a.",
                 "&4The world is reset.",
                 "&4Reset in &e<remaining>",
                 "second", "seconds",

@@ -14,11 +14,15 @@ commands:
       - farmingworld
       - farmwelt
     description: Teleport you to a farming world.
+  teleportfarmingworld:
+    aliases:
+      - tpfw
+    description: Teleport another player to a farmworld.
   farmingworldinfo:
     aliases:
       - fwi
-    description: Show current information of the FarmingWorld.
+    description: Show current information of the farmworld.
   farmingworldreset:
     aliases:
       - fwr
-    description: Reset a Farming World.
+    description: Reset a farmworld.
