@@ -46,6 +46,8 @@ import java.util.List;
  */
 public class TeleportFarmingWorldCommand implements CommandExecutor, TabCompleter {
 
+  private static final String PERMISSION = "farmingworld.teleport.other";
+
   private final API api;
   private final FarmingWorldPlugin plugin;
   private final MessageConfig messageConfig;
@@ -72,6 +74,18 @@ public class TeleportFarmingWorldCommand implements CommandExecutor, TabComplete
   @Nullable
   @Override
   public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+    if (!commandSender.hasPermission(PERMISSION)) return new ArrayList<>(0);
+    if (args.length == 1) {
+     final List<String> result = new ArrayList<>();
+     final String arg = args[0];
+
+     for (Player player : Bukkit.getOnlinePlayers()) {
+       if (player.getName().toLowerCase().startsWith(arg.toLowerCase()))
+         result.add(player.getName());
+     }
+
+     return result;
+    }
     return DefaultTabCompleter.onTabComplete(this.api, args, 1);
   }
 
@@ -95,7 +109,7 @@ public class TeleportFarmingWorldCommand implements CommandExecutor, TabComplete
   }
 
   private void checkPermission(CommandSender sender) throws NoPermissionException {
-    if (!sender.hasPermission("farmingworld.teleport.other"))
+    if (!sender.hasPermission(PERMISSION))
       throw new NoPermissionException(new Message(this.messageConfig.getNoPermission()).replace());
   }
 

@@ -14,6 +14,7 @@ import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -41,14 +42,16 @@ import java.util.List;
  */
 @AllArgsConstructor
 public class FarmingWorldInfoCommand implements AdminCommand {
-  
+
+  private static final String PERMISSION = "farmingworld.info";
+
   private final API api;
   private final MessageConfig messageConfig;
   
   //  fwi <world>
   @Override
   public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-    if (commandSender.hasPermission("farmingworld.info")) {
+    if (commandSender.hasPermission(PERMISSION)) {
       if (args.length == 0)
         sendAllowedWorlds(this.api, this.messageConfig, commandSender);
       else {
@@ -90,6 +93,9 @@ public class FarmingWorldInfoCommand implements AdminCommand {
   @Nullable
   @Override
   public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-    return DefaultTabCompleter.onTabComplete(this.api, args, 0);
+    if (commandSender.hasPermission(PERMISSION))
+      return DefaultTabCompleter.onTabComplete(this.api, args, 0);
+    else
+      return new ArrayList<>(0);
   }
 }

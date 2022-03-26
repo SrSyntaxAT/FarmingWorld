@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -49,6 +50,8 @@ import java.util.Objects;
 @AllArgsConstructor
 public class FarmingWorldResetCommand implements AdminCommand {
 
+  private static final String PERMISSION = "farmingworld.reset";
+
   private final API api;
   private final FarmingWorldPlugin plugin;
 
@@ -57,7 +60,7 @@ public class FarmingWorldResetCommand implements AdminCommand {
     // fwr <world>
     // fwr confirm
 
-    if (sender.hasPermission("farmingworld.reset")) {
+    if (sender.hasPermission(PERMISSION)) {
       final MessageConfig messageConfig = this.plugin.getPluginConfig().getMessage();
       try {
         if (args.length > 0) {
@@ -130,8 +133,11 @@ public class FarmingWorldResetCommand implements AdminCommand {
   @Nullable
   @Override
   public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-    final List<String> result = DefaultTabCompleter.onTabComplete(this.api, args, 0);
-    result.add("confirm");
-    return result;
+    if (commandSender.hasPermission(PERMISSION)) {
+      final List<String> result = DefaultTabCompleter.onTabComplete(this.api, args, 0);
+      result.add("confirm");
+      return result;
+    } else
+      return new ArrayList<>(0);
   }
 }
