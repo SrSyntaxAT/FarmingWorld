@@ -256,7 +256,7 @@ public final class APIImpl implements API {
   }
 
   private boolean isYValid(Material material) {
-    return material != Material.AIR && material != Material.LAVA;
+    return !this.plugin.getPluginConfig().getSpawnBlockBlacklist().contains(material);
   }
 
   private int random(int current, int size) {

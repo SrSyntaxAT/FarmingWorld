@@ -21,6 +21,7 @@ import at.srsyntax.farmingworld.runnable.remaining.RemainingRunnable;
 import at.srsyntax.farmingworld.util.ResetData;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.boss.BarColor;
 import org.bukkit.command.CommandSender;
@@ -29,10 +30,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Map;
-import java.util.Timer;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -183,6 +181,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
             DisplayPosition.BOSS_BAR,
             DisplayType.REMAINING,
             30*60,
+            Arrays.asList(Material.LAVA, Material.AIR, Material.WATER),
             BarColor.BLUE,
             farmingWorldTemplate.getName(),
             Collections.singletonList(farmingWorldTemplate),

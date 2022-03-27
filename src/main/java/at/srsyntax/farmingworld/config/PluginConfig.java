@@ -2,20 +2,12 @@ package at.srsyntax.farmingworld.config;
 
 import at.srsyntax.farmingworld.api.DisplayPosition;
 import at.srsyntax.farmingworld.api.DisplayType;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
-import org.bukkit.plugin.Plugin;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -51,6 +43,7 @@ public class PluginConfig extends ConfigLoader {
   private final DisplayPosition displayPosition;
   private final DisplayType displayType;
   private final int dateRefresh;
+  private final List<Material> spawnBlockBlacklist;
 
   private final BarColor barColor;
 
