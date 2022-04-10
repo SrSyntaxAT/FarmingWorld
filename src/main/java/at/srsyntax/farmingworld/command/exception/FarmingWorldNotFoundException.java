@@ -1,5 +1,8 @@
 package at.srsyntax.farmingworld.command.exception;
 
+import at.srsyntax.farmingworld.api.message.Message;
+import at.srsyntax.farmingworld.config.MessageConfig;
+
 /*
  * MIT License
  *
@@ -24,10 +27,12 @@ package at.srsyntax.farmingworld.command.exception;
  * SOFTWARE.
  */
 public class FarmingWorldNotFoundException extends FarmingWorldException {
-  public FarmingWorldNotFoundException(String message) {
-    super(message);
+
+  public FarmingWorldNotFoundException(MessageConfig config) {
+    super(new Message(config.getWorldNotFound()).replace());
   }
 
-  public FarmingWorldNotFoundException() {
+  public FarmingWorldNotFoundException(String message) {
+    super(message);
   }
 }

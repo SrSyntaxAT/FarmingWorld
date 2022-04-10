@@ -8,7 +8,6 @@ import at.srsyntax.farmingworld.api.DisplayPosition;
 import at.srsyntax.farmingworld.api.event.ReplacedFarmingWorldEvent;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -47,7 +46,7 @@ import java.util.concurrent.TimeUnit;
  * SOFTWARE.
  */
 @NoArgsConstructor
-@Getter @Setter
+@Getter
 public class FarmingWorldConfig implements FarmingWorld {
 
   private transient BossBar bossBar;
@@ -158,8 +157,8 @@ public class FarmingWorldConfig implements FarmingWorld {
   public void newWorld(@NotNull World world) {
     final World old = getWorld();
 
-    setCurrentWorldName(world.getName());
-    setCreated(System.currentTimeMillis());
+    this.currentWorldName = world.getName();
+    this.created = System.currentTimeMillis();
 
     if (old != null)
       old.getPlayers().forEach(this::teleport);
@@ -175,7 +174,7 @@ public class FarmingWorldConfig implements FarmingWorld {
 
   @Override
   public void setNextWorld(World world) {
-    setNextWorldName(world == null ? null : world.getName());
+    this.nextWorldName = world == null ? null : world.getName();
     save();
   }
 
@@ -202,5 +201,9 @@ public class FarmingWorldConfig implements FarmingWorld {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  public void setPlugin(FarmingWorldPlugin plugin) {
+    this.plugin = plugin;
   }
 }

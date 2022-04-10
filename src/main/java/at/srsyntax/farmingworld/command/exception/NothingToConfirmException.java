@@ -1,5 +1,8 @@
 package at.srsyntax.farmingworld.command.exception;
 
+import at.srsyntax.farmingworld.api.message.Message;
+import at.srsyntax.farmingworld.config.MessageConfig;
+
 /*
  * MIT License
  *
@@ -29,5 +32,9 @@ public class NothingToConfirmException extends FarmingWorldException {
   }
 
   public NothingToConfirmException() {
+  }
+
+  public NothingToConfirmException(MessageConfig config) {
+    super(new Message(config.getNothingToConfirm()).replace());
   }
 }

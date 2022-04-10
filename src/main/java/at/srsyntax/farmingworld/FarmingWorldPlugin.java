@@ -91,9 +91,11 @@ public class FarmingWorldPlugin extends JavaPlugin {
   }
 
   private void registerCommands() {
+    final MessageConfig messageConfig = this.pluginConfig.getMessage();
+
     getCommand("farming").setExecutor(new FarmingCommand(api, this));
-    getCommand("farmingworldinfo").setExecutor(new FarmingWorldInfoCommand(api, this.pluginConfig.getMessage()));
-    getCommand("farmingworldreset").setExecutor(new FarmingWorldResetCommand(api, this));
+    getCommand("farmingworldinfo").setExecutor(new FarmingWorldInfoCommand(api, messageConfig));
+    getCommand("farmingworldreset").setExecutor(new FarmingWorldResetCommand(api, this, messageConfig));
     getCommand("teleportfarmingworld").setExecutor(new TeleportFarmingWorldCommand(api, this));
   }
 

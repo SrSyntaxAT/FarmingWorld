@@ -1,5 +1,8 @@
 package at.srsyntax.farmingworld.command.exception;
 
+import at.srsyntax.farmingworld.api.message.Message;
+import at.srsyntax.farmingworld.config.MessageConfig;
+
 /*
  * MIT License
  *
@@ -23,5 +26,16 @@ package at.srsyntax.farmingworld.command.exception;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class ConfirmExpiredException extends Exception {
+public class ConfirmExpiredException extends FarmingWorldException {
+
+  public ConfirmExpiredException() {
+  }
+
+  public ConfirmExpiredException(String message) {
+    super(message);
+  }
+
+  public ConfirmExpiredException(MessageConfig config) {
+    super(new Message(config.getConfirmExpired()).replace());
+  }
 }

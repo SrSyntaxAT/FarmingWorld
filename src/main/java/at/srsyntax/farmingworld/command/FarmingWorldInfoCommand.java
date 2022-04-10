@@ -4,13 +4,13 @@ import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.api.message.MessageBuilder;
+import at.srsyntax.farmingworld.command.exception.FarmingWorldException;
 import at.srsyntax.farmingworld.command.exception.FarmingWorldNotFoundException;
+import at.srsyntax.farmingworld.command.exception.NoPermissionException;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,20 +51,29 @@ public class FarmingWorldInfoCommand implements AdminCommand {
   //  fwi <world>
   @Override
   public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-    if (commandSender.hasPermission(PERMISSION)) {
+    try {
+      if (!commandSender.hasPermission(PERMISSION))
+        throw new NoPermissionException(new Message(this.messageConfig.getNoPermission()).replace());
+
       if (args.length == 0)
         sendAllowedWorlds(this.api, this.messageConfig, commandSender);
-      else {
-        try {
-          sendFarmingWorldInfo(commandSender, args[0]);
-        } catch (FarmingWorldNotFoundException exception) {
-          commandSender.sendMessage(new Message(this.messageConfig.getWorldNotFound()).replace());
-        }
-      }
-    } else {
-      commandSender.sendMessage(new Message(this.messageConfig.getNoPermission()).replace());
+      else
+        sendFarmingWorldInfo(commandSender, args[0]);
+
+      return true;
+    } catch (FarmingWorldException exception) {
+      commandSender.sendMessage(exception.getMessage());
     }
     return false;
+  }
+
+  @Nullable
+  @Override
+  public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+    if (commandSender.hasPermission(PERMISSION))
+      return DefaultTabCompleter.onTabComplete(this.api, args, 0);
+    else
+      return new ArrayList<>(0);
   }
   
   private void sendFarmingWorldInfo(CommandSender sender, String name) throws FarmingWorldNotFoundException {
@@ -85,17 +94,7 @@ public class FarmingWorldInfoCommand implements AdminCommand {
   
   private FarmingWorld getFarmingWorld(String name) throws FarmingWorldNotFoundException {
     final FarmingWorld farmingWorld = this.api.getFarmingWorld(name);
-    if (farmingWorld == null) throw new FarmingWorldNotFoundException();
-    return farmingWorld;
-  }
-
-  
-  @Nullable
-  @Override
-  public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-    if (commandSender.hasPermission(PERMISSION))
-      return DefaultTabCompleter.onTabComplete(this.api, args, 0);
-    else
-      return new ArrayList<>(0);
+    if (farmingWorld != null) return farmingWorld;
+    throw new FarmingWorldNotFoundException(new Message(this.messageConfig.getWorldNotFound()).replace());
   }
 }
