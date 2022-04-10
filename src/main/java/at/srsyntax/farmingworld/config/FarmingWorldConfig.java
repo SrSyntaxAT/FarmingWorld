@@ -55,10 +55,10 @@ public class FarmingWorldConfig implements FarmingWorld {
 
   private String name, permission, currentWorldName, nextWorldName;
   private long created;
-  private int timer;
+  private int timer, rtpArenaSize;
   private World.Environment environment;
 
-  public FarmingWorldConfig(String name, String permission, String currentWorldName, String nextWorldName, long created, int timer, World.Environment environment) {
+  public FarmingWorldConfig(String name, String permission, String currentWorldName, String nextWorldName, long created, int timer, World.Environment environment, int rtpArenaSize) {
     this.name = name;
     this.permission = permission;
     this.currentWorldName = currentWorldName;
@@ -66,6 +66,7 @@ public class FarmingWorldConfig implements FarmingWorld {
     this.created = created;
     this.timer = timer;
     this.environment = environment;
+    this.rtpArenaSize = rtpArenaSize;
   }
 
   @Override
@@ -192,7 +193,7 @@ public class FarmingWorldConfig implements FarmingWorld {
 
   @Override
   public void teleport(@NotNull Player player) {
-    Bukkit.getScheduler().runTask(plugin, () -> FarmingWorldPlugin.getApi().randomTeleport(player, getWorld()));
+    Bukkit.getScheduler().runTask(plugin, () -> FarmingWorldPlugin.getApi().randomTeleport(player, this));
   }
 
   private void save() {

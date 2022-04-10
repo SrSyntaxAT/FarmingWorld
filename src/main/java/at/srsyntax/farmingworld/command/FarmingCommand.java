@@ -6,7 +6,6 @@ import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import lombok.AllArgsConstructor;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /*
  * MIT License
@@ -130,7 +128,7 @@ public class FarmingCommand implements CommandExecutor, TabCompleter {
       return false;
     }
 
-    api.randomTeleport(player, farmingWorld.getWorld());
+    api.randomTeleport(player, farmingWorld);
     return true;
   }
 }

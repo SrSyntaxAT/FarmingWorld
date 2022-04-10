@@ -33,10 +33,13 @@ public interface FarmingWorld {
     @NotNull String getName();
     @Nullable String getPermission();
 
+    int getRtpArenaSize();
+
     long getCreated();
     long getReset();
     boolean needReset();
     long getRemaining();
+
     void updateDisplay();
     void updateDisplay(Player player);
 

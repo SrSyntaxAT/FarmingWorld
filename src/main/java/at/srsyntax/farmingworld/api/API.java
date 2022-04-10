@@ -44,7 +44,7 @@ public interface API {
 
   @NotNull String getRemainingTime(long time);
 
-  void randomTeleport(Player player, World world);
+  void randomTeleport(Player player, FarmingWorld farmingWorld);
 
   String getDate(long date);
   String getDate();

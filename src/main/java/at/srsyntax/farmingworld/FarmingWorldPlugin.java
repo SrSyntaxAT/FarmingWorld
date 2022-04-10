@@ -25,7 +25,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.boss.BarColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -169,15 +168,15 @@ public class FarmingWorldPlugin extends JavaPlugin {
         null,
         null,
         0L,
-      4320,
-        World.Environment.NORMAL
+        4320,
+        World.Environment.NORMAL,
+        5000
     );
 
     return PluginConfig.load(
         this,
         new PluginConfig(
             new LocationConfig("world", 0D, 100D, 0D, (short) 0, (short) 0),
-            5000,
             DisplayPosition.BOSS_BAR,
             DisplayType.REMAINING,
             30*60,
