@@ -50,7 +50,7 @@ public final class APIImpl implements API {
   private final FarmingWorldPlugin plugin;
 
   @Override
-  public @NotNull World generateFarmingWorld(FarmingWorld farmingWorld) {
+  public @NotNull World generateFarmingWorld(@NotNull FarmingWorld farmingWorld) {
     final FarmingWorldConfig config = (FarmingWorldConfig) farmingWorld;
 
     final String name = farmingWorld.getName() + "-" + UUID.randomUUID().toString().split("-")[0];
@@ -72,7 +72,7 @@ public final class APIImpl implements API {
   }
 
   @Override
-  public void deleteFarmingWorld(FarmingWorld farmingWorld, World world) {
+  public void deleteFarmingWorld(@NotNull FarmingWorld farmingWorld, @NotNull World world) {
     callEvent(new DeleteFarmingWorldEvent(farmingWorld, world));
 
     sync(() -> {
@@ -91,7 +91,7 @@ public final class APIImpl implements API {
   }
 
   @Override
-  public void deleteFarmingWorld(FarmingWorld farmingWorld) {
+  public void deleteFarmingWorld(@NotNull FarmingWorld farmingWorld) {
     deleteFarmingWorld(farmingWorld, farmingWorld.getWorld());
   }
 
@@ -126,7 +126,7 @@ public final class APIImpl implements API {
   }
 
   @Override
-  public @Nullable FarmingWorld getFarmingWorld(String name) {
+  public @Nullable FarmingWorld getFarmingWorld(@NotNull String name) {
     for (FarmingWorld farmingWorld : getFarmingWorlds()) {
       if (farmingWorld.getName().equalsIgnoreCase(name))
         return farmingWorld;
@@ -135,7 +135,7 @@ public final class APIImpl implements API {
   }
 
   @Override
-  public @Nullable FarmingWorld getFarmingWorld(World world) {
+  public @Nullable FarmingWorld getFarmingWorld(@NotNull World world) {
     for (FarmingWorld farmingWorld : getFarmingWorlds()) {
       if (world.equals(farmingWorld.getWorld()) || world.equals(farmingWorld.getNextWorld()))
         return farmingWorld;
@@ -149,14 +149,12 @@ public final class APIImpl implements API {
   }
 
   @Override
-  public @NotNull World loadFarmingWorld(String name, World.Environment environment) {
-    final WorldCreator creator = new WorldCreator(name);
-    creator.environment(environment);
-    return Objects.requireNonNull(Bukkit.createWorld(creator));
+  public @NotNull World loadFarmingWorld(@NotNull String name, World.@NotNull Environment environment) {
+    return loadFarmingWorld(name, environment, null);
   }
 
   @Override
-  public @NotNull World loadFarmingWorld(String name, World.Environment environment, String generator) {
+  public @NotNull World loadFarmingWorld(@NotNull String name, World.@NotNull Environment environment, String generator) {
     final WorldCreator creator = new WorldCreator(name);
     creator.environment(environment);
     if (generator != null) creator.generator(generator);
