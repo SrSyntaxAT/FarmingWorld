@@ -81,8 +81,11 @@ public class FarmingWorldInfoCommand implements AdminCommand {
     
     final MessageBuilder builder = new MessageBuilder()
       .addLine("§6" + farmingWorld.getName() + " §eInfos§8:")
-      .addLine("&eCurrent World&8: &7" + farmingWorld.getWorld().getName())
-      .addLine("§eCreated§8: §7" + this.api.getDate(farmingWorld.getCreated()))
+      .addLine("&eCurrent world&8: &7" + farmingWorld.getWorld().getName());
+    if (farmingWorld.getNextWorld() != null)
+      builder.addLine("&eNext world&8:&7 " + farmingWorld.getNextWorld().getName());
+
+    builder.addLine("§eCreated§8: §7" + this.api.getDate(farmingWorld.getCreated()))
       .addLine("§eReset§8: §7" + this.api.getDate(farmingWorld.getReset()))
       .addLine("§ePlayers§8: §7" + farmingWorld.getWorld().getPlayers().size());
     

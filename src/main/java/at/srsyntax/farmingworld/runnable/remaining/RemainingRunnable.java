@@ -1,10 +1,13 @@
 package at.srsyntax.farmingworld.runnable.remaining;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
+import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -33,9 +36,8 @@ import java.util.concurrent.TimeUnit;
 public class RemainingRunnable implements Runnable {
 
   private final FarmingWorldPlugin plugin;
-  
-  private LastRemainingDisplayRunnable runnable;
-  private int lastRemainingTaskId;
+
+  private final List<FarmingWorld> runnables = new ArrayList<>(3);
   
   public RemainingRunnable(FarmingWorldPlugin plugin) {
     this.plugin = plugin;
@@ -56,13 +58,15 @@ public class RemainingRunnable implements Runnable {
   }
   
   private void checkNextRunnable(FarmingWorldConfig farmingWorld) {
-    if (this.runnable != null) return;
-    this.runnable = new LastRemainingDisplayRunnable(this.plugin, farmingWorld, this);
+    if (this.runnables.contains(farmingWorld)) return;
+    this.runnables.add(farmingWorld);
+    final LastRemainingDisplayRunnable runnable = new LastRemainingDisplayRunnable(this.plugin, farmingWorld, this);
     final BukkitTask task = this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(this.plugin, runnable, 20L, 20L);
-    this.lastRemainingTaskId = task.getTaskId();
+    runnable.setTaskId(task.getTaskId());
   }
   
-  public void cancelLastRemainingDisplayRunnable() {
-    Bukkit.getScheduler().cancelTask(lastRemainingTaskId);
+  public void cancelLastRemainingDisplayRunnable(int taskId, FarmingWorld farmingWorld) {
+    Bukkit.getScheduler().cancelTask(taskId);
+    this.runnables.remove(farmingWorld);
   }
 }

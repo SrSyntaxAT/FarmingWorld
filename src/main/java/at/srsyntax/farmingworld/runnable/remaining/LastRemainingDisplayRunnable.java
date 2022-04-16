@@ -34,6 +34,7 @@ public class LastRemainingDisplayRunnable implements Runnable {
   private final FarmingWorldPlugin plugin;
   private final FarmingWorldConfig farmingWorld;
   private final RemainingRunnable runnable;
+  private int taskId;
   
   public LastRemainingDisplayRunnable(FarmingWorldPlugin plugin, FarmingWorldConfig farmingWorld, RemainingRunnable runnable) {
     this.plugin = plugin;
@@ -43,10 +44,10 @@ public class LastRemainingDisplayRunnable implements Runnable {
 
   @Override
   public void run() {
-    farmingWorld.updateDisplay();
-
     if (farmingWorld.needReset())
       resetWorld();
+    else
+      farmingWorld.updateDisplay();
   }
   
   private void resetWorld() {
@@ -61,6 +62,10 @@ public class LastRemainingDisplayRunnable implements Runnable {
   
     Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> farmingWorld.updateDisplay(), 40L);
   
-    runnable.cancelLastRemainingDisplayRunnable();
+    runnable.cancelLastRemainingDisplayRunnable(taskId, farmingWorld);
+  }
+
+  public void setTaskId(int taskId) {
+    this.taskId = taskId;
   }
 }
