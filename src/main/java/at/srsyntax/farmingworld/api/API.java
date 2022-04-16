@@ -38,6 +38,7 @@ public interface API {
   boolean isFarmingWorld(World world);
 
   @NotNull World loadFarmingWorld(String name, World.Environment environment);
+  @NotNull World loadFarmingWorld(String name, World.Environment environment, String generator);
   @NotNull World generateFarmingWorld(FarmingWorld farmingWorld);
   void deleteFarmingWorld(FarmingWorld farmingWorld, World world);
   void deleteFarmingWorld(FarmingWorld farmingWorld);

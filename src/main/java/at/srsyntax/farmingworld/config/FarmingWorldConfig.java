@@ -52,13 +52,13 @@ public class FarmingWorldConfig implements FarmingWorld {
   private transient BossBar bossBar;
   private transient FarmingWorldPlugin plugin;
 
-  private String name, permission, currentWorldName, nextWorldName;
+  private String name, permission, currentWorldName, nextWorldName, generator;
   private long created;
   private int timer, rtpArenaSize;
   private double borderSize;
   private World.Environment environment;
 
-  public FarmingWorldConfig(String name, String permission, String currentWorldName, String nextWorldName, long created, int timer, World.Environment environment, int rtpArenaSize, double borderSize) {
+  public FarmingWorldConfig(String name, String permission, String currentWorldName, String nextWorldName, long created, int timer, World.Environment environment, int rtpArenaSize, double borderSize, String generator) {
     this.name = name;
     this.permission = permission;
     this.currentWorldName = currentWorldName;
@@ -68,6 +68,7 @@ public class FarmingWorldConfig implements FarmingWorld {
     this.environment = environment;
     this.rtpArenaSize = rtpArenaSize;
     this.borderSize = borderSize;
+    this.generator = generator;
   }
 
   @Override

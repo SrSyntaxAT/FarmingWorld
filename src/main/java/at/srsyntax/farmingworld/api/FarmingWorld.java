@@ -40,6 +40,7 @@ public interface FarmingWorld {
     boolean needReset();
     long getRemaining();
     double getBorderSize();
+    String getGenerator();
 
     void updateDisplay();
     void updateDisplay(Player player);

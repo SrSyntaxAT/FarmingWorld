@@ -54,7 +54,7 @@ public final class APIImpl implements API {
     final FarmingWorldConfig config = (FarmingWorldConfig) farmingWorld;
 
     final String name = farmingWorld.getName() + "-" + UUID.randomUUID().toString().split("-")[0];
-    final World world = loadFarmingWorld(name, config.getEnvironment());
+    final World world = loadFarmingWorld(name, config.getEnvironment(), farmingWorld.getGenerator());
     setBorder(world, farmingWorld.getBorderSize());
 
     callEvent(new GenerateNewFarmingWorldEvent(farmingWorld, world));
@@ -152,6 +152,14 @@ public final class APIImpl implements API {
   public @NotNull World loadFarmingWorld(String name, World.Environment environment) {
     final WorldCreator creator = new WorldCreator(name);
     creator.environment(environment);
+    return Objects.requireNonNull(Bukkit.createWorld(creator));
+  }
+
+  @Override
+  public @NotNull World loadFarmingWorld(String name, World.Environment environment, String generator) {
+    final WorldCreator creator = new WorldCreator(name);
+    creator.environment(environment);
+    if (generator != null) creator.generator(generator);
     return Objects.requireNonNull(Bukkit.createWorld(creator));
   }
 

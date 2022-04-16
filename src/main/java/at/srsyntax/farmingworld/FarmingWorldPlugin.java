@@ -185,7 +185,8 @@ public class FarmingWorldPlugin extends JavaPlugin {
         4320,
         World.Environment.NORMAL,
         10000,
-        25000
+        25000,
+        null
     );
 
     return PluginConfig.load(
