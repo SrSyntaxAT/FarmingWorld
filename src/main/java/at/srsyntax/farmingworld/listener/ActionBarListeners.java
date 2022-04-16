@@ -3,7 +3,6 @@ package at.srsyntax.farmingworld.listener;
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;
 import lombok.AllArgsConstructor;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -51,7 +50,6 @@ public class ActionBarListeners implements Listener {
   public void display(Player player) {
     final FarmingWorld farmingWorld = api.getFarmingWorld(player.getWorld());
     if (farmingWorld == null) return;
-
     farmingWorld.updateDisplay(player);
   }
 }

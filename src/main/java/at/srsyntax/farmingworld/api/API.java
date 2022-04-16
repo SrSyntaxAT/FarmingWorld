@@ -33,18 +33,19 @@ import java.util.List;
 public interface API {
 
   @NotNull List<? extends FarmingWorld> getFarmingWorlds();
-  @Nullable FarmingWorld getFarmingWorld(String name);
-  @Nullable FarmingWorld getFarmingWorld(World world);
+  @Nullable FarmingWorld getFarmingWorld(@NotNull String name);
+  @Nullable FarmingWorld getFarmingWorld(@NotNull World world);
   boolean isFarmingWorld(World world);
 
-  @NotNull World loadFarmingWorld(String name, World.Environment environment);
-  @NotNull World generateFarmingWorld(FarmingWorld farmingWorld);
-  void deleteFarmingWorld(FarmingWorld farmingWorld, World world);
-  void deleteFarmingWorld(FarmingWorld farmingWorld);
+  @NotNull World loadFarmingWorld(@NotNull String name, @NotNull World.Environment environment);
+  @NotNull World loadFarmingWorld(@NotNull String name, @NotNull World.Environment environment, @Nullable String generator);
+  @NotNull World generateFarmingWorld(@NotNull FarmingWorld farmingWorld);
+  void deleteFarmingWorld(@NotNull FarmingWorld farmingWorld, @NotNull World world);
+  void deleteFarmingWorld(@NotNull FarmingWorld farmingWorld);
 
   @NotNull String getRemainingTime(long time);
 
-  void randomTeleport(Player player, World world);
+  void randomTeleport(Player player, FarmingWorld farmingWorld);
 
   String getDate(long date);
   String getDate();

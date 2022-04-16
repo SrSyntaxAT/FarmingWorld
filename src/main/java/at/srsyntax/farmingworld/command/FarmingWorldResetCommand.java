@@ -4,24 +4,18 @@ import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.message.Message;
-import at.srsyntax.farmingworld.command.exception.ConfirmExpiredException;
-import at.srsyntax.farmingworld.command.exception.FarmingWorldNotFoundException;
-import at.srsyntax.farmingworld.command.exception.NothingToConfirmException;
+import at.srsyntax.farmingworld.command.exception.*;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import at.srsyntax.farmingworld.util.ResetData;
 import lombok.AllArgsConstructor;
 import org.bukkit.World;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /*
@@ -54,50 +48,42 @@ public class FarmingWorldResetCommand implements AdminCommand {
 
   private final API api;
   private final FarmingWorldPlugin plugin;
+  private final MessageConfig messageConfig;
 
   @Override
   public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
     // fwr <world>
     // fwr confirm
 
-    if (sender.hasPermission(PERMISSION)) {
-      final MessageConfig messageConfig = this.plugin.getPluginConfig().getMessage();
-      try {
-        if (args.length > 0) {
-          final String arg = args[0];
+    try {
+      if (!sender.hasPermission(PERMISSION)) throw new NoPermissionException(this.messageConfig);
 
-          if (arg.equalsIgnoreCase("confirm"))
-            confirmReset(sender);
-          else
-            reset(sender, arg);
-        } else {
-          sendAllowedWorlds(this.api, messageConfig, sender);
-        }
-      } catch (FarmingWorldNotFoundException exception) {
-        final String message = new Message(messageConfig.getWorldNotFound()).replace();
-        sender.sendMessage(message);
-      } catch (NothingToConfirmException exception) {
-        final String message = new Message(messageConfig.getNothingToConfirm()).replace();
-        sender.sendMessage(message);
-      } catch (ConfirmExpiredException e) {
-        final String message = new Message(messageConfig.getConfirmExpired()).replace();
-        sender.sendMessage(message);
+      if (args.length > 0) {
+        final String arg = args[0];
+
+        if (arg.equalsIgnoreCase("confirm"))
+          confirmReset(sender);
+        else
+          reset(sender, arg);
+      } else {
+        sendAllowedWorlds(this.api, messageConfig, sender);
       }
-    } else {
-      final String message = new Message(this.plugin.getPluginConfig().getMessage().getNoPermission()).replace();
-      sender.sendMessage(message);
-    }
 
+      return true;
+    } catch (FarmingWorldException exception) {
+      sender.sendMessage(exception.getMessage());
+    }
     return false;
   }
 
   private void confirmReset(CommandSender sender) throws NothingToConfirmException, ConfirmExpiredException {
-    if (!this.plugin.getNeedConfirm().containsKey(sender)) throw new NothingToConfirmException();
+    if (!this.plugin.getNeedConfirm().containsKey(sender)) throw new NothingToConfirmException(this.messageConfig);
+
     final ResetData data = this.plugin.getNeedConfirm().remove(sender);
-    if (data.isExpired()) throw new ConfirmExpiredException();
+    if (data.isExpired()) throw new ConfirmExpiredException(this.messageConfig);
     deleteWorld(data.farmingWorld());
 
-    final String message = new Message(this.plugin.getPluginConfig().getMessage().getWorldDeleted())
+    final String message = new Message(this.messageConfig.getWorldDeleted())
         .add("<farmingworld>", data.farmingWorld().getName())
         .replace();
     sender.sendMessage(message);
@@ -116,7 +102,7 @@ public class FarmingWorldResetCommand implements AdminCommand {
 
   private void reset(CommandSender sender, String name) throws FarmingWorldNotFoundException {
     final FarmingWorld world = this.api.getFarmingWorld(name);
-    if (world == null) throw new FarmingWorldNotFoundException();
+    if (world == null) throw new FarmingWorldNotFoundException(this.messageConfig);
 
     final ResetData data = new ResetData(world, System.currentTimeMillis());
     if (this.plugin.getNeedConfirm().containsKey(sender))
@@ -124,7 +110,7 @@ public class FarmingWorldResetCommand implements AdminCommand {
     else
       this.plugin.getNeedConfirm().put(sender, data);
 
-    final String message = new Message(this.plugin.getPluginConfig().getMessage().getConfirm())
+    final String message = new Message(this.messageConfig.getConfirm())
         .add("<farmingworld>", world.getName())
         .replace();
     sender.sendMessage(message);

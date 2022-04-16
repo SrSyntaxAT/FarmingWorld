@@ -38,7 +38,6 @@ import java.util.List;
 public class PluginConfig extends ConfigLoader {
 
   private final LocationConfig fallback;
-  private final int rtpArenaSize;
 
   private final DisplayPosition displayPosition;
   private final DisplayType displayType;

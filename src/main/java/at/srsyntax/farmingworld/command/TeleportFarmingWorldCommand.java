@@ -46,7 +46,12 @@ import java.util.List;
  */
 public class TeleportFarmingWorldCommand implements CommandExecutor, TabCompleter {
 
-  private static final String PERMISSION = "farmingworld.teleport.other";
+  private static final String PERMISSION, PERMISSION_IGNORE;
+
+  static {
+    PERMISSION = "farmingworld.teleport.other";
+    PERMISSION_IGNORE = "farmingworld.teleport.other.ignore.check";
+  }
 
   private final API api;
   private final FarmingWorldPlugin plugin;
@@ -96,7 +101,7 @@ public class TeleportFarmingWorldCommand implements CommandExecutor, TabComplete
     final Player target = getPlayer(args[0]);
     final FarmingWorld farmingWorld = getFarmingWorld(args);
 
-    if (sender.hasPermission("farmingworld.teleport.other.ignore.check") && !hasDisabledTargetCheck(args))
+    if (sender.hasPermission(PERMISSION_IGNORE) && !hasDisabledTargetCheck(args))
       checkTarget(target, farmingWorld);
 
     farmingWorld.teleport(target);
@@ -110,23 +115,21 @@ public class TeleportFarmingWorldCommand implements CommandExecutor, TabComplete
 
   private void checkPermission(CommandSender sender) throws NoPermissionException {
     if (!sender.hasPermission(PERMISSION))
-      throw new NoPermissionException(new Message(this.messageConfig.getNoPermission()).replace());
+      throw new NoPermissionException(this.messageConfig);
   }
 
   private void checkArgs(String[] args) throws FarmingWorldException {
-    if (args.length == 0) {
-      final String message = new Message(this.messageConfig.getUsage())
-          .add("<usage>", "tpfw <player> [<farmingworld> -dtc]")
-          .replace();
-      throw new FarmingWorldException(message);
-    }
+    if (args.length != 0) return;
+    final String message = new Message(this.messageConfig.getUsage())
+        .add("<usage>", "tpfw <player> [<farmingworld> -dtc]")
+        .replace();
+    throw new FarmingWorldException(message);
   }
 
   private Player getPlayer(String name) throws FarmingWorldException {
     final Player player = Bukkit.getPlayer(name);
-    if (player == null || !player.isOnline())
-      throw new FarmingWorldException(new Message(this.messageConfig.getTargetNotFound()).replace());
-    return player;
+    if (player != null && player.isOnline()) return player;
+    throw new FarmingWorldException(this.messageConfig);
   }
 
   private FarmingWorld getFarmingWorld(String[] args) throws FarmingWorldNotFoundException {
@@ -137,10 +140,8 @@ public class TeleportFarmingWorldCommand implements CommandExecutor, TabComplete
     else
       farmingWorld =  this.api.getFarmingWorld(this.plugin.getPluginConfig().getDefaultFarmingWorld());
 
-    if (farmingWorld == null)
-      throw new FarmingWorldNotFoundException(new Message(this.messageConfig.getWorldNotFound()).replace());
-
-    return farmingWorld;
+    if (farmingWorld != null) return farmingWorld;
+    throw new FarmingWorldNotFoundException(this.messageConfig);
   }
 
   private boolean hasDisabledTargetCheck(String[] args) {
@@ -158,6 +159,6 @@ public class TeleportFarmingWorldCommand implements CommandExecutor, TabComplete
 
   private void checkTarget(Player target, FarmingWorld farmingWorld) throws TargetHasNoPermissionException {
     if (farmingWorld.getPermission() != null && !target.hasPermission(farmingWorld.getPermission()))
-      throw new TargetHasNoPermissionException(new Message(this.messageConfig.getTargetNoPermission()).replace());
+      throw new TargetHasNoPermissionException(this.messageConfig);
   }
 }

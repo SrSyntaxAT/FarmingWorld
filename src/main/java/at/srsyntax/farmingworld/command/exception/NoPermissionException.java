@@ -1,5 +1,8 @@
 package at.srsyntax.farmingworld.command.exception;
 
+import at.srsyntax.farmingworld.api.message.Message;
+import at.srsyntax.farmingworld.config.MessageConfig;
+
 /*
  * MIT License
  *
@@ -26,5 +29,9 @@ package at.srsyntax.farmingworld.command.exception;
 public class NoPermissionException extends FarmingWorldException {
   public NoPermissionException(String message) {
     super(message);
+  }
+
+  public NoPermissionException(MessageConfig config) {
+    super(new Message(config.getNoPermission()).replace());
   }
 }

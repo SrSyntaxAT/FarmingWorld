@@ -1,5 +1,7 @@
 package at.srsyntax.farmingworld.command.exception;
 
+import at.srsyntax.farmingworld.config.MessageConfig;
+
 /*
  * MIT License
  *
@@ -25,10 +27,16 @@ package at.srsyntax.farmingworld.command.exception;
  */
 public class FarmingWorldException extends Exception {
 
+  protected MessageConfig config;
+
   public FarmingWorldException(String message) {
     super(message);
   }
 
   public FarmingWorldException() {
+  }
+
+  public FarmingWorldException(MessageConfig config) {
+    this.config = config;
   }
 }

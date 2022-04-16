@@ -5,9 +5,9 @@ import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.event.DeleteFarmingWorldEvent;
 import at.srsyntax.farmingworld.api.event.GenerateNewFarmingWorldEvent;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
+import at.srsyntax.farmingworld.util.LocationRandomizer;
 import lombok.AllArgsConstructor;
 import org.bukkit.*;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 /*
  * MIT License
@@ -51,19 +50,29 @@ public final class APIImpl implements API {
   private final FarmingWorldPlugin plugin;
 
   @Override
-  public @NotNull World generateFarmingWorld(FarmingWorld farmingWorld) {
+  public @NotNull World generateFarmingWorld(@NotNull FarmingWorld farmingWorld) {
     final FarmingWorldConfig config = (FarmingWorldConfig) farmingWorld;
 
     final String name = farmingWorld.getName() + "-" + UUID.randomUUID().toString().split("-")[0];
-    final World world = loadFarmingWorld(name, config.getEnvironment());
+    final World world = loadFarmingWorld(name, config.getEnvironment(), farmingWorld.getGenerator());
+    setBorder(world, farmingWorld.getBorderSize());
 
     callEvent(new GenerateNewFarmingWorldEvent(farmingWorld, world));
 
     return world;
   }
 
+  private void setBorder(World world, double size) {
+    if (size < 10) return;
+    if (world.getEnvironment() == World.Environment.THE_END) return;
+
+    final WorldBorder border = world.getWorldBorder();
+    border.setCenter(0D, 0D);
+    border.setSize(size);
+  }
+
   @Override
-  public void deleteFarmingWorld(FarmingWorld farmingWorld, World world) {
+  public void deleteFarmingWorld(@NotNull FarmingWorld farmingWorld, @NotNull World world) {
     callEvent(new DeleteFarmingWorldEvent(farmingWorld, world));
 
     sync(() -> {
@@ -82,7 +91,7 @@ public final class APIImpl implements API {
   }
 
   @Override
-  public void deleteFarmingWorld(FarmingWorld farmingWorld) {
+  public void deleteFarmingWorld(@NotNull FarmingWorld farmingWorld) {
     deleteFarmingWorld(farmingWorld, farmingWorld.getWorld());
   }
 
@@ -117,7 +126,7 @@ public final class APIImpl implements API {
   }
 
   @Override
-  public @Nullable FarmingWorld getFarmingWorld(String name) {
+  public @Nullable FarmingWorld getFarmingWorld(@NotNull String name) {
     for (FarmingWorld farmingWorld : getFarmingWorlds()) {
       if (farmingWorld.getName().equalsIgnoreCase(name))
         return farmingWorld;
@@ -126,9 +135,9 @@ public final class APIImpl implements API {
   }
 
   @Override
-  public @Nullable FarmingWorld getFarmingWorld(World world) {
+  public @Nullable FarmingWorld getFarmingWorld(@NotNull World world) {
     for (FarmingWorld farmingWorld : getFarmingWorlds()) {
-      if (farmingWorld.getWorld().equals(world))
+      if (world.equals(farmingWorld.getWorld()) || world.equals(farmingWorld.getNextWorld()))
         return farmingWorld;
     }
     return null;
@@ -140,9 +149,15 @@ public final class APIImpl implements API {
   }
 
   @Override
-  public @NotNull World loadFarmingWorld(String name, World.Environment environment) {
+  public @NotNull World loadFarmingWorld(@NotNull String name, World.@NotNull Environment environment) {
+    return loadFarmingWorld(name, environment, null);
+  }
+
+  @Override
+  public @NotNull World loadFarmingWorld(@NotNull String name, World.@NotNull Environment environment, String generator) {
     final WorldCreator creator = new WorldCreator(name);
     creator.environment(environment);
+    if (generator != null) creator.generator(generator);
     return Objects.requireNonNull(Bukkit.createWorld(creator));
   }
 
@@ -202,66 +217,8 @@ public final class APIImpl implements API {
   }
 
   @Override
-  public void randomTeleport(Player player, World world) {
-    player.teleport(randomLocation(world));
-  }
-
-  private Location randomLocation(World world) {
-    final boolean nether = world.getEnvironment() == World.Environment.NETHER;
-    int x, y, z, size = plugin.getPluginConfig().getRtpArenaSize();
-    final Location spawn = world.getSpawnLocation();
-
-    do {
-      x = random(spawn.getBlockX(), size);
-      z = random(spawn.getBlockZ(), size);
-      y = world.getHighestBlockYAt(x, z);
-
-
-      if (nether)
-        y = getYInNether(world, x, y, z);
-      else if (y != 0)
-        y++;
-
-      if (!isYValid(world.getBlockAt(x, y-1, z).getType()))
-        y = 0;
-
-    } while (y == 0);
-
-    return new Location(world, x, y, z, spawn.getYaw(), spawn.getPitch());
-  }
-
-  private int getYInNether(World world, int x, int y, int z) {
-    while (y != 0) {
-      y = findBlockAtY(world, x, y, z, true);
-
-      y--;
-      final Block block = world.getBlockAt(x, y, z);
-      if (!block.getType().isAir())
-        continue;
-
-      y = findBlockAtY(world, x, y, z, false) + 1;
-      break;
-    }
-    return y;
-  }
-
-  private int findBlockAtY(World world, int x, int y, int z, boolean air) {
-    Block block;
-    do {
-      block = world.getBlockAt(x, y, z);
-      if (block.getType().isAir() == air) break;
-      y--;
-    } while (y > 0);
-    return y;
-  }
-
-  private boolean isYValid(Material material) {
-    return !this.plugin.getPluginConfig().getSpawnBlockBlacklist().contains(material);
-  }
-
-  private int random(int current, int size) {
-    size/=2;
-    return ThreadLocalRandom.current().nextInt(current - size, current + size);
+  public void randomTeleport(Player player, FarmingWorld farmingWorld) {
+    player.teleport(new LocationRandomizer(this.plugin.getPluginConfig().getSpawnBlockBlacklist(), farmingWorld).random());
   }
 
   public String getDate(long date) {

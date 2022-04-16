@@ -4,9 +4,11 @@ import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.message.Message;
+import at.srsyntax.farmingworld.command.exception.FarmingWorldException;
+import at.srsyntax.farmingworld.command.exception.FarmingWorldNotFoundException;
+import at.srsyntax.farmingworld.command.exception.NoPermissionException;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import lombok.AllArgsConstructor;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /*
  * MIT License
@@ -50,24 +51,18 @@ public class FarmingCommand implements CommandExecutor, TabCompleter {
 
   @Override
   public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-    if (commandSender instanceof Player player) {
-
-      if (strings.length == 0) {
-        final String defaultFarmingWorldName = plugin.getPluginConfig().getDefaultFarmingWorld();
-
-        if (defaultFarmingWorldName == null) {
-          return listAllFarmingWorlds(player);
-        } else {
-          return randomTeleport(player, defaultFarmingWorldName);
-        }
-      } else {
-        randomTeleport(player, strings[0]);
-      }
-
-    } else {
+    if (!(commandSender instanceof final Player player))
       return new TeleportFarmingWorldCommand(this.api, this.plugin).onCommand(commandSender, command, s, strings);
+
+    try {
+      if (strings.length == 0)
+        return noArgRandomTeleport(player);
+      else
+        return randomTeleport(player, strings[0]);
+    } catch (FarmingWorldException exception) {
+      player.sendMessage(exception.getMessage());
+      return false;
     }
-    return false;
   }
 
   @Nullable
@@ -86,6 +81,16 @@ public class FarmingCommand implements CommandExecutor, TabCompleter {
     }
     
     return result;
+  }
+
+  private boolean noArgRandomTeleport(Player player) throws FarmingWorldException {
+    final String defaultFarmingWorldName = plugin.getPluginConfig().getDefaultFarmingWorld();
+
+    if (defaultFarmingWorldName == null) {
+      return listAllFarmingWorlds(player);
+    } else {
+      return randomTeleport(player, defaultFarmingWorldName);
+    }
   }
 
   private boolean listAllFarmingWorlds(Player player) {
@@ -116,21 +121,17 @@ public class FarmingCommand implements CommandExecutor, TabCompleter {
     return worlds;
   }
 
-  private boolean randomTeleport(Player player, String name) {
+  private boolean randomTeleport(Player player, String name) throws FarmingWorldException {
     final MessageConfig messageConfig = plugin.getPluginConfig().getMessage();
     final FarmingWorld farmingWorld = api.getFarmingWorld(name);
 
-    if (farmingWorld == null || farmingWorld.getWorld() == null) {
-      player.sendMessage(new Message(messageConfig.getWorldNotFound()).replace());
-      return false;
-    }
+    if (farmingWorld == null || farmingWorld.getWorld() == null)
+      throw new FarmingWorldNotFoundException(messageConfig);
 
-    if (farmingWorld.getPermission() != null && !player.hasPermission(farmingWorld.getPermission())) {
-      player.sendMessage(new Message(messageConfig.getNoPermission()).replace());
-      return false;
-    }
+    if (farmingWorld.getPermission() != null && !player.hasPermission(farmingWorld.getPermission()))
+      throw new NoPermissionException(messageConfig);
 
-    api.randomTeleport(player, farmingWorld.getWorld());
+    api.randomTeleport(player, farmingWorld);
     return true;
   }
 }
