@@ -55,9 +55,10 @@ public class FarmingWorldConfig implements FarmingWorld {
   private String name, permission, currentWorldName, nextWorldName;
   private long created;
   private int timer, rtpArenaSize;
+  private double borderSize;
   private World.Environment environment;
 
-  public FarmingWorldConfig(String name, String permission, String currentWorldName, String nextWorldName, long created, int timer, World.Environment environment, int rtpArenaSize) {
+  public FarmingWorldConfig(String name, String permission, String currentWorldName, String nextWorldName, long created, int timer, World.Environment environment, int rtpArenaSize, double borderSize) {
     this.name = name;
     this.permission = permission;
     this.currentWorldName = currentWorldName;
@@ -66,6 +67,7 @@ public class FarmingWorldConfig implements FarmingWorld {
     this.timer = timer;
     this.environment = environment;
     this.rtpArenaSize = rtpArenaSize;
+    this.borderSize = borderSize;
   }
 
   @Override
@@ -205,5 +207,9 @@ public class FarmingWorldConfig implements FarmingWorld {
 
   public void setPlugin(FarmingWorldPlugin plugin) {
     this.plugin = plugin;
+  }
+
+  public void setRtpArenaSize(int rtpArenaSize) {
+    this.rtpArenaSize = rtpArenaSize;
   }
 }

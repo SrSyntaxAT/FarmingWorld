@@ -41,7 +41,7 @@ public class LocationRandomizer {
   private final int rtpSize;
 
   public LocationRandomizer(List<Material> blacklist, FarmingWorld farmingWorld) {
-    this(blacklist, farmingWorld.getWorld(), farmingWorld.getRtpArenaSize());
+    this(blacklist, farmingWorld.getWorld(), farmingWorld.getRtpArenaSize() / 2);
   }
 
   public Location random() {

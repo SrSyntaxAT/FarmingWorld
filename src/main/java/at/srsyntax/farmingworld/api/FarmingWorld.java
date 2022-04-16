@@ -39,6 +39,7 @@ public interface FarmingWorld {
     long getReset();
     boolean needReset();
     long getRemaining();
+    double getBorderSize();
 
     void updateDisplay();
     void updateDisplay(Player player);

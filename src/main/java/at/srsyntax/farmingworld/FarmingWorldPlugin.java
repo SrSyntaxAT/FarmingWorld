@@ -3,6 +3,7 @@ package at.srsyntax.farmingworld;
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.DisplayPosition;
 import at.srsyntax.farmingworld.api.DisplayType;
+import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.command.FarmingCommand;
 import at.srsyntax.farmingworld.command.FarmingWorldInfoCommand;
 import at.srsyntax.farmingworld.command.FarmingWorldResetCommand;
@@ -134,6 +135,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
   private void loadFarmingWorlds() {
     this.pluginConfig.getFarmingWorlds().forEach(farmingWorld -> {
       farmingWorld.setPlugin(this);
+      checkBorder(farmingWorld);
       checkCurrentWorld(farmingWorld);
       checkNextWorld(farmingWorld);
     });
@@ -142,6 +144,16 @@ public class FarmingWorldPlugin extends JavaPlugin {
       final long time = this.pluginConfig.getDateRefresh() * 20L;
       Bukkit.getScheduler().runTaskTimerAsynchronously(this, new DateDisplayRunnable(api), time, time);
     }
+  }
+
+  private void checkBorder(FarmingWorld farmingWorld) {
+    if (farmingWorld.getBorderSize() < 10) return;
+    if (farmingWorld.getBorderSize() >= farmingWorld.getRtpArenaSize()) return;
+    final String prefix = farmingWorld.getName() + ": ";
+    final int newRTPArenaSize = (int) (farmingWorld.getBorderSize() - 2);
+    getLogger().severe(prefix + "The RTP arena size must be smaller than the world border.");
+    getLogger().severe(prefix + "The RTP arena size is therefore changed from " + farmingWorld.getRtpArenaSize() + " to " + newRTPArenaSize + ".");
+    ((FarmingWorldConfig) farmingWorld).setRtpArenaSize(newRTPArenaSize);
   }
 
   private void checkCurrentWorld(FarmingWorldConfig farmingWorld) {
@@ -172,7 +184,8 @@ public class FarmingWorldPlugin extends JavaPlugin {
         0L,
         4320,
         World.Environment.NORMAL,
-        5000
+        10000,
+        25000
     );
 
     return PluginConfig.load(

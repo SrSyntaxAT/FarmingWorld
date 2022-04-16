@@ -55,10 +55,19 @@ public final class APIImpl implements API {
 
     final String name = farmingWorld.getName() + "-" + UUID.randomUUID().toString().split("-")[0];
     final World world = loadFarmingWorld(name, config.getEnvironment());
+    setBorder(world, farmingWorld.getBorderSize());
 
     callEvent(new GenerateNewFarmingWorldEvent(farmingWorld, world));
 
     return world;
+  }
+
+  private void setBorder(World world, double size) {
+    if (size > 10) {
+      final WorldBorder border = world.getWorldBorder();
+      border.setCenter(0D, 0D);
+      border.setSize(size);
+    }
   }
 
   @Override
@@ -127,7 +136,7 @@ public final class APIImpl implements API {
   @Override
   public @Nullable FarmingWorld getFarmingWorld(World world) {
     for (FarmingWorld farmingWorld : getFarmingWorlds()) {
-      if (farmingWorld.getWorld().equals(world))
+      if (world.equals(farmingWorld.getWorld()) || world.equals(farmingWorld.getNextWorld()))
         return farmingWorld;
     }
     return null;
