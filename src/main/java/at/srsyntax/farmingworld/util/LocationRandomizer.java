@@ -94,7 +94,7 @@ public class LocationRandomizer {
   }
 
   private boolean isYValid(Material material) {
-    return blacklist.contains(material);
+    return !blacklist.contains(material);
   }
 
   private int random(int current, int size) {

@@ -63,11 +63,12 @@ public final class APIImpl implements API {
   }
 
   private void setBorder(World world, double size) {
-    if (size > 10) {
-      final WorldBorder border = world.getWorldBorder();
-      border.setCenter(0D, 0D);
-      border.setSize(size);
-    }
+    if (size < 10) return;
+    if (world.getEnvironment() == World.Environment.THE_END) return;
+
+    final WorldBorder border = world.getWorldBorder();
+    border.setCenter(0D, 0D);
+    border.setSize(size);
   }
 
   @Override
