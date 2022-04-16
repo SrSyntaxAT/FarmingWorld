@@ -48,10 +48,11 @@ You can create multiple farm worlds that will be automatically deleted and gener
 | currentWorldName | The current world name. You should never change this value, otherwise the current world can no longer be found.                                                                |
 | nextWorldName    | The next world to which a player will be teleported when the current world is deleted. You should never change this value, otherwise the current world can no longer be found. |
 | created          | This is the time when the current world was created. This value should never be changed.                                                                                       |
-| timer            | This is the time in minutes when the world should be deleted.  <br/>                                                                                                           |
+| timer            | This is the time in minutes when the world should be deleted.                                                                                                                  |
 | rtpArenaSize     | The area in which the player will be teleported. This must be smaller than the World Border.                                                                                   |
 | borderSize       | The size of the World Border of the world. This feature only works in the Nether and the Overworld. The size of the Border should be larger than that of the RTP area.         |
 | environment      | The world type with which the world is generated. Available types: **NORMAL, NETHER, THE_END**                                                                                 |
+| generator        | Generate a farmworld via a world generator                                                                                                                                     |
 
 **When you add a new farm world, you should not specify created, currentWorldName and nextWorldName.**
 
