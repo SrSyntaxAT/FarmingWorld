@@ -18,7 +18,6 @@ import at.srsyntax.farmingworld.util.FarmingWorldLoader;
 import at.srsyntax.farmingworld.util.ResetData;
 import at.srsyntax.farmingworld.util.VersionCheck;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.boss.BarColor;
@@ -29,7 +28,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 /*
  * MIT License
