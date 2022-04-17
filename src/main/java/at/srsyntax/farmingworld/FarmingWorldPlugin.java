@@ -17,6 +17,7 @@ import at.srsyntax.farmingworld.listener.ConfirmListener;
 import at.srsyntax.farmingworld.runnable.RunnableManager;
 import at.srsyntax.farmingworld.util.FarmingWorldLoader;
 import at.srsyntax.farmingworld.util.ResetData;
+import at.srsyntax.farmingworld.util.VersionCheck;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -54,13 +55,18 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class FarmingWorldPlugin extends JavaPlugin {
 
-  private static final int BSTATS_ID = 14550;
+  private static final int BSTATS_ID = 14550, RESOURCE_ID = 100640;
   
   @Getter private static API api;
 
   @Getter private PluginConfig pluginConfig;
   @Getter private final Map<CommandSender, ResetData> needConfirm = new ConcurrentHashMap<>();
   private RunnableManager runnableManager;
+
+  @Override
+  public void onLoad() {
+    checkVersion();
+  }
 
   @Override
   public void onEnable() {
@@ -106,6 +112,14 @@ public class FarmingWorldPlugin extends JavaPlugin {
   private void loadFarmingWorlds() {
     final FarmingWorldLoader loader = new FarmingWorldLoader(getLogger(), api, this);
     this.pluginConfig.getFarmingWorlds().forEach(loader::load);
+  }
+
+  private void checkVersion() {
+    try {
+      final VersionCheck check = new VersionCheck(getDescription().getVersion(), RESOURCE_ID);
+      if (check.check()) return;
+      getLogger().warning("The plugin is no longer up to date, please update the plugin.");
+    } catch (Exception ignored) {}
   }
 
   private PluginConfig loadConfig() throws IOException {

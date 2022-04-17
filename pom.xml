@@ -6,7 +6,7 @@
 
     <groupId>at.srsyntax</groupId>
     <artifactId>farmingworld</artifactId>
-    <version>1.5.1</version>
+    <version>dev-1.6</version>
 
     <repositories>
         <repository>
