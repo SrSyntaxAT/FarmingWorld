@@ -14,12 +14,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /*
  * MIT License
@@ -76,8 +75,12 @@ public final class APIImpl implements API {
     callEvent(new DeleteFarmingWorldEvent(farmingWorld, world));
 
     sync(() -> {
-      final Location location = plugin.getPluginConfig().getFallback().toBukkit();
-      world.getPlayers().forEach(player -> player.teleport(location));
+      try {
+        final Location location = Bukkit.getWorld(this.plugin.getPluginConfig().getFallbackWorld()).getSpawnLocation();
+        world.getPlayers().forEach(player -> player.teleport(location));
+      } catch (Exception e) {
+        this.plugin.getLogger().severe("No fallback world could be found!");
+      }
 
       for (Chunk chunk : world.getLoadedChunks())
         chunk.unload(false);
@@ -228,5 +231,11 @@ public final class APIImpl implements API {
 
   public String getDate() {
     return getDate(System.currentTimeMillis());
+  }
+
+  @Override
+  public void reload() {
+    this.plugin.onDisable();
+    this.plugin.onEnable();
   }
 }

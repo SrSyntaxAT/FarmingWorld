@@ -8,7 +8,6 @@ import at.srsyntax.farmingworld.command.FarmingWorldInfoCommand;
 import at.srsyntax.farmingworld.command.FarmingWorldResetCommand;
 import at.srsyntax.farmingworld.command.TeleportFarmingWorldCommand;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
-import at.srsyntax.farmingworld.config.LocationConfig;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import at.srsyntax.farmingworld.config.PluginConfig;
 import at.srsyntax.farmingworld.listener.ActionBarListeners;
@@ -19,6 +18,7 @@ import at.srsyntax.farmingworld.util.FarmingWorldLoader;
 import at.srsyntax.farmingworld.util.ResetData;
 import at.srsyntax.farmingworld.util.VersionCheck;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.boss.BarColor;
@@ -29,6 +29,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /*
  * MIT License
@@ -80,7 +81,6 @@ public class FarmingWorldPlugin extends JavaPlugin {
       this.runnableManager.startScheduler();
       registerListeners();
       registerCommands(pluginConfig.getMessage());
-
     } catch (Exception exception) {
       getLogger().severe("Plugin could not be loaded successfully!");
       exception.printStackTrace();
@@ -107,7 +107,6 @@ public class FarmingWorldPlugin extends JavaPlugin {
       pluginManager.registerEvents(new ActionBarListeners(api), this);
     pluginManager.registerEvents(new ConfirmListener(this), this);
   }
-
 
   private void loadFarmingWorlds() {
     final FarmingWorldLoader loader = new FarmingWorldLoader(getLogger(), api, this);
@@ -139,7 +138,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
     return PluginConfig.load(
         this,
         new PluginConfig(
-            new LocationConfig("world", 0D, 100D, 0D, (short) 0, (short) 0),
+            "world",
             DisplayPosition.BOSS_BAR,
             DisplayType.REMAINING,
             30*60,

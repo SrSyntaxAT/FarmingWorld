@@ -37,7 +37,7 @@ import java.util.List;
 @Getter @Setter
 public class PluginConfig extends ConfigLoader {
 
-  private final LocationConfig fallback;
+  private final String fallbackWorld;
 
   private final DisplayPosition displayPosition;
   private final DisplayType displayType;

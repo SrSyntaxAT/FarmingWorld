@@ -50,4 +50,5 @@ public interface API {
   String getDate(long date);
   String getDate();
 
+  void reload();
 }
