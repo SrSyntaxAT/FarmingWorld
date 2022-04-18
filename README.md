@@ -28,18 +28,18 @@ You can create multiple farm worlds that will be automatically deleted and gener
 
 | Key                 | Explain                                                                                                                                                                                                                                               |
 |---------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| fallback            | The coordinates where the player should be teleported to if there is a problem teleporting the player in a new farm world.                                                                                                                            |
+| fallbackWorld       | The world where the player should be teleported to if there is a problem teleporting the player in a new farmworld.                                                                                                                                   |
 | displayPosition     | Is the range from 0 in which a player is teleported to the farm world.                                                                                                                                                                                |
 | displayPosition     | Specifies where to display when the farm world is deleted. Possible specifications: **BOSS_BAR, ACTION_BAR, NOT**                                                                                                                                     |
 | displayType         | Specifies in which mode the display is updated. <br> **REMAINING** updates the display every minute. <br> **DATE** never updates the display, because it is not necessary. The **dateRefresh** specification can also be used to update this display. |
 | barColor            | Specifies the color of the bossbar that can be activated at displayPosition. You can find a list of colors on [Spigot's Java Docs page](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/boss/BarColor.html).                                      |
 | dateRefresh         | Specifies the time in seconds at which the DATE display type should be updated.                                                                                                                                                                       |
 | spawnBlockBlacklist | A list of blocks that the player should not teleport to.                                                                                                                                                                                              |
-| defaultFarmingWorld | Specifies the default farm world to which you will be teleported if you use the farming command without arguments. If the value is **"null"**, you need to specify a specific farm world.                                                             |
-| farmingWorlds       | These are all current farm worlds. Read more at "Farming World" explanation.                                                                                                                                                                          |
+| defaultFarmingWorld | Specifies the default farmworld to which you will be teleported if you use the farming command without arguments. If the value is **"null"**, you need to specify a specific farmworld.                                                               |
+| farmingWorlds       | These are all current farmworlds. Read more at "FarmingWorld" explanation.                                                                                                                                                                            |
 | message             | There you can change all messages that the plugin sends.                                                                                                                                                                                              |
 
-### Farming World
+### FarmingWorld
 
 | Key              | Explain                                                                                                                                                                        |
 |------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -54,7 +54,8 @@ You can create multiple farm worlds that will be automatically deleted and gener
 | environment      | The world type with which the world is generated. Available types: **NORMAL, NETHER, THE_END**                                                                                 |
 | generator        | Generate a farmworld via a world generator                                                                                                                                     |
 
-**When you add a new farm world, you should not specify created, currentWorldName and nextWorldName.**
+**When you add a new farm world, you should not specify created, currentWorldName and nextWorldName.** <br>
+[Here is an example](https://gist.github.com/SrSyntaxAT/591d75bc8c80317053cd7b24eb283f52) of creating multiple worlds in the config.
 
 ---
 
