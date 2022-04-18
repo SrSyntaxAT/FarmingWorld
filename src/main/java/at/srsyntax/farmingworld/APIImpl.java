@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -74,7 +76,7 @@ public final class APIImpl implements API {
 
     sync(() -> {
       try {
-        final Location location = Bukkit.getWorld(this.plugin.getPluginConfig().getFallbackWorld()).getSpawnLocation();
+        final Location location = getFallbackWorld().getSpawnLocation();
         world.getPlayers().forEach(player -> player.teleport(location));
       } catch (Exception e) {
         this.plugin.getLogger().severe("No fallback world could be found!");
@@ -89,6 +91,20 @@ public final class APIImpl implements API {
 
       Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> deleteFolder(world.getWorldFolder()), 60L);
     });
+  }
+
+  private World getFallbackWorld() throws IOException {
+    String worldName = this.plugin.getPluginConfig().getFallbackWorld();
+    if (worldName == null)
+      worldName = readServerPropertiesWorldName();
+    if (worldName == null) throw new NullPointerException();
+    return Bukkit.getWorld(worldName);
+  }
+
+  private String readServerPropertiesWorldName() throws IOException {
+    final Properties properties = new Properties();
+    properties.load(new FileReader("server.properties"));
+    return properties.getProperty("level-name");
   }
 
   @Override
