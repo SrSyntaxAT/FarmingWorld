@@ -26,3 +26,8 @@ commands:
     aliases:
       - fwr
     description: Reset a farmworld.
+  farmingworldadmin:
+    aliases:
+      - fwa
+      - fwadmin
+    description: Admin command.

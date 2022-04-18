@@ -1,4 +1,4 @@
-package at.srsyntax.farmingworld.command;
+package at.srsyntax.farmingworld.command.completer;
 
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;

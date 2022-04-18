@@ -3,10 +3,7 @@ package at.srsyntax.farmingworld;
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.DisplayPosition;
 import at.srsyntax.farmingworld.api.DisplayType;
-import at.srsyntax.farmingworld.command.FarmingCommand;
-import at.srsyntax.farmingworld.command.FarmingWorldInfoCommand;
-import at.srsyntax.farmingworld.command.FarmingWorldResetCommand;
-import at.srsyntax.farmingworld.command.TeleportFarmingWorldCommand;
+import at.srsyntax.farmingworld.command.*;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import at.srsyntax.farmingworld.config.PluginConfig;
@@ -95,6 +92,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
     getCommand("farmingworldinfo").setExecutor(new FarmingWorldInfoCommand(api, messageConfig));
     getCommand("farmingworldreset").setExecutor(new FarmingWorldResetCommand(api, this, messageConfig));
     getCommand("teleportfarmingworld").setExecutor(new TeleportFarmingWorldCommand(api, this));
+    getCommand("farmingworldadmin").setExecutor(new FarmingWorldAdminCommand(api, this, messageConfig));
   }
 
   private void registerListeners() {

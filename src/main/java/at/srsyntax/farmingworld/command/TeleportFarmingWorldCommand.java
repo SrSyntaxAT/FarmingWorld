@@ -4,6 +4,7 @@ import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.message.Message;
+import at.srsyntax.farmingworld.command.completer.DefaultTabCompleter;
 import at.srsyntax.farmingworld.command.exception.FarmingWorldException;
 import at.srsyntax.farmingworld.command.exception.FarmingWorldNotFoundException;
 import at.srsyntax.farmingworld.command.exception.NoPermissionException;
