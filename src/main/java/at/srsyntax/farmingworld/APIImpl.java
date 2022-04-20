@@ -250,6 +250,8 @@ public final class APIImpl implements API {
   @Override
   public void reload() {
     this.plugin.onDisable();
+    Bukkit.getOnlinePlayers().forEach(player -> this.plugin.removeFromBossBar(player, player.getWorld()));
     this.plugin.onEnable();
+    Bukkit.getOnlinePlayers().forEach(this.plugin::addToBossBar);
   }
 }

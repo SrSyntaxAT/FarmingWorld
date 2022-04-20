@@ -33,7 +33,7 @@ public class MessageConfig {
   private final String farmingWorldList;
   private final String noPermission, worldNotFound, usage;
   private final String targetNotFound, targetNoPermission, targetTeleported;
-  private final String reset;
+  private final String reset, delete, reload;
   private final String remaining;
 
   private final String second, seconds;
@@ -45,4 +45,29 @@ public class MessageConfig {
 
   private final String worldDeleted, nothingToConfirm, confirmExpired, confirm;
 
+  public MessageConfig() {
+    this(
+        "&eFarmingWorlds&8: <list>",
+        "&cYou have no rights to do that!",
+        "&cFarming world not found!",
+        "&cUsage&8:&f /<usage>",
+        "&cPlayer not found!",
+        "&cThe player does not have the rights to be teleported to the farmworld!",
+        "&e<player> &awas teleported to farmworld &e<farmingworld>&a.",
+        "&4The world is reset.",
+        "&cThe farmworld was deleted",
+        "&cThe plugin has been reloaded",
+        "&4Reset in &e<remaining>",
+        "second", "seconds",
+        "minute", "minutes",
+        "hour", "hours",
+        "day", "days",
+        "&cNo worlds found!",
+        "dd.MM.yyyy - HH:mm:ss",
+        "&aFarming world has been reset.",
+        "&cYou didn't want to reset a world, so you can't confirm anything.",
+        "&cThe time to confirm has expired.",
+        "&fConfirm your intention in the next &a10 seconds&f with the command \"&a/fwa confirm&f\"."
+    );
+  }
 }

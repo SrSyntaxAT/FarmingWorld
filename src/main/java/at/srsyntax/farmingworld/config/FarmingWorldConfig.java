@@ -8,6 +8,7 @@ import at.srsyntax.farmingworld.api.DisplayPosition;
 import at.srsyntax.farmingworld.api.event.ReplacedFarmingWorldEvent;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -51,6 +52,7 @@ public class FarmingWorldConfig implements FarmingWorld {
 
   private transient BossBar bossBar;
   private transient FarmingWorldPlugin plugin;
+  @Setter private transient boolean activ = true;
 
   private String name, permission, currentWorldName, nextWorldName, generator;
   private long created;

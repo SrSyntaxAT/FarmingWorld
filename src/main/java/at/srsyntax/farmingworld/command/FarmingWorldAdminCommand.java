@@ -2,20 +2,25 @@ package at.srsyntax.farmingworld.command;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.API;
-import at.srsyntax.farmingworld.command.completer.DefaultTabCompleter;
+import at.srsyntax.farmingworld.api.FarmingWorld;
+import at.srsyntax.farmingworld.api.message.Message;
+import at.srsyntax.farmingworld.api.message.MessageBuilder;
 import at.srsyntax.farmingworld.command.completer.FWATabCompleter;
-import at.srsyntax.farmingworld.command.exception.FarmingWorldException;
-import at.srsyntax.farmingworld.command.exception.NoPermissionException;
+import at.srsyntax.farmingworld.command.exception.*;
+import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.config.MessageConfig;
+import at.srsyntax.farmingworld.util.ConfirmAction;
+import at.srsyntax.farmingworld.util.ConfirmData;
 import lombok.AllArgsConstructor;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 /*
  * MIT License
@@ -49,30 +54,194 @@ public class FarmingWorldAdminCommand implements AdminCommand {
   private final FarmingWorldPlugin plugin;
   private final MessageConfig messageConfig;
 
-  /*
-
-  fwa reload
-  fwa confirm
-  fwa info <farmingworld>
-  fwa delete <farmingworld>
-  fwa reset <farmingworld>
-
-   */
   @Override
   public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-    // TODO
+    try {
+      if (!hasPermissionToUse(sender)) throw new NoPermissionException(this.messageConfig);
+      if (args.length == 0) return sendUsage(sender);
+      return switch (args[0].toLowerCase()) {
+        case "info" -> info(sender, args);
+        case "reload" -> sendConfirm(sender, ConfirmAction.RELOAD, null);
+        case "delete" -> sendConfirm(sender, ConfirmAction.DELETE, args);
+        case "reset" -> sendConfirm(sender, ConfirmAction.RESET, args);
+        case "confirm" -> confirm(sender);
+        case "list" -> list(sender);
+        default -> sendUsage(sender);
+      };
+    } catch (FarmingWorldException exception) {
+      sender.sendMessage(exception.getMessage());
+    }
     return false;
   }
 
   @Nullable
   @Override
   public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String arg, @NotNull String[] args) {
-    return new FWATabCompleter(this.api, PERMISSION, this).onTabComplete(commandSender, args);
+    return new FWATabCompleter(this.api, this).onTabComplete(commandSender, args);
   }
 
   public boolean hasPermissionToUse(CommandSender sender) {
-    return sender.hasPermission(PERMISSION + "*") || sender.hasPermission(PERMISSION + "reload")
-        || sender.hasPermission(PERMISSION + "info") || sender.hasPermission(PERMISSION + "delete")
-        || sender.hasPermission(PERMISSION + "reset");
+    return hasPermission(sender, "reload") || hasPermission(sender, "info")
+        || hasPermission(sender, "delete") || hasPermission(sender, "reset")
+        || hasPermission(sender, "list");
+  }
+
+  private boolean sendUsage(CommandSender sender) {
+    final MessageBuilder builder = new MessageBuilder();
+    builder.addLine("&6Farming World Administration Commands&8:");
+
+    if (hasPermission(sender, "reload"))
+      builder.addLine("§8/&ffwa reload &8-&7 Reload the plugin");
+    if (hasPermission(sender, "info"))
+      builder.addLine("§8/&ffwa info <farmingworld> &8- &7Show current information of the farmworld");
+    if (hasPermission(sender, "delete"))
+      builder.addLine("§8/&ffwa delete <farmingworld> &8- &7Reset a farmworld");
+    if (hasPermission(sender, "reset"))
+      builder.addLine("§8/&ffwa reset <farmingworld> &8- &7Delete a farmworld");
+    if (hasPermission(sender, "list"))
+      builder.addLine("§8/&ffwa list &8- &7List all farmworlds");
+
+    sender.sendMessage(builder.toString());
+    return true;
+  }
+
+  public boolean hasAdminPermission(CommandSender sender) {
+    return sender.hasPermission(PERMISSION + "*");
+  }
+
+  public boolean hasPermission(CommandSender sender, String permission) {
+    return hasAdminPermission(sender) || sender.hasPermission(PERMISSION + permission);
+  }
+
+  private void checkPermission(CommandSender sender, String permission) throws NoPermissionException {
+    if (hasPermission(sender, permission)) return;
+    throw new NoPermissionException(this.messageConfig);
+  }
+
+  private boolean info(CommandSender sender, String[] args) throws FarmingWorldException {
+    checkPermission(sender, "info");
+    sendFarmingWorldInfo(sender, getFarmingWorld(args, (byte) 1, "info <farmingworld>"));
+    return true;
+  }
+
+  private void sendFarmingWorldInfo(CommandSender sender, FarmingWorld farmingWorld) {
+    final MessageBuilder builder = new MessageBuilder()
+        .addLine("§6" + farmingWorld.getName() + " §einformation§8:")
+        .addLine("&eCurrent world&8: &7" + farmingWorld.getWorld().getName());
+    if (farmingWorld.getNextWorld() != null)
+      builder.addLine("&eNext world&8:&7 " + farmingWorld.getNextWorld().getName());
+
+    builder.addLine("§eCreated§8: §7" + this.api.getDate(farmingWorld.getCreated()))
+        .addLine("§eReset§8: §7" + this.api.getDate(farmingWorld.getReset()))
+        .addLine("§ePlayers§8: §7" + farmingWorld.getWorld().getPlayers().size());
+
+    if (farmingWorld.getPermission() != null)
+      builder.addLine("§ePermission§8:§7 " + farmingWorld.getPermission());
+
+    sender.sendMessage(builder.toString());
+  }
+
+  private boolean list(CommandSender sender) throws NoPermissionException {
+    checkPermission(sender, "list");
+
+    final StringBuilder list = new StringBuilder();
+    this.api.getFarmingWorlds().forEach(farmingWorld -> {
+      if (!list.isEmpty())
+        list.append("&f,&7 ");
+      list.append(farmingWorld.getName());
+    });
+
+    final String message;
+    if (list.isEmpty())
+      message = new Message(this.messageConfig.getNoWorlds()).replace();
+    else
+      message = new Message(this.messageConfig.getFarmingWorldList())
+          .add("<list>", list.toString())
+          .replace();
+
+    sender.sendMessage(message);
+    return true;
+  }
+
+  private boolean sendConfirm(CommandSender sender, ConfirmAction action, String[] args) throws FarmingWorldException {
+    checkPermission(sender, action.name().toLowerCase());
+    final ConfirmData data = new ConfirmData(action);
+
+    if (action.isNeedFarmingWorld()) {
+      final FarmingWorld farmingWorld = getFarmingWorld(args, (byte) 1, action.name().toLowerCase() + " <farmingworld>");
+      data.addData("farmingworld", farmingWorld);
+    }
+
+    this.plugin.getNeedConfirm().put(sender, data);
+    sender.sendMessage(new Message(this.messageConfig.getConfirm()).replace());
+    return true;
+  }
+
+  private FarmingWorld getFarmingWorld(String[] args, byte pos, String usage) throws FarmingWorldException {
+    if (args.length <= pos) throw new InvalidArgsException(this.messageConfig, "fwa " + usage);
+    final FarmingWorld farmingWorld = this.api.getFarmingWorld(args[pos]);
+    if (farmingWorld == null) throw new FarmingWorldNotFoundException(this.messageConfig);
+    return farmingWorld;
+  }
+
+  private boolean confirm(CommandSender sender) throws FarmingWorldException {
+    final ConfirmData data = this.plugin.getNeedConfirm().remove(sender);
+    if (data == null) throw new NothingToConfirmException(this.messageConfig);
+    if (data.isExpired()) throw new ConfirmExpiredException(this.messageConfig);
+    return switch (data.getAction()) {
+      case RELOAD -> reloadConfirmed(sender);
+      case DELETE -> deleteConfirmed(sender, data.getData("farmingworld"));
+      case RESET -> resetConfirmed(sender, data.getData("farmingworld"));
+    };
+  }
+
+  private boolean reloadConfirmed(CommandSender sender) {
+    this.api.reload();
+    sender.sendMessage(new Message(this.messageConfig.getReload()).replace());
+    return true;
+  }
+
+  private boolean deleteConfirmed(CommandSender sender, FarmingWorld farmingWorld) {
+    ((FarmingWorldConfig) farmingWorld).setActiv(false);
+    this.plugin.getPluginConfig().getFarmingWorlds().remove(farmingWorld);
+
+    //TODO Boss bar still needs to be fixed
+    if (farmingWorld.getWorld() != null) this.api.deleteFarmingWorld(farmingWorld);
+    if (farmingWorld.getNextWorld() != null) this.api.deleteFarmingWorld(farmingWorld, farmingWorld.getNextWorld());
+
+    try {
+      this.plugin.getPluginConfig().save(this.plugin);
+    } catch (IOException e) {
+      final String message = "Config could not be saved!";
+      this.plugin.getLogger().severe(message);
+      sender.sendMessage("§4" + message);
+      e.printStackTrace();
+    }
+    sender.sendMessage(new Message(this.messageConfig.getDelete()).replace());
+    return true;
+  }
+
+  private boolean resetConfirmed(CommandSender sender, FarmingWorld farmingWorld) {
+    ((FarmingWorldConfig) farmingWorld).setActiv(false);
+    if (!farmingWorld.hasNext()) {
+      final World world = this.api.generateFarmingWorld(farmingWorld);
+      farmingWorld.setNextWorld(world);
+    }
+
+    this.api.deleteFarmingWorld(farmingWorld);
+    farmingWorld.newWorld(Objects.requireNonNull(farmingWorld.getNextWorld()));
+    farmingWorld.setNextWorld(null);
+
+    try {
+      this.plugin.getPluginConfig().save(this.plugin);
+    } catch (IOException e) {
+      final String message = "Config could not be saved!";
+      this.plugin.getLogger().severe(message);
+      sender.sendMessage("§4" + message);
+      e.printStackTrace();
+    }
+    sender.sendMessage(new Message(this.messageConfig.getReset()).replace());
+    ((FarmingWorldConfig) farmingWorld).setActiv(true);
+    return true;
   }
 }

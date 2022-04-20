@@ -35,10 +35,10 @@ public class DefaultTabCompleter {
     final List<String> result = new ArrayList<>(api.getFarmingWorlds().size());
 
     if (args.length == pos + 1) {
-      final String arg = args[pos];
+      final String arg = args[pos].toLowerCase();
 
       for (FarmingWorld world : api.getFarmingWorlds()) {
-        if (world.getName().startsWith(arg))
+        if (world.getName().toLowerCase().startsWith(arg))
           result.add(world.getName());
       }
     }

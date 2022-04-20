@@ -1,13 +1,7 @@
-package at.srsyntax.farmingworld.listener;
+package at.srsyntax.farmingworld.util;
 
-import at.srsyntax.farmingworld.FarmingWorldPlugin;
-import at.srsyntax.farmingworld.api.API;
 import lombok.AllArgsConstructor;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import lombok.Getter;
 
 /*
  * MIT License
@@ -33,28 +27,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
  * SOFTWARE.
  */
 @AllArgsConstructor
-public class BossBarListeners implements Listener {
+@Getter
+public enum ConfirmAction {
+  RELOAD(false), DELETE(true), RESET(true);
 
-  private final API api;
-  private final FarmingWorldPlugin plugin;
-
-  @EventHandler
-  public void onPlayerJoinEvent(PlayerJoinEvent event) {
-    plugin.addToBossBar(event.getPlayer());
-  }
-
-  @EventHandler
-  public void onPlayerQuitEvent(PlayerQuitEvent event) {
-    plugin.removeFromBossBar(event.getPlayer(), event.getPlayer().getWorld());
-  }
-
-  @EventHandler
-  public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent event) {
-    if (api.isFarmingWorld(event.getFrom()))
-      plugin.removeFromBossBar(event.getPlayer(), event.getFrom());
-
-    if (api.isFarmingWorld(event.getPlayer().getWorld()))
-      plugin.addToBossBar(event.getPlayer());
-  }
-
+  private final boolean needFarmingWorld;
 }

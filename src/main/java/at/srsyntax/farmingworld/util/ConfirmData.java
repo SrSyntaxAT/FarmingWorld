@@ -1,13 +1,11 @@
-package at.srsyntax.farmingworld.listener;
+package at.srsyntax.farmingworld.util;
 
-import at.srsyntax.farmingworld.FarmingWorldPlugin;
-import at.srsyntax.farmingworld.api.API;
-import lombok.AllArgsConstructor;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import at.srsyntax.farmingworld.api.FarmingWorld;
+import lombok.Getter;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /*
  * MIT License
@@ -32,29 +30,37 @@ import org.bukkit.event.player.PlayerQuitEvent;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-public class BossBarListeners implements Listener {
+public class ConfirmData {
 
-  private final API api;
-  private final FarmingWorldPlugin plugin;
+  public static final long EXPIRED = TimeUnit.SECONDS.toMillis(10);
 
-  @EventHandler
-  public void onPlayerJoinEvent(PlayerJoinEvent event) {
-    plugin.addToBossBar(event.getPlayer());
+  private final long timestamp;
+  @Getter
+  private final ConfirmAction action;
+  private final Map<String, Object> data = new LinkedHashMap<>();
+
+  public ConfirmData(ConfirmAction action) {
+    this.action = action;
+    this.timestamp = System.currentTimeMillis();
   }
 
-  @EventHandler
-  public void onPlayerQuitEvent(PlayerQuitEvent event) {
-    plugin.removeFromBossBar(event.getPlayer(), event.getPlayer().getWorld());
+  public ConfirmData addData(String key, Object value) {
+    this.data.put(key, value);
+    return this;
   }
 
-  @EventHandler
-  public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent event) {
-    if (api.isFarmingWorld(event.getFrom()))
-      plugin.removeFromBossBar(event.getPlayer(), event.getFrom());
-
-    if (api.isFarmingWorld(event.getPlayer().getWorld()))
-      plugin.addToBossBar(event.getPlayer());
+  public <T> T getData(String key) {
+    try {
+      final Object value = this.data.get(key);
+      if (value == null) return null;
+      return (T) value;
+    } catch (Exception exception) {
+      exception.printStackTrace();
+      return null;
+    }
   }
 
+  public boolean isExpired() {
+    return System.currentTimeMillis() - timestamp > EXPIRED;
+  }
 }

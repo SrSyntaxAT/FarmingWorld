@@ -36,7 +36,6 @@ import java.util.List;
 public class FWATabCompleter {
 
   private final API api;
-  private final String permission;
   private final FarmingWorldAdminCommand command;
 
   public List<String> onTabComplete(CommandSender commandSender, String[] args) {
@@ -49,11 +48,11 @@ public class FWATabCompleter {
   }
 
   private List<String> getTabCompleteFirstArgs(CommandSender sender, String[] args) {
-    final List<String> allowedArgs = Arrays.asList("reload", "confirm", "info", "delete", "reset"),
+    final List<String> allowedArgs = Arrays.asList("reload", "list", "confirm", "info", "delete", "reset"),
         result = new ArrayList<>();
 
     for (String s : allowedArgs) {
-      if (s.startsWith(args[0])) {
+      if (s.startsWith(args[0].toLowerCase())) {
         if (!needContinue(sender, s))
           result.add(s);
       }
@@ -74,22 +73,22 @@ public class FWATabCompleter {
 
   private boolean needContinue(CommandSender sender, String s) {
     if (s.equalsIgnoreCase("confirm") && !hasPermissionToConfirm(sender)) return true;
-    return !s.equalsIgnoreCase("confirm") && !(sender.hasPermission(this.permission + s) || sender.hasPermission(this.permission + "*"));
+    return !s.equalsIgnoreCase("confirm") && !this.command.hasPermission(sender, s.toLowerCase());
   }
 
   private boolean hasPermissionToConfirm(CommandSender sender) {
-    return sender.hasPermission(this.permission + "*") || sender.hasPermission(this.permission + "reset")
-        || sender.hasPermission(this.permission + "reload") || sender.hasPermission(this.permission + "delete");
+    return this.command.hasPermission(sender, "reset") || this.command.hasPermission(sender, "reload")
+        || this.command.hasPermission(sender, "delete");
   }
 
   private List<String> getTabCompleteSecondArgs(CommandSender sender, String[] args) {
     final List<String> allowedArgs = Arrays.asList("info", "delete", "reset");
     if (!allowedArgs.contains(args[0].toLowerCase()) || !hasPermissionToCompleteSecondArgs(sender)) return null;
-    return DefaultTabCompleter.onTabComplete(api, args, 1);
+    return DefaultTabCompleter.onTabComplete(this.api, args, 1);
   }
 
   private boolean hasPermissionToCompleteSecondArgs(CommandSender sender) {
-    return sender.hasPermission(this.permission + "*") || sender.hasPermission(this.permission + "reset")
-        || sender.hasPermission(this.permission + "info") || sender.hasPermission(this.permission + "delete");
+    return this.command.hasPermission(sender, "reset") || this.command.hasPermission(sender, "info")
+        || this.command.hasPermission(sender, "delete");
   }
 }

@@ -44,6 +44,11 @@ public class LastRemainingDisplayRunnable implements Runnable {
 
   @Override
   public void run() {
+    if (!farmingWorld.isActiv()) {
+      runnable.cancelLastRemainingDisplayRunnable(taskId, farmingWorld);
+      return;
+    }
+
     if (farmingWorld.needReset())
       resetWorld();
     else

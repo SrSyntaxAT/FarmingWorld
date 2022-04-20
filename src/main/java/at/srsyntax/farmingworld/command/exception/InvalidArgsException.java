@@ -1,8 +1,7 @@
-package at.srsyntax.farmingworld.util;
+package at.srsyntax.farmingworld.command.exception;
 
-import at.srsyntax.farmingworld.api.FarmingWorld;
-
-import java.util.concurrent.TimeUnit;
+import at.srsyntax.farmingworld.api.message.Message;
+import at.srsyntax.farmingworld.config.MessageConfig;
 
 /*
  * MIT License
@@ -27,11 +26,13 @@ import java.util.concurrent.TimeUnit;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public record ResetData(FarmingWorld farmingWorld, long timestamp) {
+public class InvalidArgsException extends FarmingWorldException {
 
-  public static final long EXPIRED = TimeUnit.SECONDS.toMillis(10);
+  public InvalidArgsException(String message) {
+    super(message);
+  }
 
-  public boolean isExpired() {
-    return System.currentTimeMillis() - timestamp > EXPIRED;
+  public InvalidArgsException(MessageConfig config, String usage) {
+    super(new Message(config.getUsage()).add("usage", usage).replace());
   }
 }

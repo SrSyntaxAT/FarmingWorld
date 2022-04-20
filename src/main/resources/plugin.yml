@@ -18,14 +18,6 @@ commands:
     aliases:
       - tpfw
     description: Teleport another player to a farmworld.
-  farmingworldinfo:
-    aliases:
-      - fwi
-    description: Show current information of the farmworld.
-  farmingworldreset:
-    aliases:
-      - fwr
-    description: Reset a farmworld.
   farmingworldadmin:
     aliases:
       - fwa

@@ -46,13 +46,15 @@ public class RemainingRunnable implements Runnable {
   @Override
   public void run() {
     plugin.getPluginConfig().getFarmingWorlds().forEach(farmingWorld -> {
-      farmingWorld.updateDisplay();
+      if (farmingWorld.isActiv()) {
+        farmingWorld.updateDisplay();
 
-      if (farmingWorld.getRemaining() <= TimeUnit.MINUTES.toMillis(2)) {
-        checkNextRunnable(farmingWorld);
-        
-        if (farmingWorld.getNextWorld() == null)
-          Bukkit.getScheduler().runTask(plugin, () -> farmingWorld.setNextWorld(FarmingWorldPlugin.getApi().generateFarmingWorld(farmingWorld)));
+        if (farmingWorld.getRemaining() <= TimeUnit.MINUTES.toMillis(2)) {
+          checkNextRunnable(farmingWorld);
+
+          if (farmingWorld.getNextWorld() == null)
+            Bukkit.getScheduler().runTask(plugin, () -> farmingWorld.setNextWorld(FarmingWorldPlugin.getApi().generateFarmingWorld(farmingWorld)));
+        }
       }
     });
   }
