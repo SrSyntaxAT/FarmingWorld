@@ -93,7 +93,8 @@ public final class APIImpl implements API {
     });
   }
 
-  private World getFallbackWorld() throws IOException {
+  @Override
+  public @Nullable World getFallbackWorld() throws IOException {
     String worldName = this.plugin.getPluginConfig().getFallbackWorld();
     if (worldName == null)
       worldName = readServerPropertiesWorldName();

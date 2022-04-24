@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -47,7 +48,7 @@ public class PluginConfig extends ConfigLoader {
   private final BarColor barColor;
 
   private final String defaultFarmingWorld;
-  private final List<FarmingWorldConfig> farmingWorlds;
+  private final ArrayList<FarmingWorldConfig> farmingWorlds;
 
   private final MessageConfig message;
 

@@ -12,6 +12,7 @@ import at.srsyntax.farmingworld.config.MessageConfig;
 import at.srsyntax.farmingworld.util.ConfirmAction;
 import at.srsyntax.farmingworld.util.ConfirmData;
 import lombok.AllArgsConstructor;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -201,13 +202,14 @@ public class FarmingWorldAdminCommand implements AdminCommand {
     return true;
   }
 
-  private boolean deleteConfirmed(CommandSender sender, FarmingWorld farmingWorld) {
+  private boolean deleteConfirmed(CommandSender sender, FarmingWorld farmingWorld) throws FarmingWorldException {
+    if (farmingWorld == null) throw new FarmingWorldNotFoundException(this.messageConfig);
     ((FarmingWorldConfig) farmingWorld).setActiv(false);
-    this.plugin.getPluginConfig().getFarmingWorlds().remove(farmingWorld);
 
-    //TODO Boss bar still needs to be fixed
-    if (farmingWorld.getWorld() != null) this.api.deleteFarmingWorld(farmingWorld);
-    if (farmingWorld.getNextWorld() != null) this.api.deleteFarmingWorld(farmingWorld, farmingWorld.getNextWorld());
+    deleteFarmingWorld(farmingWorld.getWorld(), farmingWorld);
+    deleteFarmingWorld(farmingWorld.getNextWorld(), farmingWorld);
+
+    this.plugin.getPluginConfig().getFarmingWorlds().remove(farmingWorld);
 
     try {
       this.plugin.getPluginConfig().save(this.plugin);
@@ -219,6 +221,19 @@ public class FarmingWorldAdminCommand implements AdminCommand {
     }
     sender.sendMessage(new Message(this.messageConfig.getDelete()).replace());
     return true;
+  }
+
+  private void deleteFarmingWorld(World world, FarmingWorld farmingWorld) {
+    if (world == null) return;
+    if (!world.getPlayers().isEmpty()) {
+      try {
+        final Location fallback = this.api.getFallbackWorld().getSpawnLocation();
+        world.getPlayers().forEach(player -> player.teleport(fallback));
+      } catch (Exception exception) {
+        exception.printStackTrace();
+      }
+    }
+    this.api.deleteFarmingWorld(farmingWorld, world);
   }
 
   private boolean resetConfirmed(CommandSender sender, FarmingWorld farmingWorld) {

@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.List;
 
 /*
@@ -42,6 +43,7 @@ public interface API {
   @NotNull World generateFarmingWorld(@NotNull FarmingWorld farmingWorld);
   void deleteFarmingWorld(@NotNull FarmingWorld farmingWorld, @NotNull World world);
   void deleteFarmingWorld(@NotNull FarmingWorld farmingWorld);
+  @Nullable World getFallbackWorld() throws IOException;
 
   @NotNull String getRemainingTime(long time);
 

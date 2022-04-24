@@ -160,7 +160,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
             Arrays.asList(Material.LAVA, Material.AIR, Material.WATER),
             BarColor.BLUE,
             farmingWorldTemplate.getName(),
-            Collections.singletonList(farmingWorldTemplate),
+            new ArrayList<>(Collections.singletonList(farmingWorldTemplate)),
             new MessageConfig()
         )
     );
