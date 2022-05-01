@@ -44,6 +44,7 @@ public class MessageConfig {
   private final String noWorlds, dateFormat;
 
   private final String worldDeleted, nothingToConfirm, confirmExpired, confirm;
+  private final String disabled, enabled, alreadyEnabled, alreadyDisabled, isDisabled;
 
   public MessageConfig() {
     this(
@@ -67,7 +68,12 @@ public class MessageConfig {
         "&aFarming world has been reset.",
         "&cYou didn't want to reset a world, so you can't confirm anything.",
         "&cThe time to confirm has expired.",
-        "&fConfirm your intention in the next &a10 seconds&f with the command \"&a/fwa confirm&f\"."
+        "&fConfirm your intention in the next &a10 seconds&f with the command \"&a/fwa confirm&f\".",
+        "&cFarmingworld was disabled!",
+        "&aFarmingworld was enabled!",
+        "&cThe farmingworld is already enabled!",
+        "&cThe farmingworld is already disabled!",
+        "&cYou cannot teleport to this farmworld because it has been disabled."
     );
   }
 }

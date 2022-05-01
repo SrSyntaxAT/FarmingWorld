@@ -48,7 +48,7 @@ public class FWATabCompleter {
   }
 
   private List<String> getTabCompleteFirstArgs(CommandSender sender, String[] args) {
-    final List<String> allowedArgs = Arrays.asList("reload", "list", "confirm", "info", "delete", "reset"),
+    final List<String> allowedArgs = Arrays.asList("reload", "list", "confirm", "info", "delete", "reset", "enable", "disable"),
         result = new ArrayList<>();
 
     for (String s : allowedArgs) {
@@ -78,17 +78,17 @@ public class FWATabCompleter {
 
   private boolean hasPermissionToConfirm(CommandSender sender) {
     return this.command.hasPermission(sender, "reset") || this.command.hasPermission(sender, "reload")
-        || this.command.hasPermission(sender, "delete");
+        || this.command.hasPermission(sender, "delete") || this.command.hasPermission(sender, "activ");
   }
 
   private List<String> getTabCompleteSecondArgs(CommandSender sender, String[] args) {
-    final List<String> allowedArgs = Arrays.asList("info", "delete", "reset");
+    final List<String> allowedArgs = Arrays.asList("info", "delete", "reset", "disable", "enable");
     if (!allowedArgs.contains(args[0].toLowerCase()) || !hasPermissionToCompleteSecondArgs(sender)) return null;
     return DefaultTabCompleter.onTabComplete(this.api, args, 1);
   }
 
   private boolean hasPermissionToCompleteSecondArgs(CommandSender sender) {
     return this.command.hasPermission(sender, "reset") || this.command.hasPermission(sender, "info")
-        || this.command.hasPermission(sender, "delete");
+        || this.command.hasPermission(sender, "delete") || this.command.hasPermission(sender, "activ");
   }
 }

@@ -4,6 +4,7 @@ import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.event.DeleteFarmingWorldEvent;
 import at.srsyntax.farmingworld.api.event.GenerateNewFarmingWorldEvent;
+import at.srsyntax.farmingworld.command.exception.TeleportFarmingWorldException;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.util.LocationRandomizer;
 import lombok.AllArgsConstructor;
@@ -100,6 +101,17 @@ public final class APIImpl implements API {
       worldName = readServerPropertiesWorldName();
     if (worldName == null) throw new NullPointerException();
     return Bukkit.getWorld(worldName);
+  }
+
+  @Override
+  public void unloadWorlds(FarmingWorld farmingWorld) {
+    unloadWorld(farmingWorld.getWorld());
+    unloadWorld(farmingWorld.getNextWorld());
+  }
+
+  private void unloadWorld(World world) {
+    if (world == null) return;
+    sync(() -> Bukkit.unloadWorld(world, true));
   }
 
   private String readServerPropertiesWorldName() throws IOException {
@@ -235,7 +247,8 @@ public final class APIImpl implements API {
   }
 
   @Override
-  public void randomTeleport(Player player, FarmingWorld farmingWorld) {
+  public void randomTeleport(Player player, FarmingWorld farmingWorld) throws TeleportFarmingWorldException {
+    if (!farmingWorld.isActiv()) throw new TeleportFarmingWorldException(this.plugin.getPluginConfig().getMessage());
     player.teleport(new LocationRandomizer(this.plugin.getPluginConfig().getSpawnBlockBlacklist(), farmingWorld).random());
   }
 

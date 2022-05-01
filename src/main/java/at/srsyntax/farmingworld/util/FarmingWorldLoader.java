@@ -45,6 +45,11 @@ public class FarmingWorldLoader {
   public void load(FarmingWorldConfig farmingWorld) {
     farmingWorld.setPlugin(plugin);
     setDatabaseData(farmingWorld);
+    if (farmingWorld.isActiv())
+      enable(farmingWorld);
+  }
+
+  public void enable(FarmingWorldConfig farmingWorld) {
     checkBorder(farmingWorld);
     checkCurrentWorld(farmingWorld);
     checkNextWorld(farmingWorld);
@@ -52,11 +57,11 @@ public class FarmingWorldLoader {
 
   private boolean checkDatabase(FarmingWorldConfig farmingWorld) throws SQLException {
     final Database database = plugin.getDatabase();
-    if (database.exists(farmingWorld)) return false;
+    if (database.exists(farmingWorld)) return true;
     if (farmingWorld.getData() == null)
       farmingWorld.setData(new FarmingWorldData(0L, null, null));
     database.createFarmingWorld(farmingWorld);
-    return true;
+    return false;
   }
 
   private void setDatabaseData(FarmingWorldConfig farmingWorld) {

@@ -6,6 +6,7 @@ import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.api.DisplayPosition;
 import at.srsyntax.farmingworld.api.event.ReplacedFarmingWorldEvent;
+import at.srsyntax.farmingworld.command.exception.TeleportFarmingWorldException;
 import at.srsyntax.farmingworld.database.FarmingWorldData;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,7 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
@@ -53,11 +55,12 @@ public class FarmingWorldConfig implements FarmingWorld {
 
   private transient BossBar bossBar;
   private transient FarmingWorldPlugin plugin;
-  @Setter private transient boolean activ = true;
-
   @Setter private transient FarmingWorldData data;
 
-  private String name, permission, generator;
+  private String name;
+  @Setter private boolean activ = true;
+
+  private String permission, generator;
   private int timer, rtpArenaSize;
   private double borderSize;
   private World.Environment environment;
@@ -171,7 +174,7 @@ public class FarmingWorldConfig implements FarmingWorld {
     this.data.setCreated(System.currentTimeMillis());
 
     if (old != null)
-      old.getPlayers().forEach(this::teleport);
+      old.getPlayers().forEach(this::teleportUnsafe);
 
     final Event event = new ReplacedFarmingWorldEvent(this, world, old);
     Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getPluginManager().callEvent(event));
@@ -201,6 +204,18 @@ public class FarmingWorldConfig implements FarmingWorld {
     exception.printStackTrace();
   }
 
+  public void disable() {
+    this.plugin.getLogger().info("Disable " + this);
+    setActiv(false);
+    FarmingWorldPlugin.getApi().unloadWorlds(this);
+
+    try {
+      this.plugin.getPluginConfig().save(this.plugin);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
   @Override
   public @Nullable World getNextWorld() {
     if (this.data.getNextWorldName() == null)
@@ -214,8 +229,16 @@ public class FarmingWorldConfig implements FarmingWorld {
   }
 
   @Override
-  public void teleport(@NotNull Player player) {
-    Bukkit.getScheduler().runTask(plugin, () -> FarmingWorldPlugin.getApi().randomTeleport(player, this));
+  public void teleport(@NotNull Player player) throws TeleportFarmingWorldException {
+    FarmingWorldPlugin.getApi().randomTeleport(player, this);
+  }
+
+  private void teleportUnsafe(Player player) {
+    try {
+      teleport(player);
+    } catch (TeleportFarmingWorldException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   public void setPlugin(FarmingWorldPlugin plugin) {
@@ -224,5 +247,20 @@ public class FarmingWorldConfig implements FarmingWorld {
 
   public void setRtpArenaSize(int rtpArenaSize) {
     this.rtpArenaSize = rtpArenaSize;
+  }
+
+  @Override
+  public String toString() {
+    return "FarmingWorldConfig{" +
+        "data=" + data +
+        ", name='" + name + '\'' +
+        ", activ=" + activ +
+        ", permission='" + permission + '\'' +
+        ", generator='" + generator + '\'' +
+        ", timer=" + timer +
+        ", rtpArenaSize=" + rtpArenaSize +
+        ", borderSize=" + borderSize +
+        ", environment=" + environment +
+        '}';
   }
 }

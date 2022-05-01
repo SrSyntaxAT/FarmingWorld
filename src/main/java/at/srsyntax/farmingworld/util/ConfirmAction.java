@@ -29,7 +29,10 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ConfirmAction {
-  RELOAD(false), DELETE(true), RESET(true);
+  RELOAD(false),
+  DELETE(true),
+  RESET(true),
+  DISABLE(true);
 
   private final boolean needFarmingWorld;
 }

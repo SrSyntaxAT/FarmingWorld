@@ -1,5 +1,6 @@
 package at.srsyntax.farmingworld.api;
 
+import at.srsyntax.farmingworld.command.exception.TeleportFarmingWorldException;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -42,6 +43,9 @@ public interface FarmingWorld {
     double getBorderSize();
     String getGenerator();
 
+    void setActiv(boolean activ);
+    boolean isActiv();
+
     void updateDisplay();
     void updateDisplay(Player player);
 
@@ -51,6 +55,6 @@ public interface FarmingWorld {
     @Nullable World getNextWorld();
     boolean hasNext();
 
-    void teleport(@NotNull Player player);
+    void teleport(@NotNull Player player) throws TeleportFarmingWorldException;
 
 }

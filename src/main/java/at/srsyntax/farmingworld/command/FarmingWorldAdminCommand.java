@@ -11,6 +11,7 @@ import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import at.srsyntax.farmingworld.util.ConfirmAction;
 import at.srsyntax.farmingworld.util.ConfirmData;
+import at.srsyntax.farmingworld.util.FarmingWorldLoader;
 import lombok.AllArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -67,6 +68,8 @@ public class FarmingWorldAdminCommand implements AdminCommand {
         case "delete" -> sendConfirm(sender, ConfirmAction.DELETE, args);
         case "reset" -> sendConfirm(sender, ConfirmAction.RESET, args);
         case "confirm" -> confirm(sender);
+        case "enable" -> enable(sender, args);
+        case "disable" -> sendConfirm(sender, ConfirmAction.DISABLE, args);
         case "list" -> list(sender);
         default -> sendUsage(sender);
       };
@@ -85,7 +88,7 @@ public class FarmingWorldAdminCommand implements AdminCommand {
   public boolean hasPermissionToUse(CommandSender sender) {
     return hasPermission(sender, "reload") || hasPermission(sender, "info")
         || hasPermission(sender, "delete") || hasPermission(sender, "reset")
-        || hasPermission(sender, "list");
+        || hasPermission(sender, "list") || hasPermission(sender, "activ");
   }
 
   private boolean sendUsage(CommandSender sender) {
@@ -102,6 +105,10 @@ public class FarmingWorldAdminCommand implements AdminCommand {
       builder.addLine("§8/&ffwa reset <farmingworld> &8- &7Delete a farmworld");
     if (hasPermission(sender, "list"))
       builder.addLine("§8/&ffwa list &8- &7List all farmworlds");
+    if (hasPermission(sender, "activ")) {
+      builder.addLine("§8/&ffwa enable <farmingworld> &8- &7Enable a farmworld");
+      builder.addLine("§8/&ffwa disable <farmingworld> &8- &7Disable a farmworld");
+    }
 
     sender.sendMessage(builder.toString());
     return true;
@@ -129,16 +136,21 @@ public class FarmingWorldAdminCommand implements AdminCommand {
   private void sendFarmingWorldInfo(CommandSender sender, FarmingWorld farmingWorld) {
     final MessageBuilder builder = new MessageBuilder()
         .addLine("§6" + farmingWorld.getName() + " §einformation§8:")
-        .addLine("&eCurrent world&8: &7" + farmingWorld.getWorld().getName());
+        .addLine("&eActiv&8: &7" + farmingWorld.isActiv());
+    if (farmingWorld.getPermission() != null)
+      builder.addLine("§ePermission§8:§7 " + farmingWorld.getPermission());
+    if (farmingWorld.getWorld() != null)
+      builder.addLine("&eCurrent world&8: &7" + farmingWorld.getWorld().getName());
     if (farmingWorld.getNextWorld() != null)
       builder.addLine("&eNext world&8:&7 " + farmingWorld.getNextWorld().getName());
 
-    builder.addLine("§eCreated§8: §7" + this.api.getDate(farmingWorld.getCreated()))
-        .addLine("§eReset§8: §7" + this.api.getDate(farmingWorld.getReset()))
-        .addLine("§ePlayers§8: §7" + farmingWorld.getWorld().getPlayers().size());
+    if (farmingWorld.isActiv()) {
+      builder.addLine("§eCreated§8: §7" + this.api.getDate(farmingWorld.getCreated()))
+          .addLine("§eReset§8: §7" + this.api.getDate(farmingWorld.getReset()));
 
-    if (farmingWorld.getPermission() != null)
-      builder.addLine("§ePermission§8:§7 " + farmingWorld.getPermission());
+      if (farmingWorld.getWorld() != null)
+        builder.addLine("§ePlayers§8: §7" + farmingWorld.getWorld().getPlayers().size());
+    }
 
     sender.sendMessage(builder.toString());
   }
@@ -172,6 +184,9 @@ public class FarmingWorldAdminCommand implements AdminCommand {
     if (action.isNeedFarmingWorld()) {
       final FarmingWorld farmingWorld = getFarmingWorld(args, (byte) 1, action.name().toLowerCase() + " <farmingworld>");
       data.addData("farmingworld", farmingWorld);
+
+      if (action == ConfirmAction.DISABLE && !farmingWorld.isActiv())
+        throw new FarmingWorldException(new Message(this.messageConfig.getAlreadyDisabled()).replace());
     }
 
     this.plugin.getNeedConfirm().put(sender, data);
@@ -194,6 +209,7 @@ public class FarmingWorldAdminCommand implements AdminCommand {
       case RELOAD -> reloadConfirmed(sender);
       case DELETE -> deleteConfirmed(sender, data.getData("farmingworld"));
       case RESET -> resetConfirmed(sender, data.getData("farmingworld"));
+      case DISABLE -> disableConfirmed(sender, data.getData("farmingworld"));
     };
   }
 
@@ -205,7 +221,7 @@ public class FarmingWorldAdminCommand implements AdminCommand {
 
   private boolean deleteConfirmed(CommandSender sender, FarmingWorld farmingWorld) throws FarmingWorldException {
     if (farmingWorld == null) throw new FarmingWorldNotFoundException(this.messageConfig);
-    ((FarmingWorldConfig) farmingWorld).setActiv(false);
+    farmingWorld.setActiv(false);
 
     deleteFarmingWorld(farmingWorld.getWorld(), farmingWorld);
     deleteFarmingWorld(farmingWorld.getNextWorld(), farmingWorld);
@@ -222,7 +238,7 @@ public class FarmingWorldAdminCommand implements AdminCommand {
     } catch (IOException e) {
       final String message = "Config could not be saved!";
       this.plugin.getLogger().severe(message);
-      sender.sendMessage("§4" + message);
+      sender.sendMessage("§w4" + message);
       e.printStackTrace();
     }
     sender.sendMessage(new Message(this.messageConfig.getDelete()).replace());
@@ -243,7 +259,7 @@ public class FarmingWorldAdminCommand implements AdminCommand {
   }
 
   private boolean resetConfirmed(CommandSender sender, FarmingWorld farmingWorld) {
-    ((FarmingWorldConfig) farmingWorld).setActiv(false);
+    farmingWorld.setActiv(false);
     if (!farmingWorld.hasNext()) {
       final World world = this.api.generateFarmingWorld(farmingWorld);
       farmingWorld.setNextWorld(world);
@@ -262,7 +278,33 @@ public class FarmingWorldAdminCommand implements AdminCommand {
       e.printStackTrace();
     }
     sender.sendMessage(new Message(this.messageConfig.getReset()).replace());
-    ((FarmingWorldConfig) farmingWorld).setActiv(true);
+    farmingWorld.setActiv(true);
+    return true;
+  }
+
+  private boolean enable(CommandSender sender, String[] args) throws FarmingWorldException {
+    checkPermission(sender, "activ");
+    final FarmingWorldConfig world = (FarmingWorldConfig) getFarmingWorld(args, (byte) 1, "enable <farmingworld>");
+    if (world.isActiv())
+      throw new FarmingWorldException(new Message(this.messageConfig.getAlreadyEnabled()).replace());
+    world.setActiv(true);
+    new FarmingWorldLoader(this.plugin.getLogger(), this.api, this.plugin).enable(world);
+    sender.sendMessage(new Message(this.messageConfig.getEnabled()).replace());
+
+    try {
+      this.plugin.getPluginConfig().save(this.plugin);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    return true;
+  }
+
+  private boolean disableConfirmed(CommandSender sender, FarmingWorld farmingWorld) throws FarmingWorldException {
+    if (!farmingWorld.isActiv())
+      throw new FarmingWorldException(new Message(this.messageConfig.getAlreadyDisabled()).replace());
+    ((FarmingWorldConfig) farmingWorld).disable();
+    sender.sendMessage(new Message(this.messageConfig.getDisabled()).replace());
     return true;
   }
 }

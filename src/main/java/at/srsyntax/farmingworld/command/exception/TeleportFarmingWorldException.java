@@ -1,12 +1,7 @@
-package at.srsyntax.farmingworld.database;
+package at.srsyntax.farmingworld.command.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import at.srsyntax.farmingworld.api.message.Message;
+import at.srsyntax.farmingworld.config.MessageConfig;
 
 /*
  * MIT License
@@ -31,28 +26,16 @@ import java.sql.SQLException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter @Setter
-public class FarmingWorldData {
+public class TeleportFarmingWorldException extends FarmingWorldException {
 
-  private long created;
-  private String currentWorldName, nextWorldName;
+    public TeleportFarmingWorldException(String message) {
+        super(message);
+    }
 
-  public FarmingWorldData(ResultSet resultSet) throws SQLException {
-    this(
-        resultSet.getLong("created"),
-        resultSet.getString("current_world"),
-        resultSet.getString("next_world")
-    );
-  }
+    public TeleportFarmingWorldException() {
+    }
 
-  @Override
-  public String toString() {
-    return "FarmingWorldData{" +
-        "created=" + created +
-        ", currentWorldName='" + currentWorldName + '\'' +
-        ", nextWorldName='" + nextWorldName + '\'' +
-        '}';
-  }
+    public TeleportFarmingWorldException(MessageConfig config) {
+        super(new Message(config.getIsDisabled()).replace());
+    }
 }

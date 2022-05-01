@@ -1,5 +1,6 @@
 package at.srsyntax.farmingworld.api;
 
+import at.srsyntax.farmingworld.command.exception.TeleportFarmingWorldException;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -44,10 +45,11 @@ public interface API {
   void deleteFarmingWorld(@NotNull FarmingWorld farmingWorld, @NotNull World world);
   void deleteFarmingWorld(@NotNull FarmingWorld farmingWorld);
   @Nullable World getFallbackWorld() throws IOException;
+  void unloadWorlds(FarmingWorld farmingWorld);
 
   @NotNull String getRemainingTime(long time);
 
-  void randomTeleport(Player player, FarmingWorld farmingWorld);
+  void randomTeleport(Player player, FarmingWorld farmingWorld) throws TeleportFarmingWorldException;
 
   String getDate(long date);
   String getDate();
