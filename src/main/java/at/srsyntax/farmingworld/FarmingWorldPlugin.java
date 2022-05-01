@@ -7,13 +7,15 @@ import at.srsyntax.farmingworld.command.*;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import at.srsyntax.farmingworld.config.PluginConfig;
+import at.srsyntax.farmingworld.database.Database;
+import at.srsyntax.farmingworld.database.SQLiteDatabase;
 import at.srsyntax.farmingworld.listener.ActionBarListeners;
 import at.srsyntax.farmingworld.listener.BossBarListeners;
 import at.srsyntax.farmingworld.listener.ConfirmListener;
 import at.srsyntax.farmingworld.runnable.RunnableManager;
 import at.srsyntax.farmingworld.util.FarmingWorldLoader;
 import at.srsyntax.farmingworld.util.ConfirmData;
-import at.srsyntax.farmingworld.util.VersionCheck;
+import at.srsyntax.farmingworld.util.version.VersionCheck;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -57,6 +59,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
   @Getter private static API api;
 
   @Getter private PluginConfig pluginConfig;
+  @Getter private Database database;
   @Getter private final Map<CommandSender, ConfirmData> needConfirm = new ConcurrentHashMap<>();
   private RunnableManager runnableManager;
 
@@ -69,6 +72,8 @@ public class FarmingWorldPlugin extends JavaPlugin {
   public void onEnable() {
     try {
       pluginConfig = loadConfig();
+      this.database = new SQLiteDatabase(this);
+      this.database.connect();
       api = new APIImpl(this);
       new Metrics(this, BSTATS_ID);
       loadFarmingWorlds();
@@ -86,6 +91,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
   @Override
   public void onDisable() {
     this.runnableManager.purge();
+    this.database.disconnect();
   }
 
   private void registerCommands(MessageConfig messageConfig) {
@@ -153,6 +159,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
     return PluginConfig.load(
         this,
         new PluginConfig(
+            getDescription().getVersion(),
             "world",
             DisplayPosition.BOSS_BAR,
             DisplayType.REMAINING,

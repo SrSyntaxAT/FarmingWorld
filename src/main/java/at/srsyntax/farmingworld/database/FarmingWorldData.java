@@ -1,15 +1,12 @@
-package at.srsyntax.farmingworld.config;
+package at.srsyntax.farmingworld.database;
 
-import at.srsyntax.farmingworld.api.DisplayPosition;
-import at.srsyntax.farmingworld.api.DisplayType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.bukkit.Material;
-import org.bukkit.boss.BarColor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /*
  * MIT License
@@ -34,23 +31,19 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
-public class PluginConfig extends ConfigLoader {
+public class FarmingWorldData {
 
-  private String version;
-  private final String fallbackWorld;
+  private long created;
+  private String currentWorldName, nextWorldName;
 
-  private final DisplayPosition displayPosition;
-  private final DisplayType displayType;
-  private final int dateRefresh;
-  private final List<Material> spawnBlockBlacklist;
-
-  private final BarColor barColor;
-
-  private final String defaultFarmingWorld;
-  private final ArrayList<FarmingWorldConfig> farmingWorlds;
-
-  private final MessageConfig message;
-
+  public FarmingWorldData(ResultSet resultSet) throws SQLException {
+    this(
+        resultSet.getLong("created"),
+        resultSet.getString("current_world"),
+        resultSet.getString("next_world")
+    );
+  }
 }

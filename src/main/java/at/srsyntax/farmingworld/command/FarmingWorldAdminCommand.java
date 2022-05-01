@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
@@ -210,6 +211,11 @@ public class FarmingWorldAdminCommand implements AdminCommand {
     deleteFarmingWorld(farmingWorld.getNextWorld(), farmingWorld);
 
     this.plugin.getPluginConfig().getFarmingWorlds().remove(farmingWorld);
+    try {
+      this.plugin.getDatabase().deleteFarmingWorld(farmingWorld);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
 
     try {
       this.plugin.getPluginConfig().save(this.plugin);

@@ -6,6 +6,7 @@ import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.api.DisplayPosition;
 import at.srsyntax.farmingworld.api.event.ReplacedFarmingWorldEvent;
+import at.srsyntax.farmingworld.database.FarmingWorldData;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,7 +21,7 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
+import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -54,8 +55,9 @@ public class FarmingWorldConfig implements FarmingWorld {
   private transient FarmingWorldPlugin plugin;
   @Setter private transient boolean activ = true;
 
-  private String name, permission, currentWorldName, nextWorldName, generator;
-  private long created;
+  @Setter private transient FarmingWorldData data;
+
+  private String name, permission, generator;
   private int timer, rtpArenaSize;
   private double borderSize;
   private World.Environment environment;
@@ -63,9 +65,7 @@ public class FarmingWorldConfig implements FarmingWorld {
   public FarmingWorldConfig(String name, String permission, String currentWorldName, String nextWorldName, long created, int timer, World.Environment environment, int rtpArenaSize, double borderSize, String generator) {
     this.name = name;
     this.permission = permission;
-    this.currentWorldName = currentWorldName;
-    this.nextWorldName = nextWorldName;
-    this.created = created;
+    this.data = new FarmingWorldData(created, currentWorldName, nextWorldName);
     this.timer = timer;
     this.environment = environment;
     this.rtpArenaSize = rtpArenaSize;
@@ -74,8 +74,13 @@ public class FarmingWorldConfig implements FarmingWorld {
   }
 
   @Override
+  public long getCreated() {
+    return data.getCreated();
+  }
+
+  @Override
   public long getReset() {
-    return created + TimeUnit.MINUTES.toMillis(timer);
+    return getCreated() + TimeUnit.MINUTES.toMillis(timer);
   }
 
   @Override
@@ -153,17 +158,17 @@ public class FarmingWorldConfig implements FarmingWorld {
 
   @Override
   public World getWorld() {
-    if (currentWorldName == null)
+    if (this.data.getCurrentWorldName() == null)
       return null;
-    return Bukkit.getWorld(currentWorldName);
+    return Bukkit.getWorld(this.data.getCurrentWorldName());
   }
 
   @Override
   public void newWorld(@NotNull World world) {
     final World old = getWorld();
 
-    this.currentWorldName = world.getName();
-    this.created = System.currentTimeMillis();
+    this.data.setCurrentWorldName(world.getName());
+    this.data.setCreated(System.currentTimeMillis());
 
     if (old != null)
       old.getPlayers().forEach(this::teleport);
@@ -174,20 +179,33 @@ public class FarmingWorldConfig implements FarmingWorld {
     if (old != null)
       FarmingWorldPlugin.getApi().deleteFarmingWorld(this, old);
 
-    save();
+    try {
+      this.plugin.getDatabase().updateWorld(this);
+    } catch (SQLException e) {
+      handleSaveError(e);
+    }
   }
 
   @Override
   public void setNextWorld(World world) {
-    this.nextWorldName = world == null ? null : world.getName();
-    save();
+    this.data.setNextWorldName(world == null ? null : world.getName());
+    try {
+      this.plugin.getDatabase().updateNextWorld(this);
+    } catch (SQLException e) {
+      handleSaveError(e);
+    }
+  }
+
+  private void handleSaveError(SQLException exception) {
+    this.plugin.getLogger().severe(getName() + " could not be saved!");
+    exception.printStackTrace();
   }
 
   @Override
   public @Nullable World getNextWorld() {
-    if (nextWorldName == null)
+    if (this.data.getNextWorldName() == null)
       return null;
-    return Bukkit.getWorld(nextWorldName);
+    return Bukkit.getWorld(this.data.getNextWorldName());
   }
 
   @Override
@@ -198,14 +216,6 @@ public class FarmingWorldConfig implements FarmingWorld {
   @Override
   public void teleport(@NotNull Player player) {
     Bukkit.getScheduler().runTask(plugin, () -> FarmingWorldPlugin.getApi().randomTeleport(player, this));
-  }
-
-  private void save() {
-    try {
-      plugin.getPluginConfig().save(plugin);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
   }
 
   public void setPlugin(FarmingWorldPlugin plugin) {

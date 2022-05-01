@@ -1,15 +1,9 @@
-package at.srsyntax.farmingworld.config;
+package at.srsyntax.farmingworld.util.version;
 
-import at.srsyntax.farmingworld.api.DisplayPosition;
-import at.srsyntax.farmingworld.api.DisplayType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import org.bukkit.Material;
-import org.bukkit.boss.BarColor;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 
 /*
  * MIT License
@@ -34,23 +28,23 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-@Getter @Setter
-public class PluginConfig extends ConfigLoader {
+public record VersionCheck(String currentVersion, int ressouceId) {
 
-  private String version;
-  private final String fallbackWorld;
+  public boolean check() throws IOException {
+    InputStreamReader inputStreamReader = null;
+    BufferedReader bufferedReader = null;
 
-  private final DisplayPosition displayPosition;
-  private final DisplayType displayType;
-  private final int dateRefresh;
-  private final List<Material> spawnBlockBlacklist;
+    try {
+      final URL url = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.ressouceId);
 
-  private final BarColor barColor;
+      inputStreamReader = new InputStreamReader(url.openConnection().getInputStream());
+      bufferedReader = new BufferedReader(inputStreamReader);
 
-  private final String defaultFarmingWorld;
-  private final ArrayList<FarmingWorldConfig> farmingWorlds;
-
-  private final MessageConfig message;
+      return bufferedReader.readLine().equalsIgnoreCase(this.currentVersion);
+    } finally {
+      if (inputStreamReader != null) inputStreamReader.close();
+      if (bufferedReader != null) bufferedReader.close();
+    }
+  }
 
 }

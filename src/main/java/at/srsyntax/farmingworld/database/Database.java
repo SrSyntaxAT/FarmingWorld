@@ -1,9 +1,9 @@
-package at.srsyntax.farmingworld.util;
+package at.srsyntax.farmingworld.database;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
+import at.srsyntax.farmingworld.api.FarmingWorld;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.sql.SQLException;
 
 /*
  * MIT License
@@ -28,23 +28,17 @@ import java.net.URL;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public record VersionCheck(String currentVersion, int ressouceId) {
+public interface Database {
 
-  public boolean check() throws IOException {
-    InputStreamReader inputStreamReader = null;
-    BufferedReader bufferedReader = null;
+  void connect() throws SQLException;
+  void disconnect();
+  boolean isConnected() throws SQLException;
 
-    try {
-      final URL url = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.ressouceId);
-
-      inputStreamReader = new InputStreamReader(url.openConnection().getInputStream());
-      bufferedReader = new BufferedReader(inputStreamReader);
-
-      return bufferedReader.readLine().equalsIgnoreCase(this.currentVersion);
-    } finally {
-      if (inputStreamReader != null) inputStreamReader.close();
-      if (bufferedReader != null) bufferedReader.close();
-    }
-  }
+  boolean exists(FarmingWorld farmingWorld) throws SQLException;
+  void deleteFarmingWorld(FarmingWorld farmingWorld) throws SQLException;
+  void createFarmingWorld(FarmingWorld farmingWorld) throws SQLException;
+  void updateNextWorld(FarmingWorld farmingWorld) throws SQLException;
+  void updateWorld(FarmingWorld farmingWorld) throws SQLException;
+  FarmingWorldData getData(String name) throws SQLException;
 
 }

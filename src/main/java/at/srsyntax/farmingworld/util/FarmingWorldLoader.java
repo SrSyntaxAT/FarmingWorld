@@ -4,8 +4,11 @@ import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
+import at.srsyntax.farmingworld.database.Database;
+import at.srsyntax.farmingworld.database.FarmingWorldData;
 import lombok.AllArgsConstructor;
 
+import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -41,9 +44,29 @@ public class FarmingWorldLoader {
 
   public void load(FarmingWorldConfig farmingWorld) {
     farmingWorld.setPlugin(plugin);
+    setDatabaseData(farmingWorld);
     checkBorder(farmingWorld);
     checkCurrentWorld(farmingWorld);
     checkNextWorld(farmingWorld);
+  }
+
+  private boolean checkDatabase(FarmingWorldConfig farmingWorld) throws SQLException {
+    final Database database = plugin.getDatabase();
+    if (database.exists(farmingWorld)) return false;
+    if (farmingWorld.getData() == null)
+      farmingWorld.setData(new FarmingWorldData(0L, null, null));
+    database.createFarmingWorld(farmingWorld);
+    return true;
+  }
+
+  private void setDatabaseData(FarmingWorldConfig farmingWorld) {
+    try {
+      if (!checkDatabase(farmingWorld)) return;
+      farmingWorld.setData(plugin.getDatabase().getData(farmingWorld.getName()));
+    } catch (SQLException e) {
+      logger.severe("Data could not be read from the database!");
+      e.printStackTrace();
+    }
   }
 
   private void checkBorder(FarmingWorld farmingWorld) {
@@ -57,21 +80,21 @@ public class FarmingWorldLoader {
   }
 
   private void checkCurrentWorld(FarmingWorldConfig farmingWorld) {
-    if (farmingWorld.getCurrentWorldName() == null) {
+    if (farmingWorld.getData().getCurrentWorldName() == null) {
       farmingWorld.newWorld(api.generateFarmingWorld(farmingWorld));
     } else {
-      api.loadFarmingWorld(farmingWorld.getCurrentWorldName(), farmingWorld.getEnvironment());
+      api.loadFarmingWorld(farmingWorld.getData().getCurrentWorldName(), farmingWorld.getEnvironment());
     }
   }
 
   private void checkNextWorld(FarmingWorldConfig farmingWorld) {
-    if (farmingWorld.getNextWorldName() == null) {
+    if (farmingWorld.getData().getNextWorldName() == null) {
       final long remaining = farmingWorld.getReset() - System.currentTimeMillis();
       if (farmingWorld.needReset() || (remaining <= TimeUnit.MINUTES.toMillis(5) && remaining > 0)) {
         farmingWorld.setNextWorld(api.generateFarmingWorld(farmingWorld));
       }
     } else {
-      api.loadFarmingWorld(farmingWorld.getNextWorldName(), farmingWorld.getEnvironment());
+      api.loadFarmingWorld(farmingWorld.getData().getNextWorldName(), farmingWorld.getEnvironment());
     }
   }
 }

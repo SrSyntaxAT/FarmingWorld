@@ -1,5 +1,6 @@
 package at.srsyntax.farmingworld.config;
 
+import at.srsyntax.farmingworld.util.version.ConfigUpdater;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.bukkit.plugin.Plugin;
@@ -43,8 +44,13 @@ public class ConfigLoader {
       plugin.getDataFolder().mkdirs();
 
     final File file = new File(plugin.getDataFolder(), CONFIG_FILE_NAME);
-    if (file.exists())
-      return new Gson().fromJson(new FileReader(file), PluginConfig.class);
+    if (file.exists()) {
+      final PluginConfig config = new Gson().fromJson(new FileReader(file), PluginConfig.class);
+      final ConfigUpdater updater = new ConfigUpdater(file);
+      if (!updater.checkVersion(plugin.getDescription()))
+        updater.updateConfig(config, plugin);
+      return config;
+    }
 
     defaultConfig.save(plugin);
     return defaultConfig;
