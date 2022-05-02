@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -90,6 +91,11 @@ public final class APIImpl implements API {
 
       Bukkit.unloadWorld(world, false);
 
+      try {
+        this.plugin.getDatabase().deleteFarmingWorld(farmingWorld);
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
       Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> deleteFolder(world.getWorldFolder()), 60L);
     });
   }
@@ -105,6 +111,11 @@ public final class APIImpl implements API {
 
   @Override
   public void unloadWorlds(FarmingWorld farmingWorld) {
+    try {
+      farmingWorld.kickAll();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     unloadWorld(farmingWorld.getWorld());
     unloadWorld(farmingWorld.getNextWorld());
   }

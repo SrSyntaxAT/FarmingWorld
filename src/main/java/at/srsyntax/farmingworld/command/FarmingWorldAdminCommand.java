@@ -17,6 +17,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -75,6 +76,9 @@ public class FarmingWorldAdminCommand implements AdminCommand {
       };
     } catch (FarmingWorldException exception) {
       sender.sendMessage(exception.getMessage());
+    } catch (Exception exception) {
+      sender.sendMessage(exception.getMessage());
+      exception.printStackTrace();
     }
     return false;
   }
@@ -98,7 +102,7 @@ public class FarmingWorldAdminCommand implements AdminCommand {
     if (hasPermission(sender, "reload"))
       builder.addLine("§8/&ffwa reload &8-&7 Reload the plugin");
     if (hasPermission(sender, "info"))
-      builder.addLine("§8/&ffwa info <farmingworld> &8- &7Show current information of the farmworld");
+      builder.addLine("§8/&ffwa info <farmingworld> &8- &7Show current information");
     if (hasPermission(sender, "delete"))
       builder.addLine("§8/&ffwa delete <farmingworld> &8- &7Reset a farmworld");
     if (hasPermission(sender, "reset"))
@@ -201,7 +205,7 @@ public class FarmingWorldAdminCommand implements AdminCommand {
     return farmingWorld;
   }
 
-  private boolean confirm(CommandSender sender) throws FarmingWorldException {
+  private boolean confirm(CommandSender sender) throws FarmingWorldException, IOException {
     final ConfirmData data = this.plugin.getNeedConfirm().remove(sender);
     if (data == null) throw new NothingToConfirmException(this.messageConfig);
     if (data.isExpired()) throw new ConfirmExpiredException(this.messageConfig);
@@ -300,11 +304,18 @@ public class FarmingWorldAdminCommand implements AdminCommand {
     return true;
   }
 
-  private boolean disableConfirmed(CommandSender sender, FarmingWorld farmingWorld) throws FarmingWorldException {
+  private boolean disableConfirmed(CommandSender sender, FarmingWorld farmingWorld) throws FarmingWorldException, IOException {
     if (!farmingWorld.isActiv())
       throw new FarmingWorldException(new Message(this.messageConfig.getAlreadyDisabled()).replace());
+
+    final String message = new Message(this.messageConfig.getDisabled()).replace();
+    final boolean needMessage = !(sender instanceof Player) || !farmingWorld.isFarming((Player) sender);
+
+    farmingWorld.kickAll(message);
     ((FarmingWorldConfig) farmingWorld).disable();
-    sender.sendMessage(new Message(this.messageConfig.getDisabled()).replace());
+
+    if (needMessage)
+      sender.sendMessage(message);
     return true;
   }
 }

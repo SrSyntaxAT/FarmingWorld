@@ -14,6 +14,7 @@ import lombok.Setter;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -239,6 +240,34 @@ public class FarmingWorldConfig implements FarmingWorld {
     } catch (TeleportFarmingWorldException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  @Override
+  public void kickAll() throws IOException {
+    kickAll(null);
+  }
+
+  @Override
+  public void kickAll(String reason) throws IOException {
+    final API api = FarmingWorldPlugin.getApi();
+    final World world = getWorld(), fallbackWorld = api.getFallbackWorld();
+
+    if (world == null || fallbackWorld == null) return;
+    final Location location = fallbackWorld.getSpawnLocation();
+
+    Bukkit.getScheduler().runTask(this.plugin, () -> world.getPlayers().forEach(player -> {
+      if (reason != null)
+        player.sendMessage(reason);
+      player.teleport(location);
+    }));
+  }
+
+  @Override
+  public boolean isFarming(@NotNull Player player) {
+    final World world = getWorld();
+    if (world != null)
+      return world.getPlayers().contains(player);
+    return false;
   }
 
   public void setPlugin(FarmingWorldPlugin plugin) {

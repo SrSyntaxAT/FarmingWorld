@@ -6,6 +6,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+
 /*
  * MIT License
  *
@@ -56,5 +58,9 @@ public interface FarmingWorld {
     boolean hasNext();
 
     void teleport(@NotNull Player player) throws TeleportFarmingWorldException;
+    void kickAll() throws IOException;
+    void kickAll(String reason) throws IOException;
+
+    boolean isFarming(@NotNull Player player);
 
 }
