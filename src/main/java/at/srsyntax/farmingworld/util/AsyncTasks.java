@@ -1,4 +1,7 @@
-package at.srsyntax.farmingworld.api;
+package at.srsyntax.farmingworld.util;
+
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
 /*
  * MIT License
@@ -23,6 +26,11 @@ package at.srsyntax.farmingworld.api;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public enum DisplayPosition {
-  BOSS_BAR, ACTION_BAR, NOT
+public interface AsyncTasks {
+
+  default void async(Runnable runnable) {
+    Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), runnable);
+  }
+
+  Plugin getPlugin();
 }

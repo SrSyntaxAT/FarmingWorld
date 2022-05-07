@@ -4,9 +4,8 @@ import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.event.DeleteFarmingWorldEvent;
 import at.srsyntax.farmingworld.api.event.GenerateNewFarmingWorldEvent;
-import at.srsyntax.farmingworld.command.exception.TeleportFarmingWorldException;
+import at.srsyntax.farmingworld.api.exception.TeleportFarmingWorldException;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
-import at.srsyntax.farmingworld.util.LocationRandomizer;
 import lombok.AllArgsConstructor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -136,7 +135,7 @@ public final class APIImpl implements API {
     deleteFarmingWorld(farmingWorld, farmingWorld.getWorld());
   }
 
-  private boolean deleteFolder(File folder) {
+  public boolean deleteFolder(File folder) {
     if(folder.exists()) {
       final File[] files = folder.listFiles();
 
@@ -260,7 +259,7 @@ public final class APIImpl implements API {
   @Override
   public void randomTeleport(Player player, FarmingWorld farmingWorld) throws TeleportFarmingWorldException {
     if (!farmingWorld.isActiv()) throw new TeleportFarmingWorldException(this.plugin.getPluginConfig().getMessage());
-    player.teleport(new LocationRandomizer(this.plugin.getPluginConfig().getSpawnBlockBlacklist(), farmingWorld).random());
+    player.teleport(farmingWorld.randomLocation());
   }
 
   public String getDate(long date) {

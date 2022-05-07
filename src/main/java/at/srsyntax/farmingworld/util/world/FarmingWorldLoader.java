@@ -1,4 +1,4 @@
-package at.srsyntax.farmingworld.util;
+package at.srsyntax.farmingworld.util.world;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.API;
@@ -6,9 +6,11 @@ import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.database.FarmingWorldData;
+import at.srsyntax.farmingworld.util.location.LocationCache;
 import lombok.AllArgsConstructor;
 
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -41,22 +43,28 @@ public class FarmingWorldLoader {
   private final Logger logger;
   private final API api;
   private final FarmingWorldPlugin plugin;
+  private final Database database;
 
   public void load(FarmingWorldConfig farmingWorld) {
+    logger.info("Load " + farmingWorld.getName() + "...");
     farmingWorld.setPlugin(plugin);
     setDatabaseData(farmingWorld);
-    if (farmingWorld.isActiv())
-      enable(farmingWorld);
+    if (!farmingWorld.isActiv()) {
+      logger.info(farmingWorld.getName() + " is not activ!");
+      return;
+    }
+    enable(farmingWorld);
   }
 
   public void enable(FarmingWorldConfig farmingWorld) {
+    logger.info("Enable " + farmingWorld.getName());
     checkBorder(farmingWorld);
     checkCurrentWorld(farmingWorld);
     checkNextWorld(farmingWorld);
+    farmingWorld.async(() -> checkLocations(farmingWorld.getData()));
   }
 
   private boolean checkDatabase(FarmingWorldConfig farmingWorld) throws SQLException {
-    final Database database = plugin.getDatabase();
     if (database.exists(farmingWorld)) return true;
     if (farmingWorld.getData() == null)
       farmingWorld.setData(new FarmingWorldData(0L, null, null));
@@ -66,12 +74,42 @@ public class FarmingWorldLoader {
 
   private void setDatabaseData(FarmingWorldConfig farmingWorld) {
     try {
-      if (!checkDatabase(farmingWorld)) return;
-      farmingWorld.setData(plugin.getDatabase().getData(farmingWorld.getName()));
+      if (checkDatabase(farmingWorld)) {
+        farmingWorld.setData(plugin.getDatabase().getData(farmingWorld.getName()));
+      }
+      farmingWorld.getData().setFarmingWorld(farmingWorld);
     } catch (SQLException e) {
-      logger.severe("Data could not be read from the database!");
-      e.printStackTrace();
+      databaseError(e);
     }
+  }
+
+  private void checkLocations(FarmingWorldData data) {
+    try {
+      if (data == null) return;
+      data.getLocationCache().putAll(database.getLocations(data.getFarmingWorld()));
+
+      if (data.getLocationCache().size() < 3)
+        generateMoreRtpLocations(data.getFarmingWorld().getName(), data);
+
+      data.loadChunks();
+    } catch (SQLException e) {
+      databaseError(e);
+    }
+  }
+
+  private void databaseError(Exception exception) {
+    logger.severe("Data could not be read from the database!");
+    exception.printStackTrace();
+  }
+
+  private void generateMoreRtpLocations(String name, FarmingWorldData data) {
+    logger.warning( name + " has too few rtp locations. (" + data.getLocationCache().size() + ")");
+    logger.warning("New ones are generated...");
+
+    for (byte need = (byte) (3 - data.getLocationCache().size()); need != 0; need--)
+      data.getLocationCache().putAll(data.generateLocation());
+
+    data.saveAllLocations();
   }
 
   private void checkBorder(FarmingWorld farmingWorld) {

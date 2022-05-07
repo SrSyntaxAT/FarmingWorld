@@ -1,6 +1,6 @@
-package at.srsyntax.farmingworld.command.exception;
+package at.srsyntax.farmingworld.api.display;
 
-import at.srsyntax.farmingworld.config.MessageConfig;
+import org.bukkit.entity.Player;
 
 /*
  * MIT License
@@ -25,18 +25,9 @@ import at.srsyntax.farmingworld.config.MessageConfig;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class FarmingWorldException extends Exception {
+public interface Displayable {
 
-  protected MessageConfig config;
+  void updateDisplay();
+  void updateDisplay(Player player);
 
-  public FarmingWorldException(String message) {
-    super(message);
-  }
-
-  public FarmingWorldException() {
-  }
-
-  public FarmingWorldException(MessageConfig config) {
-    this.config = config;
-  }
 }

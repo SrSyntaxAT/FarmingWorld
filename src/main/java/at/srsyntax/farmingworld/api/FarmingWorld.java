@@ -1,7 +1,8 @@
 package at.srsyntax.farmingworld.api;
 
-import at.srsyntax.farmingworld.command.exception.TeleportFarmingWorldException;
-import org.bukkit.World;
+import at.srsyntax.farmingworld.api.display.Displayable;
+import at.srsyntax.farmingworld.api.exception.TeleportFarmingWorldException;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +32,7 @@ import java.io.IOException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface FarmingWorld {
+public interface FarmingWorld extends Displayable, WorldManager {
 
     @NotNull String getName();
     @Nullable String getPermission();
@@ -45,22 +46,20 @@ public interface FarmingWorld {
     double getBorderSize();
     String getGenerator();
 
+    Location randomLocation();
+
     void setActiv(boolean activ);
     boolean isActiv();
-
-    void updateDisplay();
-    void updateDisplay(Player player);
-
-    @Nullable World getWorld();
-    void newWorld(@NotNull World world);
-    void setNextWorld(@Nullable World world);
-    @Nullable World getNextWorld();
-    boolean hasNext();
+    void disable();
+    void enable();
+    void delete();
 
     void teleport(@NotNull Player player) throws TeleportFarmingWorldException;
     void kickAll() throws IOException;
-    void kickAll(String reason) throws IOException;
+    void kickAll(@Nullable String reason) throws IOException;
 
     boolean isFarming(@NotNull Player player);
+
+    void save();
 
 }

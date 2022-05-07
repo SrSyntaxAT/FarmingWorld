@@ -1,7 +1,5 @@
-package at.srsyntax.farmingworld.command.exception;
+package at.srsyntax.farmingworld.api.exception;
 
-import at.srsyntax.farmingworld.api.exception.FarmingWorldException;
-import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.config.MessageConfig;
 
 /*
@@ -27,15 +25,18 @@ import at.srsyntax.farmingworld.config.MessageConfig;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class NothingToConfirmException extends FarmingWorldException {
-  public NothingToConfirmException(String message) {
+public class FarmingWorldException extends Exception {
+
+  protected MessageConfig config;
+
+  public FarmingWorldException(String message) {
     super(message);
   }
 
-  public NothingToConfirmException() {
+  public FarmingWorldException() {
   }
 
-  public NothingToConfirmException(MessageConfig config) {
-    super(new Message(config.getNothingToConfirm()).replace());
+  public FarmingWorldException(MessageConfig config) {
+    this.config = config;
   }
 }

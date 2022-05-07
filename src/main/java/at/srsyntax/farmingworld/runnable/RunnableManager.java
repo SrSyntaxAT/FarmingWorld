@@ -2,7 +2,7 @@ package at.srsyntax.farmingworld.runnable;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.API;
-import at.srsyntax.farmingworld.api.DisplayType;
+import at.srsyntax.farmingworld.api.display.DisplayType;
 import at.srsyntax.farmingworld.runnable.date.DateCheckRunnable;
 import at.srsyntax.farmingworld.runnable.date.DateDisplayRunnable;
 import at.srsyntax.farmingworld.runnable.date.DateRunnable;

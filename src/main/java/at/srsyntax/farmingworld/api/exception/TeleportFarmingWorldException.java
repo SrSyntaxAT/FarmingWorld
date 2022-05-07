@@ -1,6 +1,5 @@
-package at.srsyntax.farmingworld.command.exception;
+package at.srsyntax.farmingworld.api.exception;
 
-import at.srsyntax.farmingworld.api.exception.FarmingWorldException;
 import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.config.MessageConfig;
 
@@ -27,15 +26,16 @@ import at.srsyntax.farmingworld.config.MessageConfig;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class NothingToConfirmException extends FarmingWorldException {
-  public NothingToConfirmException(String message) {
-    super(message);
-  }
+public class TeleportFarmingWorldException extends FarmingWorldException {
 
-  public NothingToConfirmException() {
-  }
+    public TeleportFarmingWorldException(String message) {
+        super(message);
+    }
 
-  public NothingToConfirmException(MessageConfig config) {
-    super(new Message(config.getNothingToConfirm()).replace());
-  }
+    public TeleportFarmingWorldException() {
+    }
+
+    public TeleportFarmingWorldException(MessageConfig config) {
+        super(new Message(config.getIsDisabled()).replace());
+    }
 }

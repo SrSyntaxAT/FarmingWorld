@@ -1,9 +1,10 @@
 package at.srsyntax.farmingworld.database;
 
 import at.srsyntax.farmingworld.api.FarmingWorld;
-import org.bukkit.plugin.java.JavaPlugin;
+import at.srsyntax.farmingworld.util.location.LocationCache;
 
 import java.sql.SQLException;
+import java.util.Map;
 
 /*
  * MIT License
@@ -40,5 +41,10 @@ public interface Database {
   void updateNextWorld(FarmingWorld farmingWorld) throws SQLException;
   void updateWorld(FarmingWorld farmingWorld) throws SQLException;
   FarmingWorldData getData(String name) throws SQLException;
+
+  Map<String, LocationCache> getLocations(FarmingWorld farmingWorld) throws SQLException;
+  void removeLocation(String id) throws SQLException;
+  void removeLocations(FarmingWorld farmingWorld) throws SQLException;
+  void addLocation(FarmingWorld farmingWorld, String id, LocationCache locationCache) throws SQLException;
 
 }

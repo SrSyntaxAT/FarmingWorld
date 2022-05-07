@@ -1,6 +1,6 @@
 package at.srsyntax.farmingworld.api;
 
-import at.srsyntax.farmingworld.command.exception.TeleportFarmingWorldException;
+import at.srsyntax.farmingworld.api.exception.TeleportFarmingWorldException;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

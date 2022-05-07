@@ -3,17 +3,15 @@ package at.srsyntax.farmingworld.command;
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;
+import at.srsyntax.farmingworld.api.exception.FarmingWorldException;
 import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.api.message.MessageBuilder;
 import at.srsyntax.farmingworld.command.completer.FWATabCompleter;
 import at.srsyntax.farmingworld.command.exception.*;
-import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import at.srsyntax.farmingworld.util.ConfirmAction;
 import at.srsyntax.farmingworld.util.ConfirmData;
-import at.srsyntax.farmingworld.util.FarmingWorldLoader;
 import lombok.AllArgsConstructor;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -22,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
@@ -225,42 +222,11 @@ public class FarmingWorldAdminCommand implements AdminCommand {
 
   private boolean deleteConfirmed(CommandSender sender, FarmingWorld farmingWorld) throws FarmingWorldException {
     if (farmingWorld == null) throw new FarmingWorldNotFoundException(this.messageConfig);
-    farmingWorld.setActiv(false);
-
-    deleteFarmingWorld(farmingWorld.getWorld(), farmingWorld);
-    deleteFarmingWorld(farmingWorld.getNextWorld(), farmingWorld);
-
-    this.plugin.getPluginConfig().getFarmingWorlds().remove(farmingWorld);
-    try {
-      this.plugin.getDatabase().deleteFarmingWorld(farmingWorld);
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-
-    try {
-      this.plugin.getPluginConfig().save(this.plugin);
-    } catch (IOException e) {
-      final String message = "Config could not be saved!";
-      this.plugin.getLogger().severe(message);
-      sender.sendMessage("§w4" + message);
-      e.printStackTrace();
-    }
+    farmingWorld.delete();
     sender.sendMessage(new Message(this.messageConfig.getDelete()).replace());
     return true;
   }
 
-  private void deleteFarmingWorld(World world, FarmingWorld farmingWorld) {
-    if (world == null) return;
-    if (!world.getPlayers().isEmpty()) {
-      try {
-        final Location fallback = this.api.getFallbackWorld().getSpawnLocation();
-        world.getPlayers().forEach(player -> player.teleport(fallback));
-      } catch (Exception exception) {
-        exception.printStackTrace();
-      }
-    }
-    this.api.deleteFarmingWorld(farmingWorld, world);
-  }
 
   private boolean resetConfirmed(CommandSender sender, FarmingWorld farmingWorld) {
     farmingWorld.setActiv(false);
@@ -288,19 +254,11 @@ public class FarmingWorldAdminCommand implements AdminCommand {
 
   private boolean enable(CommandSender sender, String[] args) throws FarmingWorldException {
     checkPermission(sender, "activ");
-    final FarmingWorldConfig world = (FarmingWorldConfig) getFarmingWorld(args, (byte) 1, "enable <farmingworld>");
+    final FarmingWorld world = getFarmingWorld(args, (byte) 1, "enable <farmingworld>");
     if (world.isActiv())
       throw new FarmingWorldException(new Message(this.messageConfig.getAlreadyEnabled()).replace());
-    world.setActiv(true);
-    new FarmingWorldLoader(this.plugin.getLogger(), this.api, this.plugin).enable(world);
     sender.sendMessage(new Message(this.messageConfig.getEnabled()).replace());
-
-    try {
-      this.plugin.getPluginConfig().save(this.plugin);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
+    world.enable();
     return true;
   }
 
@@ -312,7 +270,7 @@ public class FarmingWorldAdminCommand implements AdminCommand {
     final boolean needMessage = !(sender instanceof Player) || !farmingWorld.isFarming((Player) sender);
 
     farmingWorld.kickAll(message);
-    ((FarmingWorldConfig) farmingWorld).disable();
+    farmingWorld.disable();
 
     if (needMessage)
       sender.sendMessage(message);

@@ -1,8 +1,8 @@
 package at.srsyntax.farmingworld;
 
 import at.srsyntax.farmingworld.api.API;
-import at.srsyntax.farmingworld.api.DisplayPosition;
-import at.srsyntax.farmingworld.api.DisplayType;
+import at.srsyntax.farmingworld.api.display.DisplayPosition;
+import at.srsyntax.farmingworld.api.display.DisplayType;
 import at.srsyntax.farmingworld.command.*;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.config.MessageConfig;
@@ -13,7 +13,7 @@ import at.srsyntax.farmingworld.listener.ActionBarListeners;
 import at.srsyntax.farmingworld.listener.BossBarListeners;
 import at.srsyntax.farmingworld.listener.ConfirmListener;
 import at.srsyntax.farmingworld.runnable.RunnableManager;
-import at.srsyntax.farmingworld.util.FarmingWorldLoader;
+import at.srsyntax.farmingworld.util.world.FarmingWorldLoader;
 import at.srsyntax.farmingworld.util.ConfirmData;
 import at.srsyntax.farmingworld.util.version.VersionCheck;
 import lombok.Getter;
@@ -110,7 +110,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
   }
 
   private void loadFarmingWorlds() {
-    final FarmingWorldLoader loader = new FarmingWorldLoader(getLogger(), api, this);
+    final FarmingWorldLoader loader = new FarmingWorldLoader(getLogger(), api, this, this.database);
     this.pluginConfig.getFarmingWorlds().forEach(loader::load);
   }
 
@@ -124,22 +124,16 @@ public class FarmingWorldPlugin extends JavaPlugin {
 
   public void addToBossBar(Player player) {
     final World world = player.getWorld();
-
-    if (api.isFarmingWorld(world)) {
-      final FarmingWorldConfig farmingWorld = (FarmingWorldConfig) api.getFarmingWorld(world);
-      farmingWorld.checkBossbar(null);
-      if (farmingWorld.getBossBar() != null)
-        farmingWorld.getBossBar().addPlayer(player);
-      farmingWorld.updateDisplay(player);
-    }
+    if (!api.isFarmingWorld(world)) return
+        ;
+    final FarmingWorldConfig farmingWorld = (FarmingWorldConfig) api.getFarmingWorld(world);
+    farmingWorld.getDisplayer().checkBossbar(null);
+    farmingWorld.updateDisplay(player);
   }
 
   public void removeFromBossBar(Player player, World world) {
-    if (api.isFarmingWorld(world)) {
-      final FarmingWorldConfig farmingWorld = (FarmingWorldConfig) api.getFarmingWorld(world);
-      if (farmingWorld.getBossBar() != null)
-        farmingWorld.getBossBar().removePlayer(player);
-    }
+    if (!api.isFarmingWorld(world)) return;
+    ((FarmingWorldConfig) api.getFarmingWorld(world)).getDisplayer().removeFromBossBar(player);
   }
 
   private PluginConfig loadConfig() throws IOException {

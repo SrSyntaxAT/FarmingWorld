@@ -1,7 +1,7 @@
 package at.srsyntax.farmingworld.config;
 
-import at.srsyntax.farmingworld.api.DisplayPosition;
-import at.srsyntax.farmingworld.api.DisplayType;
+import at.srsyntax.farmingworld.api.display.DisplayPosition;
+import at.srsyntax.farmingworld.api.display.DisplayType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

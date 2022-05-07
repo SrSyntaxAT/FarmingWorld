@@ -1,4 +1,10 @@
-package at.srsyntax.farmingworld.api;
+package at.srsyntax.farmingworld.util.location;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import lombok.AllArgsConstructor;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 
 /*
  * MIT License
@@ -23,6 +29,35 @@ package at.srsyntax.farmingworld.api;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public enum DisplayType {
-  REMAINING, DATE
+@AllArgsConstructor
+public class LocationCache {
+
+  private final String world;
+  private final double x, y, z;
+  private final float pitch, yaw;
+
+  public LocationCache(Location location) {
+    this(
+        location.getWorld().getName(),
+        location.getX(), location.getY(), location.getZ(),
+        location.getPitch(), location.getYaw()
+    );
+  }
+
+  public static LocationCache fromJson(String json) {
+    return new Gson().fromJson(json, LocationCache.class);
+  }
+
+  public Location toBukkit() {
+    return new Location(
+        Bukkit.getWorld(this.world),
+        this.x, this.y, this.z,
+        this.yaw, this.pitch
+    );
+  }
+
+  @Override
+  public String toString() {
+    return new GsonBuilder().disableHtmlEscaping().create().toJson(this);
+  }
 }
