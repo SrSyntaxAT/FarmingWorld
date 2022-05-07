@@ -8,9 +8,7 @@ import at.srsyntax.farmingworld.api.exception.FarmingWorldException;
 import at.srsyntax.farmingworld.command.exception.FarmingWorldNotFoundException;
 import at.srsyntax.farmingworld.command.exception.NoPermissionException;
 import at.srsyntax.farmingworld.config.MessageConfig;
-import lombok.AllArgsConstructor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
@@ -43,16 +41,21 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-public class FarmingCommand implements CommandExecutor, TabCompleter {
+public class FarmingCommand extends Command implements TabCompleter {
 
   private final API api;
   private final FarmingWorldPlugin plugin;
 
+  public FarmingCommand(API api, FarmingWorldPlugin plugin, List<String> aliases) {
+    super("farming", "Teleport you to a farmingworld.", "/fwa", aliases);
+    this.api = api;
+    this.plugin = plugin;
+  }
+
   @Override
-  public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+  public boolean execute(@NotNull CommandSender commandSender, @NotNull String s, @NotNull String[] strings) {
     if (!(commandSender instanceof final Player player))
-      return new TeleportFarmingWorldCommand(this.api, this.plugin).onCommand(commandSender, command, s, strings);
+      return new TeleportFarmingWorldCommand(this.api, this.plugin).onCommand(commandSender, this, s, strings);
 
     try {
       if (strings.length == 0)
@@ -134,4 +137,5 @@ public class FarmingCommand implements CommandExecutor, TabCompleter {
     api.randomTeleport(player, farmingWorld);
     return true;
   }
+
 }

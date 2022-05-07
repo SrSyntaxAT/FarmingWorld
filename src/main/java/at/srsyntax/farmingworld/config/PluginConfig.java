@@ -41,6 +41,8 @@ public class PluginConfig extends ConfigLoader {
   private String version;
   private final String fallbackWorld;
 
+  private List<String> aliases;
+
   private final DisplayPosition displayPosition;
   private final DisplayType displayType;
   private final int dateRefresh;

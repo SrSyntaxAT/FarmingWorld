@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collections;
 
 /*
  * MIT License
@@ -54,9 +55,12 @@ public class ConfigUpdater {
   public void updateConfig(PluginConfig config, Plugin plugin) throws IOException {
     config.setVersion(plugin.getDescription().getVersion());
 
+    // since 1.6
     final JsonElement element = this.object.get("farmingWorlds");
     if (element == null) return;
     element.getAsJsonArray().forEach(jsonElement -> insertData(jsonElement.getAsJsonObject(), config));
+
+    config.setAliases(Collections.singletonList("farmingworld"));
 
     config.save(plugin);
   }

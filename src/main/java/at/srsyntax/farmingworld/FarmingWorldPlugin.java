@@ -17,15 +17,18 @@ import at.srsyntax.farmingworld.util.world.FarmingWorldLoader;
 import at.srsyntax.farmingworld.util.ConfirmData;
 import at.srsyntax.farmingworld.util.version.VersionCheck;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.boss.BarColor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -95,9 +98,21 @@ public class FarmingWorldPlugin extends JavaPlugin {
   }
 
   private void registerCommands(MessageConfig messageConfig) {
-    getCommand("farming").setExecutor(new FarmingCommand(api, this));
+    registerFarmingCommand();
     getCommand("teleportfarmingworld").setExecutor(new TeleportFarmingWorldCommand(api, this));
     getCommand("farmingworldadmin").setExecutor(new FarmingWorldAdminCommand(api, this, messageConfig));
+  }
+
+  private void registerFarmingCommand() {
+    try {
+      final Field field = SimplePluginManager.class.getDeclaredField("commandMap");
+      field.setAccessible(true);
+      final SimpleCommandMap commandMap = (SimpleCommandMap) field.get(Bukkit.getPluginManager());
+      final List<String> aliases = pluginConfig.getAliases();
+      commandMap.register(getName().toLowerCase(), new FarmingCommand(api, this, aliases == null ? new ArrayList<>() : aliases));
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private void registerListeners() {
@@ -155,6 +170,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
         new PluginConfig(
             getDescription().getVersion(),
             "world",
+            Collections.singletonList("farmingworld"),
             DisplayPosition.BOSS_BAR,
             DisplayType.REMAINING,
             30*60,

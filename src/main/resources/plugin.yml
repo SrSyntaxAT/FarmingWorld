@@ -7,13 +7,6 @@ author: SrSyntaxAT
 website: https://srsyntax.at/
 
 commands:
-  farming:
-    aliases:
-      - farm
-      - farmworld
-      - farmingworld
-      - farmwelt
-    description: Teleport you to a farming world.
   teleportfarmingworld:
     aliases:
       - tpfw
