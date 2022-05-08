@@ -1,9 +1,10 @@
-package at.srsyntax.farmingworld.database;
+package at.srsyntax.farmingworld.database.repoistory;
 
-import at.srsyntax.farmingworld.database.repoistory.FarmingWorldRepository;
-import at.srsyntax.farmingworld.database.repoistory.LocationRepository;
+import at.srsyntax.farmingworld.api.FarmingWorld;
+import at.srsyntax.farmingworld.util.location.LocationCache;
 
 import java.sql.SQLException;
+import java.util.Map;
 
 /*
  * MIT License
@@ -28,10 +29,10 @@ import java.sql.SQLException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface Database extends LocationRepository, FarmingWorldRepository {
+public interface LocationRepository {
 
-  void connect() throws SQLException;
-  void disconnect();
-  boolean isConnected() throws SQLException;
-
+  Map<String, LocationCache> getLocations(FarmingWorld farmingWorld) throws SQLException;
+  void removeLocation(String id) throws SQLException;
+  void removeLocations(FarmingWorld farmingWorld) throws SQLException;
+  void addLocation(FarmingWorld farmingWorld, String id, LocationCache locationCache) throws SQLException;
 }

@@ -55,7 +55,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class FarmingWorldPlugin extends JavaPlugin {
+public class FarmingWorldPlugin extends JavaPlugin { // TODO: Add Cooldown and Countdown
 
   private static final int BSTATS_ID = 14550, RESOURCE_ID = 100640;
   
