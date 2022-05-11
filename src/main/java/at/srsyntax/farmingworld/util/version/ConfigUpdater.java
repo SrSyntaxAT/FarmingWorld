@@ -2,7 +2,7 @@ package at.srsyntax.farmingworld.util.version;
 
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.config.PluginConfig;
-import at.srsyntax.farmingworld.database.FarmingWorldData;
+import at.srsyntax.farmingworld.database.data.FarmingWorldData;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

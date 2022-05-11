@@ -5,7 +5,7 @@ import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.exception.GenerateLocationException;
 import at.srsyntax.farmingworld.api.exception.TeleportFarmingWorldException;
-import at.srsyntax.farmingworld.database.FarmingWorldData;
+import at.srsyntax.farmingworld.database.data.FarmingWorldData;
 import at.srsyntax.farmingworld.util.AsyncTasks;
 import at.srsyntax.farmingworld.util.Displayer;
 import at.srsyntax.farmingworld.util.world.FarmingWorldDeleter;
@@ -61,6 +61,7 @@ public class FarmingWorldConfig implements FarmingWorld, AsyncTasks {
   private int timer, rtpArenaSize;
   private double borderSize;
   private World.Environment environment;
+  private int cooldown = 60*60;
 
   public FarmingWorldConfig(String name, String permission, String currentWorldName, String nextWorldName, long created, int timer, World.Environment environment, int rtpArenaSize, double borderSize, String generator) {
     this.name = name;

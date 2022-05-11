@@ -2,6 +2,7 @@ package at.srsyntax.farmingworld.database;
 
 import at.srsyntax.farmingworld.database.repoistory.FarmingWorldRepository;
 import at.srsyntax.farmingworld.database.repoistory.LocationRepository;
+import at.srsyntax.farmingworld.database.repoistory.PlayerRepository;
 
 import java.sql.SQLException;
 
@@ -28,7 +29,7 @@ import java.sql.SQLException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface Database extends LocationRepository, FarmingWorldRepository {
+public interface Database extends LocationRepository, FarmingWorldRepository, PlayerRepository {
 
   void connect() throws SQLException;
   void disconnect();

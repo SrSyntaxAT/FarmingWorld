@@ -45,6 +45,7 @@ public interface FarmingWorld extends Displayable, WorldManager {
     long getRemaining();
     double getBorderSize();
     String getGenerator();
+    int getCooldown();
 
     Location randomLocation();
 

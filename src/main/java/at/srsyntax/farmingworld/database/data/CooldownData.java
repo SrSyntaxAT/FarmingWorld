@@ -1,9 +1,7 @@
-package at.srsyntax.farmingworld.database.repoistory;
+package at.srsyntax.farmingworld.database.data;
 
-import at.srsyntax.farmingworld.api.FarmingWorld;
-import at.srsyntax.farmingworld.database.data.FarmingWorldData;
-
-import java.sql.SQLException;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /*
  * MIT License
@@ -28,13 +26,24 @@ import java.sql.SQLException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface FarmingWorldRepository {
+@AllArgsConstructor
+@Getter
+public class CooldownData {
 
-  boolean exists(FarmingWorld farmingWorld) throws SQLException;
-  void deleteFarmingWorld(FarmingWorld farmingWorld) throws SQLException;
-  void createFarmingWorld(FarmingWorld farmingWorld) throws SQLException;
-  void updateNextWorld(FarmingWorld farmingWorld) throws SQLException;
-  void updateWorld(FarmingWorld farmingWorld) throws SQLException;
-  FarmingWorldData getData(String name) throws SQLException;
+  private String farmingWorld;
+  private long end;
 
+  public static final String METADATA_KEY = "fw:pc:";
+
+  public boolean hasCooldown() {
+    return end > System.currentTimeMillis();
+  }
+
+  @Override
+  public String toString() {
+    return "CooldownData{" +
+        "farmingWorld='" + farmingWorld + '\'' +
+        ", end=" + end +
+        '}';
+  }
 }

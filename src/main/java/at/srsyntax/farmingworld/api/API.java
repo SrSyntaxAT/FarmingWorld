@@ -54,5 +54,7 @@ public interface API {
   String getDate(long date);
   String getDate();
 
+  CooldownHandler newCooldownHandler(Player player, FarmingWorld farmingWorld);
+
   void reload();
 }

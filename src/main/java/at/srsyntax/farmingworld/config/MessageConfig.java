@@ -46,6 +46,8 @@ public class MessageConfig {
   private final String worldDeleted, nothingToConfirm, confirmExpired, confirm;
   private final String disabled, enabled, alreadyEnabled, alreadyDisabled, isDisabled;
 
+  private String cooldownError, cooldownOtherError;
+
   public MessageConfig() {
     this(
         "&eFarmingWorlds&8: <list>",
@@ -73,7 +75,9 @@ public class MessageConfig {
         "&aFarmingworld was enabled!",
         "&cThe farmingworld is already enabled!",
         "&cThe farmingworld is already disabled!",
-        "&cYou cannot teleport to this farmworld because it has been disabled."
+        "&cYou cannot teleport to this farmworld because it has been disabled.",
+        "",
+        ""
     );
   }
 }

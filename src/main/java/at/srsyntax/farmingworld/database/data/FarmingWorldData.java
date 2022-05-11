@@ -1,8 +1,9 @@
-package at.srsyntax.farmingworld.database;
+package at.srsyntax.farmingworld.database.data;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.WorldManager;
 import at.srsyntax.farmingworld.api.event.ReplacedFarmingWorldEvent;
+import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.util.location.LocationHelper;
 import lombok.Getter;
 import lombok.Setter;

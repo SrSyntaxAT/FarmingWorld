@@ -1,7 +1,6 @@
 package at.srsyntax.farmingworld.database.repoistory;
 
-import at.srsyntax.farmingworld.api.FarmingWorld;
-import at.srsyntax.farmingworld.database.data.FarmingWorldData;
+import org.bukkit.entity.Player;
 
 import java.sql.SQLException;
 
@@ -28,13 +27,11 @@ import java.sql.SQLException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface FarmingWorldRepository {
+public interface PlayerRepository {
 
-  boolean exists(FarmingWorld farmingWorld) throws SQLException;
-  void deleteFarmingWorld(FarmingWorld farmingWorld) throws SQLException;
-  void createFarmingWorld(FarmingWorld farmingWorld) throws SQLException;
-  void updateNextWorld(FarmingWorld farmingWorld) throws SQLException;
-  void updateWorld(FarmingWorld farmingWorld) throws SQLException;
-  FarmingWorldData getData(String name) throws SQLException;
+  boolean existsPlayer(Player player) throws SQLException;
+  void createPlayer(Player player) throws SQLException;
+  void updateCooldown(Player player) throws SQLException;
+  void insertPlayerData(Player player) throws SQLException;
 
 }

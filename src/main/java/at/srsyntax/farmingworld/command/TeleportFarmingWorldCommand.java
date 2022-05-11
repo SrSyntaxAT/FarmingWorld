@@ -2,10 +2,12 @@ package at.srsyntax.farmingworld.command;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.API;
+import at.srsyntax.farmingworld.api.CooldownHandler;
 import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.command.completer.DefaultTabCompleter;
 import at.srsyntax.farmingworld.api.exception.FarmingWorldException;
+import at.srsyntax.farmingworld.command.exception.CooldownException;
 import at.srsyntax.farmingworld.command.exception.FarmingWorldNotFoundException;
 import at.srsyntax.farmingworld.command.exception.NoPermissionException;
 import at.srsyntax.farmingworld.command.exception.TargetHasNoPermissionException;
@@ -105,6 +107,11 @@ public class TeleportFarmingWorldCommand implements CommandExecutor, TabComplete
     if (sender.hasPermission(PERMISSION_IGNORE) && !hasDisabledTargetCheck(args))
       checkTarget(target, farmingWorld);
 
+
+    final CooldownHandler cooldownHandler = api.newCooldownHandler(target, farmingWorld);
+    checkCooldown(sender, cooldownHandler);
+    cooldownHandler.addCooldown();
+
     farmingWorld.teleport(target);
 
     final String message = new Message(this.messageConfig.getTargetTeleported())
@@ -112,6 +119,19 @@ public class TeleportFarmingWorldCommand implements CommandExecutor, TabComplete
         .add("<farmingworld>", farmingWorld.getName())
         .replace();
     sender.sendMessage(message);
+  }
+
+  private void checkCooldown(CommandSender sender, CooldownHandler cooldownHandler) throws CooldownException {
+    if (!cooldownHandler.hasCooldown()) return;
+    if (hasCooldownPermission(sender, cooldownHandler.getFarmingWorld().getName())) return;
+
+    final String error = new Message(plugin.getPluginConfig().getMessage().getCooldownOtherError()).replace();
+    throw new CooldownException(error);
+  }
+
+  private boolean hasCooldownPermission(CommandSender sender, String farmingWorldName) {
+    final String permissionPrefix = "farmingworld.cooldown.bypass.other.";
+    return sender.hasPermission(permissionPrefix + "*") || sender.hasPermission(permissionPrefix + farmingWorldName);
   }
 
   private void checkPermission(CommandSender sender) throws NoPermissionException {

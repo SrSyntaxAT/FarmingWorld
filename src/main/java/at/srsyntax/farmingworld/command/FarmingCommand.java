@@ -3,11 +3,14 @@ package at.srsyntax.farmingworld.command;
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;
+import at.srsyntax.farmingworld.api.CooldownHandler;
 import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.api.exception.FarmingWorldException;
+import at.srsyntax.farmingworld.command.exception.CooldownException;
 import at.srsyntax.farmingworld.command.exception.FarmingWorldNotFoundException;
 import at.srsyntax.farmingworld.command.exception.NoPermissionException;
 import at.srsyntax.farmingworld.config.MessageConfig;
+import at.srsyntax.farmingworld.database.data.CooldownData;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -133,6 +136,10 @@ public class FarmingCommand extends Command implements TabCompleter {
 
     if (farmingWorld.getPermission() != null && !player.hasPermission(farmingWorld.getPermission()))
       throw new NoPermissionException(messageConfig);
+
+    final CooldownHandler cooldownHandler = api.newCooldownHandler(player, farmingWorld);
+    if (cooldownHandler.hasCooldown()) throw new CooldownException(plugin.getPluginConfig().getMessage());
+    cooldownHandler.addCooldown();
 
     api.randomTeleport(player, farmingWorld);
     return true;

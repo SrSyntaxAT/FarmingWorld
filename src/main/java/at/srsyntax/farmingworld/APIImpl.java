@@ -1,11 +1,13 @@
 package at.srsyntax.farmingworld;
 
 import at.srsyntax.farmingworld.api.API;
+import at.srsyntax.farmingworld.api.CooldownHandler;
 import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.event.DeleteFarmingWorldEvent;
 import at.srsyntax.farmingworld.api.event.GenerateNewFarmingWorldEvent;
 import at.srsyntax.farmingworld.api.exception.TeleportFarmingWorldException;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
+import at.srsyntax.farmingworld.util.CooldownHandlerImpl;
 import lombok.AllArgsConstructor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -269,6 +271,11 @@ public final class APIImpl implements API {
 
   public String getDate() {
     return getDate(System.currentTimeMillis());
+  }
+
+  @Override
+  public CooldownHandler newCooldownHandler(Player player, FarmingWorld farmingWorld) {
+    return new CooldownHandlerImpl(this.plugin, player, farmingWorld);
   }
 
   @Override

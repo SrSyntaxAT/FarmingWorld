@@ -1,9 +1,8 @@
-package at.srsyntax.farmingworld.database.repoistory;
+package at.srsyntax.farmingworld.command.exception;
 
-import at.srsyntax.farmingworld.api.FarmingWorld;
-import at.srsyntax.farmingworld.database.data.FarmingWorldData;
-
-import java.sql.SQLException;
+import at.srsyntax.farmingworld.api.exception.FarmingWorldException;
+import at.srsyntax.farmingworld.api.message.Message;
+import at.srsyntax.farmingworld.config.MessageConfig;
 
 /*
  * MIT License
@@ -28,13 +27,16 @@ import java.sql.SQLException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface FarmingWorldRepository {
+public class CooldownException extends FarmingWorldException {
 
-  boolean exists(FarmingWorld farmingWorld) throws SQLException;
-  void deleteFarmingWorld(FarmingWorld farmingWorld) throws SQLException;
-  void createFarmingWorld(FarmingWorld farmingWorld) throws SQLException;
-  void updateNextWorld(FarmingWorld farmingWorld) throws SQLException;
-  void updateWorld(FarmingWorld farmingWorld) throws SQLException;
-  FarmingWorldData getData(String name) throws SQLException;
+  public CooldownException(String message) {
+    super(message);
+  }
 
+  public CooldownException() {
+  }
+
+  public CooldownException(MessageConfig config) {
+    this(new Message(config.getCooldownError()).replace());
+  }
 }

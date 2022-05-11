@@ -4,6 +4,18 @@ You can create multiple farm worlds that will be automatically deleted and gener
 
 ---
 
+## Contents
+
+- [Useful links](#useful-links)
+- [Commands](#commands)
+- [Config](#config)
+  - [FarmingWorld](#farmingworld)
+  - [Multiple worlds](#multiple-worlds)
+- [Cooldown](#cooldown)
+- [License](#license)
+
+---
+
 ## Useful links
 
 * [Download](https://www.spigotmc.org/resources/farmingworld.100640/)
@@ -42,19 +54,33 @@ You can create multiple farm worlds that will be automatically deleted and gener
 
 ### FarmingWorld
 
-| Key              | Explain                                                                                                                                                                        |
-|------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| name             | Name of the world.                                                                                                                                                             |
-| permission       | The permission a player needs to teleport to this world. If the value is "null", no permission is needed.                                                                      |
-| activ            | This can be used to activate or deactivate a farmworld.                                                                                                                        |
-| timer            | This is the time in minutes when the world should be deleted.                                                                                                                  |
-| rtpArenaSize     | The area in which the player will be teleported. This must be smaller than the World Border.                                                                                   |
-| borderSize       | The size of the World Border of the world. This feature only works in the Nether and the Overworld. The size of the Border should be larger than that of the RTP area.         |
-| environment      | The world type with which the world is generated. Available types: **NORMAL, NETHER, THE_END**                                                                                 |
-| generator        | Generate a farmworld via a world generator                                                                                                                                     |
+| Key          | Explain                                                                                                                                                                |
+|--------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| name         | Name of the world.                                                                                                                                                     |
+| permission   | The permission a player needs to teleport to this world. If the value is "null", no permission is needed.                                                              |
+| activ        | This can be used to activate or deactivate a farmworld.                                                                                                                |
+| timer        | This is the time in minutes when the world should be deleted.                                                                                                          |
+| rtpArenaSize | The area in which the player will be teleported. This must be smaller than the World Border.                                                                           |
+| borderSize   | The size of the World Border of the world. This feature only works in the Nether and the Overworld. The size of the Border should be larger than that of the RTP area. |
+| environment  | The world type with which the world is generated. Available types: **NORMAL, NETHER, THE_END**                                                                         |
+| generator    | Generate a farmworld via a world generator                                                                                                                             |
+| cooldown     | A cooldown in seconds. More under [Cooldown](#cooldown).                                                                                                               |
 
 **You should not delete a farm world by removing it from the configuration. This will not delete the data in the database or the worlds. Instead, you should use the "farmingworldadmin delete" command as a console or player in the game.** <br><br>
+
+### Multiple worlds
 [Here is an example](https://gist.github.com/SrSyntaxAT/591d75bc8c80317053cd7b24eb283f52) of creating multiple worlds in the config.
+
+---
+
+## Cooldown
+
+<p>
+To save the server, a cooldown can be specified in seconds.
+This limits the number of times a player can teleport to a farmworld.
+This cooldown can also be bypassed. To do so, a player needs the permission 'farmingworld.cooldown.bypass.*' to bypass it for every world or 'farmingworld.cooldown.bypass.<farmingworld>' to bypass it for a specific world only.
+To teleport another player without cooldown, you need the permission 'farmingworld.cooldown.bypass.other.*' or 'farmingworld.cooldown.bypass.other.<farmingworld>'.
+</p>
 
 ---
 

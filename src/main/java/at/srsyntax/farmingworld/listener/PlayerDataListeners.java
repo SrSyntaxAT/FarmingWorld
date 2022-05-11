@@ -1,7 +1,11 @@
-package at.srsyntax.farmingworld.database.repoistory;
+package at.srsyntax.farmingworld.listener;
 
-import at.srsyntax.farmingworld.api.FarmingWorld;
-import at.srsyntax.farmingworld.database.data.FarmingWorldData;
+import at.srsyntax.farmingworld.database.Database;
+import lombok.AllArgsConstructor;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.sql.SQLException;
 
@@ -28,13 +32,21 @@ import java.sql.SQLException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface FarmingWorldRepository {
+@AllArgsConstructor
+public class PlayerDataListeners implements Listener {
 
-  boolean exists(FarmingWorld farmingWorld) throws SQLException;
-  void deleteFarmingWorld(FarmingWorld farmingWorld) throws SQLException;
-  void createFarmingWorld(FarmingWorld farmingWorld) throws SQLException;
-  void updateNextWorld(FarmingWorld farmingWorld) throws SQLException;
-  void updateWorld(FarmingWorld farmingWorld) throws SQLException;
-  FarmingWorldData getData(String name) throws SQLException;
+  private final Database database;
+
+  @EventHandler
+  public void onPlayerJoinEvent(PlayerJoinEvent event) {
+    try {
+      final Player player = event.getPlayer();
+      if (!database.existsPlayer(player))
+        database.createPlayer(player);
+      database.insertPlayerData(player);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
 }

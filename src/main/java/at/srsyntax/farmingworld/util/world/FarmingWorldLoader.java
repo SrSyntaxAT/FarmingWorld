@@ -5,12 +5,10 @@ import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.database.Database;
-import at.srsyntax.farmingworld.database.FarmingWorldData;
-import at.srsyntax.farmingworld.util.location.LocationCache;
+import at.srsyntax.farmingworld.database.data.FarmingWorldData;
 import lombok.AllArgsConstructor;
 
 import java.sql.SQLException;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 

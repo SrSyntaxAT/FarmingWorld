@@ -1,9 +1,7 @@
-package at.srsyntax.farmingworld.database.repoistory;
+package at.srsyntax.farmingworld.api;
 
-import at.srsyntax.farmingworld.api.FarmingWorld;
-import at.srsyntax.farmingworld.database.data.FarmingWorldData;
-
-import java.sql.SQLException;
+import at.srsyntax.farmingworld.database.data.CooldownData;
+import org.bukkit.entity.Player;
 
 /*
  * MIT License
@@ -28,13 +26,14 @@ import java.sql.SQLException;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface FarmingWorldRepository {
+public interface CooldownHandler {
 
-  boolean exists(FarmingWorld farmingWorld) throws SQLException;
-  void deleteFarmingWorld(FarmingWorld farmingWorld) throws SQLException;
-  void createFarmingWorld(FarmingWorld farmingWorld) throws SQLException;
-  void updateNextWorld(FarmingWorld farmingWorld) throws SQLException;
-  void updateWorld(FarmingWorld farmingWorld) throws SQLException;
-  FarmingWorldData getData(String name) throws SQLException;
+  boolean hasCooldown();
+  CooldownData getCooldownData();
+  void addCooldown();
+  void removeCooldown();
+
+  FarmingWorld getFarmingWorld();
+  Player getPlayer();
 
 }

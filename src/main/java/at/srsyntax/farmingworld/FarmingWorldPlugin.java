@@ -12,6 +12,7 @@ import at.srsyntax.farmingworld.database.SQLiteDatabase;
 import at.srsyntax.farmingworld.listener.ActionBarListeners;
 import at.srsyntax.farmingworld.listener.BossBarListeners;
 import at.srsyntax.farmingworld.listener.ConfirmListener;
+import at.srsyntax.farmingworld.listener.PlayerDataListeners;
 import at.srsyntax.farmingworld.runnable.RunnableManager;
 import at.srsyntax.farmingworld.util.world.FarmingWorldLoader;
 import at.srsyntax.farmingworld.util.ConfirmData;
@@ -55,7 +56,19 @@ import java.util.concurrent.ConcurrentHashMap;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class FarmingWorldPlugin extends JavaPlugin { // TODO: Add Cooldown and Countdown
+public class FarmingWorldPlugin extends JavaPlugin {
+
+  /*
+  TODO
+
+  add:
+  - countdown
+  - farmingworld aliases
+  fix:
+  - FarmingCommand tab compleder
+  - Remove Boss Bar after deletion
+  - ReplacedFarmingWorldEvent sync
+   */
 
   private static final int BSTATS_ID = 14550, RESOURCE_ID = 100640;
   
@@ -122,6 +135,7 @@ public class FarmingWorldPlugin extends JavaPlugin { // TODO: Add Cooldown and C
     else if (pluginConfig.getDisplayPosition() == DisplayPosition.ACTION_BAR)
       pluginManager.registerEvents(new ActionBarListeners(api), this);
     pluginManager.registerEvents(new ConfirmListener(this), this);
+    pluginManager.registerEvents(new PlayerDataListeners(getDatabase()), this);
   }
 
   private void loadFarmingWorlds() {
@@ -171,6 +185,7 @@ public class FarmingWorldPlugin extends JavaPlugin { // TODO: Add Cooldown and C
             getDescription().getVersion(),
             "world",
             Collections.singletonList("farmingworld"),
+            false,
             DisplayPosition.BOSS_BAR,
             DisplayType.REMAINING,
             30*60,
