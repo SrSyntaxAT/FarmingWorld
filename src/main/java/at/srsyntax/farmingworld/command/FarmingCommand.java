@@ -43,13 +43,13 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class FarmingCommand extends Command implements TabCompleter {
+public class FarmingCommand extends Command {
 
   private final API api;
   private final FarmingWorldPlugin plugin;
 
   public FarmingCommand(API api, FarmingWorldPlugin plugin, List<String> aliases) {
-    super("farming", "Teleport you to a farmingworld.", "/fwa", aliases);
+    super("farming", "Teleport you to a farmingworld.", "/farming [farmingworld]", aliases);
     this.api = api;
     this.plugin = plugin;
   }
@@ -70,21 +70,21 @@ public class FarmingCommand extends Command implements TabCompleter {
     }
   }
 
-  @Nullable
+  @NotNull
   @Override
-  public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+  public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws IllegalArgumentException {
     final List<String> result = new ArrayList<>();
-    
-    if (commandSender instanceof Player player && args.length == 1) {
+
+    if (args.length == 1) {
       final String arg = args[0];
-  
+
       for (FarmingWorld world : this.api.getFarmingWorlds()) {
-        boolean hasPermission = world.getPermission() == null || player.hasPermission(world.getPermission());
+        boolean hasPermission = world.getPermission() == null || sender.hasPermission(world.getPermission());
         if (world.getName().startsWith(arg) && hasPermission)
           result.add(world.getName());
       }
     }
-    
+
     return result;
   }
 
