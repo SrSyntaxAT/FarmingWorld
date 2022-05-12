@@ -261,7 +261,7 @@ public final class APIImpl implements API {
   @Override
   public void randomTeleport(Player player, FarmingWorld farmingWorld) throws TeleportFarmingWorldException {
     if (!farmingWorld.isActiv()) throw new TeleportFarmingWorldException(this.plugin.getPluginConfig().getMessage());
-    player.teleport(farmingWorld.randomLocation());
+    sync(() -> player.teleport(farmingWorld.randomLocation()));
   }
 
   public String getDate(long date) {
