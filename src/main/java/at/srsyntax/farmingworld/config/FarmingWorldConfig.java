@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -62,6 +64,7 @@ public class FarmingWorldConfig implements FarmingWorld, Tasks {
   private double borderSize;
   private World.Environment environment;
   private int cooldown = 60*60;
+  private List<String> aliases = new ArrayList<>();
 
   public FarmingWorldConfig(String name, String permission, String currentWorldName, String nextWorldName, long created, int timer, World.Environment environment, int rtpArenaSize, double borderSize, String generator) {
     this.name = name;

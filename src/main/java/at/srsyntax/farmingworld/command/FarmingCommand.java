@@ -10,7 +10,6 @@ import at.srsyntax.farmingworld.command.exception.CooldownException;
 import at.srsyntax.farmingworld.command.exception.FarmingWorldNotFoundException;
 import at.srsyntax.farmingworld.command.exception.NoPermissionException;
 import at.srsyntax.farmingworld.config.MessageConfig;
-import at.srsyntax.farmingworld.database.data.CooldownData;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;

@@ -63,7 +63,6 @@ public class FarmingWorldPlugin extends JavaPlugin {
 
   add:
   - countdown
-  - farmingworld aliases
   fix:
   - FarmingCommand tab compleder
   - Remove Boss Bar after deletion
@@ -110,18 +109,19 @@ public class FarmingWorldPlugin extends JavaPlugin {
   }
 
   private void registerCommands(MessageConfig messageConfig) {
-    registerFarmingCommand();
+    final List<String> aliases = pluginConfig.getAliases();
+    registerFarmingCommand(new FarmingCommand(api, this, aliases == null ? new ArrayList<>() : aliases));
+
     getCommand("teleportfarmingworld").setExecutor(new TeleportFarmingWorldCommand(api, this));
     getCommand("farmingworldadmin").setExecutor(new FarmingWorldAdminCommand(api, this, messageConfig));
   }
 
-  private void registerFarmingCommand() {
+  public void registerFarmingCommand(Command command) {
     try {
       final Field field = SimplePluginManager.class.getDeclaredField("commandMap");
       field.setAccessible(true);
       final SimpleCommandMap commandMap = (SimpleCommandMap) field.get(Bukkit.getPluginManager());
-      final List<String> aliases = pluginConfig.getAliases();
-      commandMap.register(getName().toLowerCase(), new FarmingCommand(api, this, aliases == null ? new ArrayList<>() : aliases));
+      commandMap.register(getName().toLowerCase(), command);
     } catch (NoSuchFieldException | IllegalAccessException e) {
       throw new RuntimeException(e);
     }

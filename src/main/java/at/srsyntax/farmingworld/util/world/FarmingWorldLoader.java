@@ -3,6 +3,7 @@ package at.srsyntax.farmingworld.util.world;
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;
+import at.srsyntax.farmingworld.command.FarmingAliasCommand;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.database.data.FarmingWorldData;
@@ -47,6 +48,7 @@ public class FarmingWorldLoader {
     logger.info("Load " + farmingWorld.getName() + "...");
     farmingWorld.setPlugin(plugin);
     setDatabaseData(farmingWorld);
+    registerCommands(farmingWorld);
     if (!farmingWorld.isActiv()) {
       logger.info(farmingWorld.getName() + " is not activ!");
       return;
@@ -93,6 +95,13 @@ public class FarmingWorldLoader {
     } catch (SQLException e) {
       databaseError(e);
     }
+  }
+
+  private void registerCommands(FarmingWorldConfig farmingWorld) {
+    if (farmingWorld.getAliases().isEmpty()) return;
+
+    farmingWorld.getAliases()
+        .forEach(alias -> plugin.registerFarmingCommand(new FarmingAliasCommand(alias, farmingWorld)));
   }
 
   private void databaseError(Exception exception) {
