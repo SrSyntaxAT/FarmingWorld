@@ -8,7 +8,12 @@ import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.database.data.FarmingWorldData;
 import lombok.AllArgsConstructor;
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.plugin.SimplePluginManager;
 
+import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -101,7 +106,18 @@ public class FarmingWorldLoader {
     if (farmingWorld.getAliases().isEmpty()) return;
 
     farmingWorld.getAliases()
-        .forEach(alias -> plugin.registerFarmingCommand(new FarmingAliasCommand(alias, farmingWorld)));
+        .forEach(alias -> registerFarmingCommand(new FarmingAliasCommand(alias, farmingWorld)));
+  }
+
+  public void registerFarmingCommand(Command command) {
+    try {
+      final Field field = SimplePluginManager.class.getDeclaredField("commandMap");
+      field.setAccessible(true);
+      final SimpleCommandMap commandMap = (SimpleCommandMap) field.get(Bukkit.getPluginManager());
+      commandMap.register(plugin.getName().toLowerCase(), command);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private void databaseError(Exception exception) {

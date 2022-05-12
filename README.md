@@ -41,7 +41,6 @@ You can create multiple farm worlds that will be automatically deleted and gener
 |---------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | version             | The current version of the Config. **Should not be changed.**                                                                                                                                                                                         |
 | fallbackWorld       | The world where the player should be teleported to if there is a problem teleporting the player in a new farmworld.                                                                                                                                   |
-| aliases             | Aliases for the "farming" command.                                                                                                                                                                                                                    |
 | displayPosition     | Specifies where to display when the farm world is deleted. Possible specifications: **BOSS_BAR, ACTION_BAR, NOT**                                                                                                                                     |
 | displayType         | Specifies in which mode the display is updated. <br> **REMAINING** updates the display every minute. <br> **DATE** never updates the display, because it is not necessary. The **dateRefresh** specification can also be used to update this display. |
 | dateRefresh         | Can be optionally specified if you want the display to update when displayType has been set to DATE.                                                                                                                                                  |
@@ -63,8 +62,9 @@ You can create multiple farm worlds that will be automatically deleted and gener
 | rtpArenaSize | The area in which the player will be teleported. This must be smaller than the World Border.                                                                           |
 | borderSize   | The size of the World Border of the world. This feature only works in the Nether and the Overworld. The size of the Border should be larger than that of the RTP area. |
 | environment  | The world type with which the world is generated. Available types: **NORMAL, NETHER, THE_END**                                                                         |
-| generator    | Generate a farmworld via a world generator                                                                                                                             |
+| generator    | Generate a farmworld via a world generator.                                                                                                                            |
 | cooldown     | A cooldown in seconds. More under [Cooldown](#cooldown).                                                                                                               |
+| aliases      | A list of alias commands for the farmworld.                                                                                                                            |
 
 **You should not delete a farm world by removing it from the configuration. This will not delete the data in the database or the worlds. Instead, you should use the "farmingworldadmin delete" command as a console or player in the game.** <br><br>
 

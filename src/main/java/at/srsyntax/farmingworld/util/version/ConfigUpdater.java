@@ -60,8 +60,6 @@ public class ConfigUpdater {
     if (element == null) return;
     element.getAsJsonArray().forEach(jsonElement -> insertData(jsonElement.getAsJsonObject(), config));
 
-    config.setAliases(Collections.singletonList("farmingworld"));
-
     config.save(plugin);
   }
 

@@ -11,6 +11,7 @@ import at.srsyntax.farmingworld.command.exception.FarmingWorldNotFoundException;
 import at.srsyntax.farmingworld.command.exception.NoPermissionException;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
@@ -43,21 +44,20 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class FarmingCommand extends Command {
+public class FarmingCommand implements CommandExecutor, TabCompleter {
 
   private final API api;
   private final FarmingWorldPlugin plugin;
 
-  public FarmingCommand(API api, FarmingWorldPlugin plugin, List<String> aliases) {
-    super("farming", "Teleport you to a farmingworld.", "/farming [farmingworld]", aliases);
+  public FarmingCommand(API api, FarmingWorldPlugin plugin) {
     this.api = api;
     this.plugin = plugin;
   }
 
   @Override
-  public boolean execute(@NotNull CommandSender commandSender, @NotNull String s, @NotNull String[] strings) {
+  public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
     if (!(commandSender instanceof final Player player))
-      return new TeleportFarmingWorldCommand(this.api, this.plugin).onCommand(commandSender, this, s, strings);
+      return new TeleportFarmingWorldCommand(this.api, this.plugin).onCommand(commandSender, command, s, strings);
 
     try {
       if (strings.length == 0)
@@ -70,9 +70,9 @@ public class FarmingCommand extends Command {
     }
   }
 
-  @NotNull
+  @Nullable
   @Override
-  public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws IllegalArgumentException {
+  public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
     final List<String> result = new ArrayList<>();
 
     if (args.length == 1) {

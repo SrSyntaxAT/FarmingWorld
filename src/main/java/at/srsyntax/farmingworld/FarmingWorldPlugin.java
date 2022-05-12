@@ -108,22 +108,9 @@ public class FarmingWorldPlugin extends JavaPlugin {
   }
 
   private void registerCommands(MessageConfig messageConfig) {
-    final List<String> aliases = pluginConfig.getAliases();
-    registerFarmingCommand(new FarmingCommand(api, this, aliases == null ? new ArrayList<>() : aliases));
-
+    getCommand("farming").setExecutor(new FarmingCommand(api, this));
     getCommand("teleportfarmingworld").setExecutor(new TeleportFarmingWorldCommand(api, this));
     getCommand("farmingworldadmin").setExecutor(new FarmingWorldAdminCommand(api, this, messageConfig));
-  }
-
-  public void registerFarmingCommand(Command command) {
-    try {
-      final Field field = SimplePluginManager.class.getDeclaredField("commandMap");
-      field.setAccessible(true);
-      final SimpleCommandMap commandMap = (SimpleCommandMap) field.get(Bukkit.getPluginManager());
-      commandMap.register(getName().toLowerCase(), command);
-    } catch (NoSuchFieldException | IllegalAccessException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   private void registerListeners() {
@@ -182,7 +169,6 @@ public class FarmingWorldPlugin extends JavaPlugin {
         new PluginConfig(
             getDescription().getVersion(),
             "world",
-            Collections.singletonList("farmingworld"),
             false,
             DisplayPosition.BOSS_BAR,
             DisplayType.REMAINING,
