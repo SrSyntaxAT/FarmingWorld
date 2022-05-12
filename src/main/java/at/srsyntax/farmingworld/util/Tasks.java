@@ -26,10 +26,14 @@ import org.bukkit.plugin.Plugin;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface AsyncTasks {
+public interface Tasks {
 
   default void async(Runnable runnable) {
     Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), runnable);
+  }
+
+  default void sync(Runnable runnable) {
+    Bukkit.getScheduler().runTask(getPlugin(), runnable);
   }
 
   Plugin getPlugin();

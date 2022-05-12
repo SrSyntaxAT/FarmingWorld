@@ -6,7 +6,7 @@ import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.exception.GenerateLocationException;
 import at.srsyntax.farmingworld.api.exception.TeleportFarmingWorldException;
 import at.srsyntax.farmingworld.database.data.FarmingWorldData;
-import at.srsyntax.farmingworld.util.AsyncTasks;
+import at.srsyntax.farmingworld.util.Tasks;
 import at.srsyntax.farmingworld.util.Displayer;
 import at.srsyntax.farmingworld.util.world.FarmingWorldDeleter;
 import at.srsyntax.farmingworld.util.world.FarmingWorldLoader;
@@ -47,7 +47,7 @@ import java.util.concurrent.TimeUnit;
  * SOFTWARE.
  */
 @Getter
-public class FarmingWorldConfig implements FarmingWorld, AsyncTasks {
+public class FarmingWorldConfig implements FarmingWorld, Tasks {
 
   private transient FarmingWorldPlugin plugin;
   @Setter private transient FarmingWorldData data;

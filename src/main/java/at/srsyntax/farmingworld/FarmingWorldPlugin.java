@@ -67,7 +67,6 @@ public class FarmingWorldPlugin extends JavaPlugin {
   fix:
   - FarmingCommand tab compleder
   - Remove Boss Bar after deletion
-  - ReplacedFarmingWorldEvent sync
    */
 
   private static final int BSTATS_ID = 14550, RESOURCE_ID = 100640;

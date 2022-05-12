@@ -85,7 +85,7 @@ public class FarmingWorldData extends LocationHelper implements WorldManager {
       old.getPlayers().forEach(player -> this.farmingWorld.getUnsafe().teleport(player));
 
     final Event event = new ReplacedFarmingWorldEvent(this.farmingWorld, world, old);
-    Bukkit.getPluginManager().callEvent(event);
+    this.farmingWorld.sync(() -> Bukkit.getPluginManager().callEvent(event));
 
     if (old != null)
       FarmingWorldPlugin.getApi().deleteFarmingWorld(this.farmingWorld, old);
