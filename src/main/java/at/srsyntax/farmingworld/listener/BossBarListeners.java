@@ -2,7 +2,10 @@ package at.srsyntax.farmingworld.listener;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.API;
+import at.srsyntax.farmingworld.api.event.ReplacedFarmingWorldEvent;
+import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import lombok.AllArgsConstructor;
+import org.bukkit.boss.BossBar;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -46,6 +49,16 @@ public class BossBarListeners implements Listener {
   @EventHandler
   public void onPlayerQuitEvent(PlayerQuitEvent event) {
     plugin.removeFromBossBar(event.getPlayer(), event.getPlayer().getWorld());
+  }
+
+  @EventHandler
+  public void onReplacedFarmingWorldEvent(ReplacedFarmingWorldEvent event) {
+    final BossBar bossBar = ((FarmingWorldConfig) event.getFarmingWorld()).getDisplayer().getBossBar();
+    if (bossBar == null) return;
+    bossBar.getPlayers().forEach(player -> {
+      if (!event.getWorld().getPlayers().contains(player))
+        plugin.removeFromBossBar(player, event.getFarmingWorld());
+    });
   }
 
   @EventHandler

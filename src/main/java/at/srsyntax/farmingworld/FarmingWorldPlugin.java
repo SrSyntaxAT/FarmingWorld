@@ -1,6 +1,7 @@
 package at.srsyntax.farmingworld;
 
 import at.srsyntax.farmingworld.api.API;
+import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.display.DisplayPosition;
 import at.srsyntax.farmingworld.api.display.DisplayType;
 import at.srsyntax.farmingworld.command.*;
@@ -57,13 +58,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * SOFTWARE.
  */
 public class FarmingWorldPlugin extends JavaPlugin {
-
-  /*
-  TODO
-
-  fix:
-  - Remove Boss Bar after deletion
-   */
 
   private static final int BSTATS_ID = 14550, RESOURCE_ID = 100640;
   
@@ -135,17 +129,24 @@ public class FarmingWorldPlugin extends JavaPlugin {
   }
 
   public void addToBossBar(Player player) {
+    getLogger().info("Call 1");
     final World world = player.getWorld();
-    if (!api.isFarmingWorld(world)) return
-        ;
+    if (!api.isFarmingWorld(world)) return;
+    getLogger().info("Call 2");
     final FarmingWorldConfig farmingWorld = (FarmingWorldConfig) api.getFarmingWorld(world);
     farmingWorld.getDisplayer().checkBossbar(null);
+    farmingWorld.getDisplayer().getBossBar().addPlayer(player);
     farmingWorld.updateDisplay(player);
+    getLogger().info("Call 3");
   }
 
   public void removeFromBossBar(Player player, World world) {
     if (!api.isFarmingWorld(world)) return;
-    ((FarmingWorldConfig) api.getFarmingWorld(world)).getDisplayer().removeFromBossBar(player);
+    removeFromBossBar(player, api.getFarmingWorld(world));
+  }
+
+  public void removeFromBossBar(Player player, FarmingWorld farmingWorld) {
+    ((FarmingWorldConfig) farmingWorld).getDisplayer().removeFromBossBar(player);
   }
 
   private PluginConfig loadConfig() throws IOException {

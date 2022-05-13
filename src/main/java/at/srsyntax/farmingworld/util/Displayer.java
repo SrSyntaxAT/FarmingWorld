@@ -7,7 +7,7 @@ import at.srsyntax.farmingworld.api.display.Displayable;
 import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.config.MessageConfig;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -44,7 +44,7 @@ import java.util.concurrent.TimeUnit;
 public class Displayer implements Displayable {
 
   private final FarmingWorldConfig farmingWorld;
-  private BossBar bossBar;
+  @Getter private BossBar bossBar;
 
   public Displayer(FarmingWorldConfig farmingWorld) {
     this.farmingWorld = farmingWorld;
