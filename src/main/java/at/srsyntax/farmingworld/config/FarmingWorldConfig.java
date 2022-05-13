@@ -63,7 +63,7 @@ public class FarmingWorldConfig implements FarmingWorld, Tasks {
   private int timer, rtpArenaSize;
   private double borderSize;
   private World.Environment environment;
-  private int cooldown = 60*60, countdown;
+  private int cooldown = 60*60, countdown = 3;
   private List<String> aliases = new ArrayList<>();
 
   public FarmingWorldConfig(String name, String permission, String currentWorldName, String nextWorldName, long created, int timer, World.Environment environment, int rtpArenaSize, double borderSize, String generator) {
