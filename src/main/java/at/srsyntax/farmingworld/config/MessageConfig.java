@@ -47,6 +47,7 @@ public class MessageConfig {
   private final String disabled, enabled, alreadyEnabled, alreadyDisabled, isDisabled;
 
   private String cooldownError, cooldownOtherError;
+  private String countdown, countdownActivError;
 
   public MessageConfig() {
     this(
@@ -77,7 +78,9 @@ public class MessageConfig {
         "&cThe farmingworld is already disabled!",
         "&cYou cannot teleport to this farmworld because it has been disabled.",
         "",
-        ""
+        "",
+        "&cYou will be teleported in <time> seconds.",
+        "&cYou are already teleported to a farmworld.!"
     );
   }
 }

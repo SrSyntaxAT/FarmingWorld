@@ -1,14 +1,9 @@
-package at.srsyntax.farmingworld.api;
+package at.srsyntax.farmingworld.countdown;
 
-import at.srsyntax.farmingworld.api.display.Displayable;
-import at.srsyntax.farmingworld.api.exception.TeleportFarmingWorldException;
-import org.bukkit.Location;
+import at.srsyntax.farmingworld.api.message.Message;
+import at.srsyntax.farmingworld.config.MessageConfig;
+import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.util.List;
 
 /*
  * MIT License
@@ -33,37 +28,22 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface FarmingWorld extends Displayable, WorldManager {
+@AllArgsConstructor
+public class CountdownRunnable implements Runnable {
 
-    @NotNull String getName();
-    @Nullable String getPermission();
+  private final MessageConfig messageConfig;
+  private final Countdown countdown;
+  private final Player player;
 
-    int getRtpArenaSize();
+  private int time;
 
-    long getCreated();
-    long getReset();
-    boolean needReset();
-    long getRemaining();
-    double getBorderSize();
-    String getGenerator();
-    int getCooldown();
-    List<String> getAliases();
-    int getCountdowm();
-
-    Location randomLocation();
-
-    void setActiv(boolean activ);
-    boolean isActiv();
-    void disable();
-    void enable();
-    void delete();
-
-    void teleport(@NotNull Player player) throws TeleportFarmingWorldException;
-    void kickAll() throws IOException;
-    void kickAll(@Nullable String reason) throws IOException;
-
-    boolean isFarming(@NotNull Player player);
-
-    void save();
-
+  @Override
+  public void run() {
+    if (time == 0) {
+      countdown.finish();
+    } else {
+      player.sendMessage(new Message(messageConfig.getCountdown()).add("<time>", String.valueOf(time)).replace());
+      time--;
+    }
+  }
 }

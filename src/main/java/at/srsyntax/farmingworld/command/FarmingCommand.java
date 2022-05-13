@@ -10,6 +10,8 @@ import at.srsyntax.farmingworld.command.exception.CooldownException;
 import at.srsyntax.farmingworld.command.exception.FarmingWorldNotFoundException;
 import at.srsyntax.farmingworld.command.exception.NoPermissionException;
 import at.srsyntax.farmingworld.config.MessageConfig;
+import at.srsyntax.farmingworld.countdown.Countdown;
+import at.srsyntax.farmingworld.countdown.CountdownCallback;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -65,9 +67,13 @@ public class FarmingCommand implements CommandExecutor, TabCompleter {
       else
         return randomTeleport(player, strings[0]);
     } catch (FarmingWorldException exception) {
-      player.sendMessage(exception.getMessage());
-      return false;
+      return handleException(commandSender, exception);
     }
+  }
+
+  private boolean handleException(CommandSender sender, Exception exception) {
+    sender.sendMessage(exception.getMessage());
+    return false;
   }
 
   @Nullable
@@ -136,12 +142,45 @@ public class FarmingCommand implements CommandExecutor, TabCompleter {
     if (farmingWorld.getPermission() != null && !player.hasPermission(farmingWorld.getPermission()))
       throw new NoPermissionException(messageConfig);
 
+
+    final CountdownCallback callback = createCallback(player, farmingWorld);
+    final Countdown countdown = new Countdown(plugin, callback, player);
+
+    if (countdown.isActiv()) {
+      final Message message = new Message(messageConfig.getCountdownActivError());
+      throw new FarmingWorldException(message.replace());
+    }
+
     final CooldownHandler cooldownHandler = api.newCooldownHandler(player, farmingWorld);
     if (cooldownHandler.hasCooldown()) throw new CooldownException(plugin.getPluginConfig().getMessage());
     cooldownHandler.addCooldown();
 
-    api.randomTeleport(player, farmingWorld);
+    if (hasCountdown(player, farmingWorld)) {
+      countdown.start(farmingWorld.getCountdowm());
+    } else {
+      callback.done();
+    }
+
     return true;
+  }
+
+  private boolean hasCountdown(Player player, FarmingWorld farmingWorld) {
+    return farmingWorld.getCountdowm() > 0 && !hasCountdownBypassPermission(player, farmingWorld);
+  }
+
+  private boolean hasCountdownBypassPermission(Player player, FarmingWorld farmingWorld) {
+    final String prefix = "farmingworld.countdown.bypass.";
+    return player.hasPermission(prefix + "*") || player.hasPermission(prefix + farmingWorld.getName());
+  }
+
+  private CountdownCallback createCallback(Player player, FarmingWorld farmingWorld) {
+    return () -> {
+      try {
+        api.randomTeleport(player, farmingWorld);
+      } catch (Exception exception) {
+        handleException(player, exception);
+      }
+    };
   }
 
 }

@@ -65,6 +65,7 @@ You can create multiple farm worlds that will be automatically deleted and gener
 | generator    | Generate a farmworld via a world generator.                                                                                                                            |
 | cooldown     | A cooldown in seconds. More under [Cooldown](#cooldown).                                                                                                               |
 | aliases      | A list of alias commands for the farmworld.                                                                                                                            |
+| countdown    | Set a countdown in seconds that expires before a player can teleport there.                                                                                            |
 
 **You should not delete a farm world by removing it from the configuration. This will not delete the data in the database or the worlds. Instead, you should use the "farmingworldadmin delete" command as a console or player in the game.** <br><br>
 

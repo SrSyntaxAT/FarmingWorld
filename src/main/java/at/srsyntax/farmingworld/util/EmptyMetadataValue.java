@@ -1,14 +1,8 @@
-package at.srsyntax.farmingworld.api;
+package at.srsyntax.farmingworld.util;
 
-import at.srsyntax.farmingworld.api.display.Displayable;
-import at.srsyntax.farmingworld.api.exception.TeleportFarmingWorldException;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import org.bukkit.metadata.LazyMetadataValue;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.util.List;
 
 /*
  * MIT License
@@ -33,37 +27,9 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface FarmingWorld extends Displayable, WorldManager {
+public class EmptyMetadataValue extends LazyMetadataValue {
 
-    @NotNull String getName();
-    @Nullable String getPermission();
-
-    int getRtpArenaSize();
-
-    long getCreated();
-    long getReset();
-    boolean needReset();
-    long getRemaining();
-    double getBorderSize();
-    String getGenerator();
-    int getCooldown();
-    List<String> getAliases();
-    int getCountdowm();
-
-    Location randomLocation();
-
-    void setActiv(boolean activ);
-    boolean isActiv();
-    void disable();
-    void enable();
-    void delete();
-
-    void teleport(@NotNull Player player) throws TeleportFarmingWorldException;
-    void kickAll() throws IOException;
-    void kickAll(@Nullable String reason) throws IOException;
-
-    boolean isFarming(@NotNull Player player);
-
-    void save();
-
+  public EmptyMetadataValue(@NotNull Plugin owningPlugin) {
+    super(owningPlugin);
+  }
 }

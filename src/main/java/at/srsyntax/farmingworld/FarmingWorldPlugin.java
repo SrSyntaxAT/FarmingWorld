@@ -61,8 +61,6 @@ public class FarmingWorldPlugin extends JavaPlugin {
   /*
   TODO
 
-  add:
-  - countdown
   fix:
   - Remove Boss Bar after deletion
    */
