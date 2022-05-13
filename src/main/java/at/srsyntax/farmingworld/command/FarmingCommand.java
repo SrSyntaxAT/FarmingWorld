@@ -152,7 +152,13 @@ public class FarmingCommand implements CommandExecutor, TabCompleter {
     }
 
     final CooldownHandler cooldownHandler = api.newCooldownHandler(player, farmingWorld);
-    if (cooldownHandler.hasCooldown()) throw new CooldownException(plugin.getPluginConfig().getMessage());
+    if (cooldownHandler.hasCooldown()) {
+      final long end = cooldownHandler.getCooldownData().getEnd();
+      final Message message = new Message(plugin.getPluginConfig().getMessage().getCooldownError())
+          .add("<date>", api.getDate(end))
+          .add("<remaining>", api.getRemainingTime(end));
+      throw new CooldownException(message.replace());
+    }
     cooldownHandler.addCooldown();
 
     if (hasCountdown(player, farmingWorld)) {

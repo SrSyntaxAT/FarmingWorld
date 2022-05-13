@@ -77,10 +77,10 @@ public class MessageConfig {
         "&cThe farmingworld is already enabled!",
         "&cThe farmingworld is already disabled!",
         "&cYou cannot teleport to this farmworld because it has been disabled.",
-        "",
-        "",
-        "&cYou will be teleported in <time> seconds.",
-        "&cYou are already teleported to a farmworld.!"
+        "&cYou may not teleport to this farmworld until <date>.",
+        "&cThis player will not be allowed to teleport to this farmworld until <date>.",
+        "&cYou will be teleported in &e<time> &cseconds.",
+        "&cYou are already teleported to a farmworld!"
     );
   }
 }

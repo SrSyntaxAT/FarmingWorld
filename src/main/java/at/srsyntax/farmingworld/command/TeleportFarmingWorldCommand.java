@@ -125,8 +125,11 @@ public class TeleportFarmingWorldCommand implements CommandExecutor, TabComplete
     if (!cooldownHandler.hasCooldown()) return;
     if (hasCooldownPermission(sender, cooldownHandler.getFarmingWorld().getName())) return;
 
-    final String error = new Message(plugin.getPluginConfig().getMessage().getCooldownOtherError()).replace();
-    throw new CooldownException(error);
+    final long end = cooldownHandler.getCooldownData().getEnd();
+    final Message error = new Message(plugin.getPluginConfig().getMessage().getCooldownOtherError())
+        .add("<date>", api.getDate(end))
+        .add("<remaining>", api.getRemainingTime(end));
+    throw new CooldownException(error.replace());
   }
 
   private boolean hasCooldownPermission(CommandSender sender, String farmingWorldName) {
