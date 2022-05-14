@@ -1,4 +1,13 @@
-package at.srsyntax.farmingworld.api;
+package at.srsyntax.farmingworld.listener;
+
+import at.srsyntax.farmingworld.database.Database;
+import lombok.AllArgsConstructor;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+
+import java.sql.SQLException;
 
 /*
  * MIT License
@@ -23,6 +32,21 @@ package at.srsyntax.farmingworld.api;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public enum DisplayPosition {
-  BOSS_BAR, ACTION_BAR, NOT
+@AllArgsConstructor
+public class PlayerDataListeners implements Listener {
+
+  private final Database database;
+
+  @EventHandler
+  public void onPlayerJoinEvent(PlayerJoinEvent event) {
+    try {
+      final Player player = event.getPlayer();
+      if (!database.existsPlayer(player))
+        database.createPlayer(player);
+      database.insertPlayerData(player);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
 }

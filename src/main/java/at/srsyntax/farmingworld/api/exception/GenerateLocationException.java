@@ -1,8 +1,4 @@
-package at.srsyntax.farmingworld.command.exception;
-
-import at.srsyntax.farmingworld.api.exception.FarmingWorldException;
-import at.srsyntax.farmingworld.api.message.Message;
-import at.srsyntax.farmingworld.config.MessageConfig;
+package at.srsyntax.farmingworld.api.exception;
 
 /*
  * MIT License
@@ -27,15 +23,5 @@ import at.srsyntax.farmingworld.config.MessageConfig;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class NothingToConfirmException extends FarmingWorldException {
-  public NothingToConfirmException(String message) {
-    super(message);
-  }
-
-  public NothingToConfirmException() {
-  }
-
-  public NothingToConfirmException(MessageConfig config) {
-    super(new Message(config.getNothingToConfirm()).replace());
-  }
+public class GenerateLocationException extends RuntimeException {
 }

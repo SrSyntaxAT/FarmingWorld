@@ -1,13 +1,14 @@
 package at.srsyntax.farmingworld.config;
 
-import at.srsyntax.farmingworld.api.DisplayPosition;
-import at.srsyntax.farmingworld.api.DisplayType;
+import at.srsyntax.farmingworld.api.display.DisplayPosition;
+import at.srsyntax.farmingworld.api.display.DisplayType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -37,7 +38,10 @@ import java.util.List;
 @Getter @Setter
 public class PluginConfig extends ConfigLoader {
 
-  private final LocationConfig fallback;
+  private String version;
+  private final String fallbackWorld;
+
+  private boolean offline;
 
   private final DisplayPosition displayPosition;
   private final DisplayType displayType;
@@ -47,7 +51,7 @@ public class PluginConfig extends ConfigLoader {
   private final BarColor barColor;
 
   private final String defaultFarmingWorld;
-  private final List<FarmingWorldConfig> farmingWorlds;
+  private final ArrayList<FarmingWorldConfig> farmingWorlds;
 
   private final MessageConfig message;
 

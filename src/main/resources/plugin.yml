@@ -8,21 +8,13 @@ website: https://srsyntax.at/
 
 commands:
   farming:
-    aliases:
-      - farm
-      - farmworld
-      - farmingworld
-      - farmwelt
-    description: Teleport you to a farming world.
+    description: Teleport you to a farmworld.
   teleportfarmingworld:
     aliases:
       - tpfw
     description: Teleport another player to a farmworld.
-  farmingworldinfo:
+  farmingworldadmin:
     aliases:
-      - fwi
-    description: Show current information of the farmworld.
-  farmingworldreset:
-    aliases:
-      - fwr
-    description: Reset a farmworld.
+      - fwa
+      - fwadmin
+    description: Admin command.

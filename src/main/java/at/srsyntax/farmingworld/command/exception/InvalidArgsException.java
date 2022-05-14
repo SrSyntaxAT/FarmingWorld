@@ -27,15 +27,13 @@ import at.srsyntax.farmingworld.config.MessageConfig;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class NothingToConfirmException extends FarmingWorldException {
-  public NothingToConfirmException(String message) {
+public class InvalidArgsException extends FarmingWorldException {
+
+  public InvalidArgsException(String message) {
     super(message);
   }
 
-  public NothingToConfirmException() {
-  }
-
-  public NothingToConfirmException(MessageConfig config) {
-    super(new Message(config.getNothingToConfirm()).replace());
+  public InvalidArgsException(MessageConfig config, String usage) {
+    super(new Message(config.getUsage()).add("usage", usage).replace());
   }
 }

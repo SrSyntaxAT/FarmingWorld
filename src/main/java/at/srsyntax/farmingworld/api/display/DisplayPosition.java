@@ -1,8 +1,4 @@
-package at.srsyntax.farmingworld.config;
-
-import lombok.AllArgsConstructor;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+package at.srsyntax.farmingworld.api.display;
 
 /*
  * MIT License
@@ -27,15 +23,6 @@ import org.bukkit.Location;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-public class LocationConfig {
-
-    private final String world;
-    private final double x, y, z;
-    private final short pitch, yaw;
-
-    public Location toBukkit() {
-        return new Location(Bukkit.getWorld(world), x, y, z, yaw, pitch);
-    }
-
+public enum DisplayPosition {
+  BOSS_BAR, ACTION_BAR, NOT
 }

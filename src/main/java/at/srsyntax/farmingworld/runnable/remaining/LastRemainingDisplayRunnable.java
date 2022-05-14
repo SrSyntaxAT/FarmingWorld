@@ -44,6 +44,11 @@ public class LastRemainingDisplayRunnable implements Runnable {
 
   @Override
   public void run() {
+    if (!farmingWorld.isActiv()) {
+      runnable.cancelLastRemainingDisplayRunnable(taskId, farmingWorld);
+      return;
+    }
+
     if (farmingWorld.needReset())
       resetWorld();
     else
@@ -55,7 +60,7 @@ public class LastRemainingDisplayRunnable implements Runnable {
     if (nextWorld == null)
       nextWorld = FarmingWorldPlugin.getApi().generateFarmingWorld(farmingWorld);
   
-    farmingWorld.display(new Message(plugin.getPluginConfig().getMessage().getReset()).replace());
+    farmingWorld.getDisplayer().display(new Message(plugin.getPluginConfig().getMessage().getReset()).replace());
   
     farmingWorld.newWorld(nextWorld);
     farmingWorld.setNextWorld(null);

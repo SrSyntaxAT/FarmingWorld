@@ -1,8 +1,7 @@
-package at.srsyntax.farmingworld.command.exception;
+package at.srsyntax.farmingworld.util;
 
-import at.srsyntax.farmingworld.api.exception.FarmingWorldException;
-import at.srsyntax.farmingworld.api.message.Message;
-import at.srsyntax.farmingworld.config.MessageConfig;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
 /*
  * MIT License
@@ -27,15 +26,15 @@ import at.srsyntax.farmingworld.config.MessageConfig;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class NothingToConfirmException extends FarmingWorldException {
-  public NothingToConfirmException(String message) {
-    super(message);
+public interface Tasks {
+
+  default void async(Runnable runnable) {
+    Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), runnable);
   }
 
-  public NothingToConfirmException() {
+  default void sync(Runnable runnable) {
+    Bukkit.getScheduler().runTask(getPlugin(), runnable);
   }
 
-  public NothingToConfirmException(MessageConfig config) {
-    super(new Message(config.getNothingToConfirm()).replace());
-  }
+  Plugin getPlugin();
 }

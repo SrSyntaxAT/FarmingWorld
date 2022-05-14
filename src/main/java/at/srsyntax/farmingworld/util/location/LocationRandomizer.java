@@ -1,4 +1,4 @@
-package at.srsyntax.farmingworld.util;
+package at.srsyntax.farmingworld.util.location;
 
 import at.srsyntax.farmingworld.api.FarmingWorld;
 import lombok.AllArgsConstructor;

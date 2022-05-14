@@ -1,8 +1,7 @@
-package at.srsyntax.farmingworld.command.exception;
+package at.srsyntax.farmingworld.util;
 
-import at.srsyntax.farmingworld.api.exception.FarmingWorldException;
-import at.srsyntax.farmingworld.api.message.Message;
-import at.srsyntax.farmingworld.config.MessageConfig;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /*
  * MIT License
@@ -27,15 +26,13 @@ import at.srsyntax.farmingworld.config.MessageConfig;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class NothingToConfirmException extends FarmingWorldException {
-  public NothingToConfirmException(String message) {
-    super(message);
-  }
+@AllArgsConstructor
+@Getter
+public enum ConfirmAction {
+  RELOAD(false),
+  DELETE(true),
+  RESET(true),
+  DISABLE(true);
 
-  public NothingToConfirmException() {
-  }
-
-  public NothingToConfirmException(MessageConfig config) {
-    super(new Message(config.getNothingToConfirm()).replace());
-  }
+  private final boolean needFarmingWorld;
 }

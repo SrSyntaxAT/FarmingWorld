@@ -1,4 +1,8 @@
-package at.srsyntax.farmingworld.api;
+package at.srsyntax.farmingworld.database.repoistory;
+
+import org.bukkit.entity.Player;
+
+import java.sql.SQLException;
 
 /*
  * MIT License
@@ -23,6 +27,11 @@ package at.srsyntax.farmingworld.api;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public enum DisplayType {
-  REMAINING, DATE
+public interface PlayerRepository {
+
+  boolean existsPlayer(Player player) throws SQLException;
+  void createPlayer(Player player) throws SQLException;
+  void updateCooldown(Player player) throws SQLException;
+  void insertPlayerData(Player player) throws SQLException;
+
 }

@@ -1,8 +1,11 @@
-package at.srsyntax.farmingworld.command.exception;
+package at.srsyntax.farmingworld.util;
 
-import at.srsyntax.farmingworld.api.exception.FarmingWorldException;
-import at.srsyntax.farmingworld.api.message.Message;
-import at.srsyntax.farmingworld.config.MessageConfig;
+import at.srsyntax.farmingworld.api.FarmingWorld;
+import lombok.Getter;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /*
  * MIT License
@@ -27,15 +30,37 @@ import at.srsyntax.farmingworld.config.MessageConfig;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class NothingToConfirmException extends FarmingWorldException {
-  public NothingToConfirmException(String message) {
-    super(message);
+public class ConfirmData {
+
+  public static final long EXPIRED = TimeUnit.SECONDS.toMillis(10);
+
+  private final long timestamp;
+  @Getter
+  private final ConfirmAction action;
+  private final Map<String, Object> data = new LinkedHashMap<>();
+
+  public ConfirmData(ConfirmAction action) {
+    this.action = action;
+    this.timestamp = System.currentTimeMillis();
   }
 
-  public NothingToConfirmException() {
+  public ConfirmData addData(String key, Object value) {
+    this.data.put(key, value);
+    return this;
   }
 
-  public NothingToConfirmException(MessageConfig config) {
-    super(new Message(config.getNothingToConfirm()).replace());
+  public <T> T getData(String key) {
+    try {
+      final Object value = this.data.get(key);
+      if (value == null) return null;
+      return (T) value;
+    } catch (Exception exception) {
+      exception.printStackTrace();
+      return null;
+    }
+  }
+
+  public boolean isExpired() {
+    return System.currentTimeMillis() - timestamp > EXPIRED;
   }
 }

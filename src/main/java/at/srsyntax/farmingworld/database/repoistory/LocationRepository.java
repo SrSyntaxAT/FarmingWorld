@@ -1,10 +1,10 @@
-package at.srsyntax.farmingworld.command;
+package at.srsyntax.farmingworld.database.repoistory;
 
-import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;
+import at.srsyntax.farmingworld.util.location.LocationCache;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.SQLException;
+import java.util.Map;
 
 /*
  * MIT License
@@ -29,21 +29,10 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class DefaultTabCompleter {
+public interface LocationRepository {
 
-  public static List<String> onTabComplete(API api, String[] args, int pos) {
-    final List<String> result = new ArrayList<>(api.getFarmingWorlds().size());
-
-    if (args.length == pos + 1) {
-      final String arg = args[pos];
-
-      for (FarmingWorld world : api.getFarmingWorlds()) {
-        if (world.getName().startsWith(arg))
-          result.add(world.getName());
-      }
-    }
-
-    return result;
-  }
-
+  Map<String, LocationCache> getLocations(FarmingWorld farmingWorld) throws SQLException;
+  void removeLocation(String id) throws SQLException;
+  void removeLocations(FarmingWorld farmingWorld) throws SQLException;
+  void addLocation(FarmingWorld farmingWorld, String id, LocationCache locationCache) throws SQLException;
 }

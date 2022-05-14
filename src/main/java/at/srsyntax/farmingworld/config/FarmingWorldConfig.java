@@ -3,23 +3,26 @@ package at.srsyntax.farmingworld.config;
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;
-import at.srsyntax.farmingworld.api.message.Message;
-import at.srsyntax.farmingworld.api.DisplayPosition;
-import at.srsyntax.farmingworld.api.event.ReplacedFarmingWorldEvent;
+import at.srsyntax.farmingworld.api.exception.GenerateLocationException;
+import at.srsyntax.farmingworld.api.exception.TeleportFarmingWorldException;
+import at.srsyntax.farmingworld.database.data.FarmingWorldData;
+import at.srsyntax.farmingworld.util.Tasks;
+import at.srsyntax.farmingworld.util.Displayer;
+import at.srsyntax.farmingworld.util.world.FarmingWorldDeleter;
+import at.srsyntax.farmingworld.util.world.FarmingWorldLoader;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
+import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.boss.BarStyle;
-import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -45,35 +48,51 @@ import java.util.concurrent.TimeUnit;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@NoArgsConstructor
 @Getter
-public class FarmingWorldConfig implements FarmingWorld {
+public class FarmingWorldConfig implements FarmingWorld, Tasks {
 
-  private transient BossBar bossBar;
   private transient FarmingWorldPlugin plugin;
+  @Setter private transient FarmingWorldData data;
+  private final transient Displayer displayer;
+  private final transient Unsafe unsafe;
 
-  private String name, permission, currentWorldName, nextWorldName, generator;
-  private long created;
+  private String name;
+  @Setter private boolean activ = false;
+
+  private String permission, generator;
   private int timer, rtpArenaSize;
   private double borderSize;
   private World.Environment environment;
+  private int cooldown = 60*60, countdown = 3;
+  private List<String> aliases = new ArrayList<>();
 
   public FarmingWorldConfig(String name, String permission, String currentWorldName, String nextWorldName, long created, int timer, World.Environment environment, int rtpArenaSize, double borderSize, String generator) {
     this.name = name;
     this.permission = permission;
-    this.currentWorldName = currentWorldName;
-    this.nextWorldName = nextWorldName;
-    this.created = created;
+    this.data = new FarmingWorldData(created, currentWorldName, nextWorldName);
     this.timer = timer;
     this.environment = environment;
     this.rtpArenaSize = rtpArenaSize;
     this.borderSize = borderSize;
     this.generator = generator;
+
+    this.displayer = new Displayer(this);
+    this.unsafe = new Unsafe(this);
+  }
+
+  public FarmingWorldConfig() {
+    this.displayer = new Displayer(this);
+    this.unsafe = new Unsafe(this);
+  }
+
+  @Override
+  public long getCreated() {
+    return data.getCreated();
   }
 
   @Override
   public long getReset() {
-    return created + TimeUnit.MINUTES.toMillis(timer);
+    return getCreated() + TimeUnit.MINUTES.toMillis(timer);
   }
 
   @Override
@@ -87,123 +106,110 @@ public class FarmingWorldConfig implements FarmingWorld {
   }
 
   @Override
+  public int getCountdowm() {
+    return countdown;
+  }
+
+  @Override
+  public Location randomLocation() {
+    if (!isActiv() || this.data == null) throw new GenerateLocationException();
+    return this.data.getRandomLocation();
+  }
+
+  @Override
   public void updateDisplay() {
-    final String message = getUpdateMessage();
-    getWorld().getPlayers().forEach(player -> display(player, message));
+    this.displayer.updateDisplay();
   }
 
   @Override
   public void updateDisplay(Player player) {
-    display(player, getUpdateMessage());
-  }
-
-  private String getUpdateMessage() {
-    final MessageConfig messageConfig = plugin.getPluginConfig().getMessage();
-
-    long reset = getReset();
-    if (getRemaining() > TimeUnit.SECONDS.toMillis(60))
-      reset+=TimeUnit.SECONDS.toMillis(60);
-
-    final API api = FarmingWorldPlugin.getApi();
-    final Message message = new Message(messageConfig.getRemaining())
-        .add("<remaining>", api.getRemainingTime(reset))
-        .add("<date>", api.getDate(getReset()))
-        .add("<second>", messageConfig.getSecond())
-        .add("<seconds>", messageConfig.getSeconds())
-        .add("<minute>", messageConfig.getMinute())
-        .add("<minutes>", messageConfig.getMinutes())
-        .add("<hour>", messageConfig.getHour())
-        .add("<hours>", messageConfig.getHours())
-        .add("<day>", messageConfig.getDay())
-        .add("<days>", messageConfig.getDays());
-
-    return message.replace();
-  }
-
-  public void checkBossbar(String message) {
-    if (bossBar == null) {
-      bossBar = Bukkit.createBossBar(message, plugin.getPluginConfig().getBarColor(), BarStyle.SEGMENTED_20);
-      bossBar.setVisible(true);
-      getWorld().getPlayers().forEach(player -> bossBar.addPlayer(player));
-    }
-  }
-
-  public void display(String message) {
-    getWorld().getPlayers().forEach(player -> display(player, message));
-  }
-
-  public void display(Player player, String message) {
-    if (plugin.getPluginConfig().getDisplayPosition() == DisplayPosition.BOSS_BAR)
-      displayBossBar(message);
-    else
-      displayActionBar(player, message);
-  }
-
-  private void displayBossBar(String message) {
-    checkBossbar(message);
-    bossBar.setTitle(message);
-  }
-
-  private void displayActionBar(Player player, String message) {
-    final TextComponent textComponent = new TextComponent(message);
-    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, textComponent);
+    this.displayer.updateDisplay(player);
   }
 
   @Override
   public World getWorld() {
-    if (currentWorldName == null)
-      return null;
-    return Bukkit.getWorld(currentWorldName);
+    return this.data.getWorld();
   }
 
   @Override
   public void newWorld(@NotNull World world) {
-    final World old = getWorld();
-
-    this.currentWorldName = world.getName();
-    this.created = System.currentTimeMillis();
-
-    if (old != null)
-      old.getPlayers().forEach(this::teleport);
-
-    final Event event = new ReplacedFarmingWorldEvent(this, world, old);
-    Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getPluginManager().callEvent(event));
-
-    if (old != null)
-      FarmingWorldPlugin.getApi().deleteFarmingWorld(this, old);
-
-    save();
+    this.data.newWorld(world);
   }
 
   @Override
   public void setNextWorld(World world) {
-    this.nextWorldName = world == null ? null : world.getName();
+    this.data.setNextWorld(world);
+  }
+
+  public void disable() {
+    this.plugin.getLogger().info("Disable " + this);
+    setActiv(false);
+    FarmingWorldPlugin.getApi().unloadWorlds(this);
     save();
   }
 
   @Override
+  public void enable() {
+    setActiv(true);
+    new FarmingWorldLoader(getPlugin().getLogger(), FarmingWorldPlugin.getApi(), getPlugin(), getPlugin().getDatabase()).enable(this);
+    save();
+  }
+
+  @Override
+  public void delete() {
+    new FarmingWorldDeleter(FarmingWorldPlugin.getApi(), getPlugin(), this).delete();
+  }
+  @Override
+  public void save() {
+    try {
+      this.plugin.getPluginConfig().save(this.plugin);
+    } catch (IOException e) {
+      this.plugin.getLogger().severe(getName() + " could not be saved!");
+      e.printStackTrace();
+    }
+  }
+
+  @Override
   public @Nullable World getNextWorld() {
-    if (nextWorldName == null)
-      return null;
-    return Bukkit.getWorld(nextWorldName);
+    return this.data.getNextWorld();
   }
 
   @Override
   public boolean hasNext() {
-    return getNextWorld() != null;
+    return this.data.hasNext();
   }
 
   @Override
-  public void teleport(@NotNull Player player) {
-    Bukkit.getScheduler().runTask(plugin, () -> FarmingWorldPlugin.getApi().randomTeleport(player, this));
+  public void teleport(@NotNull Player player) throws TeleportFarmingWorldException {
+    FarmingWorldPlugin.getApi().randomTeleport(player, this);
   }
 
-  private void save() {
-    try {
-      plugin.getPluginConfig().save(plugin);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+  @Override
+  public void kickAll() throws IOException {
+    kickAll(null);
+  }
+
+  @Override
+  public void kickAll(String reason) throws IOException {
+    final API api = FarmingWorldPlugin.getApi();
+    final World world = getWorld(), fallbackWorld = api.getFallbackWorld();
+
+    if (world == null || fallbackWorld == null) return;
+    final Location location = fallbackWorld.getSpawnLocation();
+
+    Bukkit.getScheduler().runTask(this.plugin, () -> world.getPlayers().forEach(player -> {
+      if (reason != null)
+        player.sendMessage(reason);
+      player.teleport(location);
+    }));
+  }
+
+  @Override
+  public boolean isFarming(@NotNull Player player) {
+    final World world = getWorld();
+    if (world != null)
+      return world.getPlayers().contains(player);
+    return false;
   }
 
   public void setPlugin(FarmingWorldPlugin plugin) {
@@ -212,5 +218,19 @@ public class FarmingWorldConfig implements FarmingWorld {
 
   public void setRtpArenaSize(int rtpArenaSize) {
     this.rtpArenaSize = rtpArenaSize;
+  }
+
+  @AllArgsConstructor
+  public static class Unsafe {
+
+    private final FarmingWorldConfig farmingWorld;
+
+    public void teleport(Player player) {
+      try {
+        this.farmingWorld.teleport(player);
+      } catch (TeleportFarmingWorldException e) {
+        throw new RuntimeException(e);
+      }
+    }
   }
 }

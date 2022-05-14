@@ -1,8 +1,9 @@
-package at.srsyntax.farmingworld.command.exception;
+package at.srsyntax.farmingworld.database.repoistory;
 
-import at.srsyntax.farmingworld.api.exception.FarmingWorldException;
-import at.srsyntax.farmingworld.api.message.Message;
-import at.srsyntax.farmingworld.config.MessageConfig;
+import at.srsyntax.farmingworld.api.FarmingWorld;
+import at.srsyntax.farmingworld.database.data.FarmingWorldData;
+
+import java.sql.SQLException;
 
 /*
  * MIT License
@@ -27,15 +28,13 @@ import at.srsyntax.farmingworld.config.MessageConfig;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class NothingToConfirmException extends FarmingWorldException {
-  public NothingToConfirmException(String message) {
-    super(message);
-  }
+public interface FarmingWorldRepository {
 
-  public NothingToConfirmException() {
-  }
+  boolean exists(FarmingWorld farmingWorld) throws SQLException;
+  void deleteFarmingWorld(FarmingWorld farmingWorld) throws SQLException;
+  void createFarmingWorld(FarmingWorld farmingWorld) throws SQLException;
+  void updateNextWorld(FarmingWorld farmingWorld) throws SQLException;
+  void updateWorld(FarmingWorld farmingWorld) throws SQLException;
+  FarmingWorldData getData(String name) throws SQLException;
 
-  public NothingToConfirmException(MessageConfig config) {
-    super(new Message(config.getNothingToConfirm()).replace());
-  }
 }

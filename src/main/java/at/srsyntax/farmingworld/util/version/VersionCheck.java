@@ -1,6 +1,9 @@
-package at.srsyntax.farmingworld.command.exception;
+package at.srsyntax.farmingworld.util.version;
 
-import at.srsyntax.farmingworld.config.MessageConfig;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 
 /*
  * MIT License
@@ -25,18 +28,23 @@ import at.srsyntax.farmingworld.config.MessageConfig;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class FarmingWorldException extends Exception {
+public record VersionCheck(String currentVersion, int ressouceId) {
 
-  protected MessageConfig config;
+  public boolean check() throws IOException {
+    InputStreamReader inputStreamReader = null;
+    BufferedReader bufferedReader = null;
 
-  public FarmingWorldException(String message) {
-    super(message);
+    try {
+      final URL url = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.ressouceId);
+
+      inputStreamReader = new InputStreamReader(url.openConnection().getInputStream());
+      bufferedReader = new BufferedReader(inputStreamReader);
+
+      return bufferedReader.readLine().equalsIgnoreCase(this.currentVersion);
+    } finally {
+      if (inputStreamReader != null) inputStreamReader.close();
+      if (bufferedReader != null) bufferedReader.close();
+    }
   }
 
-  public FarmingWorldException() {
-  }
-
-  public FarmingWorldException(MessageConfig config) {
-    this.config = config;
-  }
 }

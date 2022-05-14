@@ -1,8 +1,7 @@
-package at.srsyntax.farmingworld.command.exception;
+package at.srsyntax.farmingworld.database.data;
 
-import at.srsyntax.farmingworld.api.exception.FarmingWorldException;
-import at.srsyntax.farmingworld.api.message.Message;
-import at.srsyntax.farmingworld.config.MessageConfig;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /*
  * MIT License
@@ -27,15 +26,24 @@ import at.srsyntax.farmingworld.config.MessageConfig;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class NothingToConfirmException extends FarmingWorldException {
-  public NothingToConfirmException(String message) {
-    super(message);
+@AllArgsConstructor
+@Getter
+public class CooldownData {
+
+  private String farmingWorld;
+  private long end;
+
+  public static final String METADATA_KEY = "fw:pc:";
+
+  public boolean hasCooldown() {
+    return end > System.currentTimeMillis();
   }
 
-  public NothingToConfirmException() {
-  }
-
-  public NothingToConfirmException(MessageConfig config) {
-    super(new Message(config.getNothingToConfirm()).replace());
+  @Override
+  public String toString() {
+    return "CooldownData{" +
+        "farmingWorld='" + farmingWorld + '\'' +
+        ", end=" + end +
+        '}';
   }
 }

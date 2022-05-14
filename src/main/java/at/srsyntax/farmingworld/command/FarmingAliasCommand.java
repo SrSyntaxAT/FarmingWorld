@@ -1,14 +1,10 @@
-package at.srsyntax.farmingworld.api;
+package at.srsyntax.farmingworld.command;
 
-import at.srsyntax.farmingworld.api.display.Displayable;
-import at.srsyntax.farmingworld.api.exception.TeleportFarmingWorldException;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import at.srsyntax.farmingworld.api.FarmingWorld;
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.util.List;
 
 /*
  * MIT License
@@ -33,37 +29,18 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface FarmingWorld extends Displayable, WorldManager {
+public class FarmingAliasCommand extends Command {
 
-    @NotNull String getName();
-    @Nullable String getPermission();
+  private final FarmingWorld farmingWorld;
 
-    int getRtpArenaSize();
+  public FarmingAliasCommand(@NotNull String name, FarmingWorld farmingWorld) {
+    super(name.toLowerCase());
+    this.farmingWorld = farmingWorld;
+  }
 
-    long getCreated();
-    long getReset();
-    boolean needReset();
-    long getRemaining();
-    double getBorderSize();
-    String getGenerator();
-    int getCooldown();
-    List<String> getAliases();
-    int getCountdowm();
-
-    Location randomLocation();
-
-    void setActiv(boolean activ);
-    boolean isActiv();
-    void disable();
-    void enable();
-    void delete();
-
-    void teleport(@NotNull Player player) throws TeleportFarmingWorldException;
-    void kickAll() throws IOException;
-    void kickAll(@Nullable String reason) throws IOException;
-
-    boolean isFarming(@NotNull Player player);
-
-    void save();
-
+  @Override
+  public boolean execute(@NotNull CommandSender commandSender, @NotNull String s, @NotNull String[] strings) {
+    Bukkit.dispatchCommand(commandSender, "farming " + farmingWorld.getName());
+    return true;
+  }
 }

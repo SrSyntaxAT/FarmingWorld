@@ -1,13 +1,9 @@
-package at.srsyntax.farmingworld.api;
+package at.srsyntax.farmingworld.command.completer;
 
-import at.srsyntax.farmingworld.api.display.Displayable;
-import at.srsyntax.farmingworld.api.exception.TeleportFarmingWorldException;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import at.srsyntax.farmingworld.api.API;
+import at.srsyntax.farmingworld.api.FarmingWorld;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -33,37 +29,21 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface FarmingWorld extends Displayable, WorldManager {
+public class DefaultTabCompleter {
 
-    @NotNull String getName();
-    @Nullable String getPermission();
+  public static List<String> onTabComplete(API api, String[] args, int pos) {
+    final List<String> result = new ArrayList<>(api.getFarmingWorlds().size());
 
-    int getRtpArenaSize();
+    if (args.length == pos + 1) {
+      final String arg = args[pos].toLowerCase();
 
-    long getCreated();
-    long getReset();
-    boolean needReset();
-    long getRemaining();
-    double getBorderSize();
-    String getGenerator();
-    int getCooldown();
-    List<String> getAliases();
-    int getCountdowm();
+      for (FarmingWorld world : api.getFarmingWorlds()) {
+        if (world.getName().toLowerCase().startsWith(arg))
+          result.add(world.getName());
+      }
+    }
 
-    Location randomLocation();
-
-    void setActiv(boolean activ);
-    boolean isActiv();
-    void disable();
-    void enable();
-    void delete();
-
-    void teleport(@NotNull Player player) throws TeleportFarmingWorldException;
-    void kickAll() throws IOException;
-    void kickAll(@Nullable String reason) throws IOException;
-
-    boolean isFarming(@NotNull Player player);
-
-    void save();
+    return result;
+  }
 
 }

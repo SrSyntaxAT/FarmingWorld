@@ -1,11 +1,13 @@
 package at.srsyntax.farmingworld;
 
 import at.srsyntax.farmingworld.api.API;
+import at.srsyntax.farmingworld.api.CooldownHandler;
 import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.event.DeleteFarmingWorldEvent;
 import at.srsyntax.farmingworld.api.event.GenerateNewFarmingWorldEvent;
+import at.srsyntax.farmingworld.api.exception.TeleportFarmingWorldException;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
-import at.srsyntax.farmingworld.util.LocationRandomizer;
+import at.srsyntax.farmingworld.util.CooldownHandlerImpl;
 import lombok.AllArgsConstructor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -14,12 +16,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /*
  * MIT License
@@ -76,8 +78,12 @@ public final class APIImpl implements API {
     callEvent(new DeleteFarmingWorldEvent(farmingWorld, world));
 
     sync(() -> {
-      final Location location = plugin.getPluginConfig().getFallback().toBukkit();
-      world.getPlayers().forEach(player -> player.teleport(location));
+      try {
+        final Location location = getFallbackWorld().getSpawnLocation();
+        world.getPlayers().forEach(player -> player.teleport(location));
+      } catch (Exception e) {
+        this.plugin.getLogger().severe("No fallback world could be found!");
+      }
 
       for (Chunk chunk : world.getLoadedChunks())
         chunk.unload(false);
@@ -86,8 +92,44 @@ public final class APIImpl implements API {
 
       Bukkit.unloadWorld(world, false);
 
+      try {
+        this.plugin.getDatabase().deleteFarmingWorld(farmingWorld);
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
       Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> deleteFolder(world.getWorldFolder()), 60L);
     });
+  }
+
+  @Override
+  public @Nullable World getFallbackWorld() throws IOException {
+    String worldName = this.plugin.getPluginConfig().getFallbackWorld();
+    if (worldName == null)
+      worldName = readServerPropertiesWorldName();
+    if (worldName == null) throw new NullPointerException();
+    return Bukkit.getWorld(worldName);
+  }
+
+  @Override
+  public void unloadWorlds(FarmingWorld farmingWorld) {
+    try {
+      farmingWorld.kickAll();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    unloadWorld(farmingWorld.getWorld());
+    unloadWorld(farmingWorld.getNextWorld());
+  }
+
+  private void unloadWorld(World world) {
+    if (world == null) return;
+    sync(() -> Bukkit.unloadWorld(world, true));
+  }
+
+  private String readServerPropertiesWorldName() throws IOException {
+    final Properties properties = new Properties();
+    properties.load(new FileReader("server.properties"));
+    return properties.getProperty("level-name");
   }
 
   @Override
@@ -95,7 +137,7 @@ public final class APIImpl implements API {
     deleteFarmingWorld(farmingWorld, farmingWorld.getWorld());
   }
 
-  private boolean deleteFolder(File folder) {
+  public boolean deleteFolder(File folder) {
     if(folder.exists()) {
       final File[] files = folder.listFiles();
 
@@ -217,8 +259,9 @@ public final class APIImpl implements API {
   }
 
   @Override
-  public void randomTeleport(Player player, FarmingWorld farmingWorld) {
-    player.teleport(new LocationRandomizer(this.plugin.getPluginConfig().getSpawnBlockBlacklist(), farmingWorld).random());
+  public void randomTeleport(Player player, FarmingWorld farmingWorld) throws TeleportFarmingWorldException {
+    if (!farmingWorld.isActiv()) throw new TeleportFarmingWorldException(this.plugin.getPluginConfig().getMessage());
+    sync(() -> player.teleport(farmingWorld.randomLocation()));
   }
 
   public String getDate(long date) {
@@ -228,5 +271,18 @@ public final class APIImpl implements API {
 
   public String getDate() {
     return getDate(System.currentTimeMillis());
+  }
+
+  @Override
+  public CooldownHandler newCooldownHandler(Player player, FarmingWorld farmingWorld) {
+    return new CooldownHandlerImpl(this.plugin, player, farmingWorld);
+  }
+
+  @Override
+  public void reload() {
+    this.plugin.onDisable();
+    Bukkit.getOnlinePlayers().forEach(player -> this.plugin.removeFromBossBar(player, player.getWorld()));
+    this.plugin.onEnable();
+    Bukkit.getOnlinePlayers().forEach(this.plugin::addToBossBar);
   }
 }

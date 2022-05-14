@@ -1,8 +1,10 @@
-package at.srsyntax.farmingworld.util;
+package at.srsyntax.farmingworld.util.location;
 
-import at.srsyntax.farmingworld.api.FarmingWorld;
-
-import java.util.concurrent.TimeUnit;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import lombok.AllArgsConstructor;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 
 /*
  * MIT License
@@ -27,11 +29,35 @@ import java.util.concurrent.TimeUnit;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public record ResetData(FarmingWorld farmingWorld, long timestamp) {
+@AllArgsConstructor
+public class LocationCache {
 
-  public static final long EXPIRED = TimeUnit.SECONDS.toMillis(10);
+  private final String world;
+  private final double x, y, z;
+  private final float pitch, yaw;
 
-  public boolean isExpired() {
-    return System.currentTimeMillis() - timestamp > EXPIRED;
+  public LocationCache(Location location) {
+    this(
+        location.getWorld().getName(),
+        location.getX(), location.getY(), location.getZ(),
+        location.getPitch(), location.getYaw()
+    );
+  }
+
+  public static LocationCache fromJson(String json) {
+    return new Gson().fromJson(json, LocationCache.class);
+  }
+
+  public Location toBukkit() {
+    return new Location(
+        Bukkit.getWorld(this.world),
+        this.x, this.y, this.z,
+        this.yaw, this.pitch
+    );
+  }
+
+  @Override
+  public String toString() {
+    return new GsonBuilder().disableHtmlEscaping().create().toJson(this);
   }
 }
