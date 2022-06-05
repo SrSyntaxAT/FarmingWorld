@@ -129,15 +129,12 @@ public class FarmingWorldPlugin extends JavaPlugin {
   }
 
   public void addToBossBar(Player player) {
-    getLogger().info("Call 1");
     final World world = player.getWorld();
     if (!api.isFarmingWorld(world)) return;
-    getLogger().info("Call 2");
     final FarmingWorldConfig farmingWorld = (FarmingWorldConfig) api.getFarmingWorld(world);
     farmingWorld.getDisplayer().checkBossbar(null);
     farmingWorld.getDisplayer().getBossBar().addPlayer(player);
     farmingWorld.updateDisplay(player);
-    getLogger().info("Call 3");
   }
 
   public void removeFromBossBar(Player player, World world) {

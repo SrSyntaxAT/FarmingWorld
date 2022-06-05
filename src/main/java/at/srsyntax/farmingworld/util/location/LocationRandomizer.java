@@ -65,7 +65,7 @@ public class LocationRandomizer {
 
     } while (y == 0);
 
-    return new Location(world, x, y, z, spawn.getYaw(), spawn.getPitch());
+    return new Location(world, x + .5D, y, z + .5D, spawn.getYaw(), spawn.getPitch());
   }
 
   private int getYInNether(World world, int x, int y, int z) {
