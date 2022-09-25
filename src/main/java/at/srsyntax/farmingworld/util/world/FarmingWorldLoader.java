@@ -66,7 +66,7 @@ public class FarmingWorldLoader {
     checkBorder(farmingWorld);
     checkCurrentWorld(farmingWorld);
     checkNextWorld(farmingWorld);
-    farmingWorld.async(() -> checkLocations(farmingWorld.getData()));
+    checkLocations(farmingWorld.getData());
   }
 
   private boolean checkDatabase(FarmingWorldConfig farmingWorld) throws SQLException {
