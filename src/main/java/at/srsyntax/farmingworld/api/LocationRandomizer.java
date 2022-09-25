@@ -1,4 +1,4 @@
-package at.srsyntax.farmingworld.util.location;
+package at.srsyntax.farmingworld.api;
 
 import at.srsyntax.farmingworld.api.FarmingWorld;
 import lombok.AllArgsConstructor;
@@ -60,17 +60,19 @@ public class LocationRandomizer {
       else if (y != 0)
         y++;
 
-      if (!isYValid(world.getBlockAt(x, y-1, z).getType()))
+      if (y == 0 || !isYValid(world.getBlockAt(x, y-1, z).getType()))
         y = 0;
 
     } while (y == 0);
 
-    return new Location(world, x, y, z, spawn.getYaw(), spawn.getPitch());
+    return new Location(world, x + .5D, y, z + .5D, spawn.getYaw(), spawn.getPitch());
   }
 
   private int getYInNether(World world, int x, int y, int z) {
     while (y != 0) {
       y = findBlockAtY(world, x, y, z, true);
+
+      if (y <= 0) return 0;
 
       y--;
       final Block block = world.getBlockAt(x, y, z);
@@ -80,7 +82,7 @@ public class LocationRandomizer {
       y = findBlockAtY(world, x, y, z, false) + 1;
       break;
     }
-    return y;
+    return Math.max(y, 0);
   }
 
   private int findBlockAtY(World world, int x, int y, int z, boolean air) {

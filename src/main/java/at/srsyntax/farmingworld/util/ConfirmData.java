@@ -1,6 +1,5 @@
 package at.srsyntax.farmingworld.util;
 
-import at.srsyntax.farmingworld.api.FarmingWorld;
 import lombok.Getter;
 
 import java.util.LinkedHashMap;

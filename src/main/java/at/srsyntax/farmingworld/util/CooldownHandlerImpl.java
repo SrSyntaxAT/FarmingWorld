@@ -5,7 +5,6 @@ import at.srsyntax.farmingworld.api.CooldownHandler;
 import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.database.data.CooldownData;
-import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 

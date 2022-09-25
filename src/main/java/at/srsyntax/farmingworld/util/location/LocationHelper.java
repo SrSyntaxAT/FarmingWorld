@@ -1,8 +1,8 @@
 package at.srsyntax.farmingworld.util.location;
 
+import at.srsyntax.farmingworld.api.LocationRandomizer;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.database.Database;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -89,14 +89,12 @@ public abstract class LocationHelper {
   }
 
   public void saveAllLocations() {
-    this.farmingWorld.async(() -> {
-      this.locationCache.forEach((id, cache) -> {
-        try {
-          this.farmingWorld.getPlugin().getDatabase().addLocation(this.farmingWorld, id, cache);
-        } catch (SQLException e) {
-          throw new RuntimeException(e);
-        }
-      });
+    this.locationCache.forEach((id, cache) -> {
+      try {
+        this.farmingWorld.getPlugin().getDatabase().addLocation(this.farmingWorld, id, cache);
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
     });
   }
 }

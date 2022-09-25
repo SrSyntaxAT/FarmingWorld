@@ -4,7 +4,9 @@ import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.display.DisplayPosition;
 import at.srsyntax.farmingworld.api.display.DisplayType;
-import at.srsyntax.farmingworld.command.*;
+import at.srsyntax.farmingworld.command.FarmingCommand;
+import at.srsyntax.farmingworld.command.FarmingWorldAdminCommand;
+import at.srsyntax.farmingworld.command.TeleportFarmingWorldCommand;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import at.srsyntax.farmingworld.config.PluginConfig;
@@ -15,23 +17,23 @@ import at.srsyntax.farmingworld.listener.BossBarListeners;
 import at.srsyntax.farmingworld.listener.ConfirmListener;
 import at.srsyntax.farmingworld.listener.PlayerDataListeners;
 import at.srsyntax.farmingworld.runnable.RunnableManager;
-import at.srsyntax.farmingworld.util.world.FarmingWorldLoader;
 import at.srsyntax.farmingworld.util.ConfirmData;
 import at.srsyntax.farmingworld.util.version.VersionCheck;
+import at.srsyntax.farmingworld.util.world.FarmingWorldLoader;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.boss.BarColor;
-import org.bukkit.command.*;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /*
@@ -129,15 +131,12 @@ public class FarmingWorldPlugin extends JavaPlugin {
   }
 
   public void addToBossBar(Player player) {
-    getLogger().info("Call 1");
     final World world = player.getWorld();
     if (!api.isFarmingWorld(world)) return;
-    getLogger().info("Call 2");
     final FarmingWorldConfig farmingWorld = (FarmingWorldConfig) api.getFarmingWorld(world);
     farmingWorld.getDisplayer().checkBossbar(null);
     farmingWorld.getDisplayer().getBossBar().addPlayer(player);
     farmingWorld.updateDisplay(player);
-    getLogger().info("Call 3");
   }
 
   public void removeFromBossBar(Player player, World world) {
