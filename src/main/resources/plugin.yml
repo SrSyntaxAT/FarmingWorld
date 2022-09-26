@@ -1,20 +1,7 @@
 main: at.srsyntax.farmingworld.FarmingWorldPlugin
 name: FarmingWorld
 version: ${version}
-api-version: 1.18
+api-version: 1.19
 
 author: SrSyntaxAT
 website: https://srsyntax.at/
-
-commands:
-  farming:
-    description: Teleport you to a farmworld.
-  teleportfarmingworld:
-    aliases:
-      - tpfw
-    description: Teleport another player to a farmworld.
-  farmingworldadmin:
-    aliases:
-      - fwa
-      - fwadmin
-    description: Admin command.

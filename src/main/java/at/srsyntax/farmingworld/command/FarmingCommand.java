@@ -50,7 +50,7 @@ public class FarmingCommand extends Command {
   private final FarmingWorldPlugin plugin;
 
   public FarmingCommand(@NotNull String name, API api, FarmingWorldPlugin plugin) {
-    super(name);
+    super(name, "Teleport you to a farming world.", "/" + name, new ArrayList<>());
     this.api = api;
     this.plugin = plugin;
   }

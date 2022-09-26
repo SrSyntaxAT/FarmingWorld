@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /*
@@ -58,7 +59,7 @@ public class TeleportFarmingWorldCommand extends Command {
   private final MessageConfig messageConfig;
 
   public TeleportFarmingWorldCommand(@NotNull String name, API api, FarmingWorldPlugin plugin) {
-    super(name);
+    super(name, "Teleport another player to a farming world.", "/" + name, Collections.singletonList("tpfw"));
     this.plugin = plugin;
     this.api = api;
     this.messageConfig = plugin.getPluginConfig().getMessage();

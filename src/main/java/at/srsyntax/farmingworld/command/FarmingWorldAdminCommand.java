@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -59,7 +60,7 @@ public class FarmingWorldAdminCommand extends Command implements AdminCommand {
   private final MessageConfig messageConfig;
 
   public FarmingWorldAdminCommand(@NotNull String name, API api, FarmingWorldPlugin plugin) {
-    super(name);
+    super(name, "Admin command.", "/" + name, Arrays.asList("fwa", "fwadmin"));
     this.api = api;
     this.plugin = plugin;
     this.messageConfig = plugin.getPluginConfig().getMessage();

@@ -6,6 +6,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+
 /*
  * MIT License
  *
@@ -34,7 +36,7 @@ public class FarmingAliasCommand extends Command {
   private final FarmingWorld farmingWorld;
 
   public FarmingAliasCommand(@NotNull String name, FarmingWorld farmingWorld) {
-    super(name.toLowerCase());
+    super(name.toLowerCase(), "Teleport you to a farming world.", "/" + name.toLowerCase(), new ArrayList<>());
     this.farmingWorld = farmingWorld;
   }
 

@@ -12,6 +12,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+
 /*
  * MIT License
  *
@@ -41,7 +43,7 @@ public class SpawnCommand extends Command {
     private final MessageConfig messageConfig;
 
     public SpawnCommand(@NotNull String name, FarmingWorldPlugin plugin) {
-        super(name);
+        super(name, "Teleport you to the spawn.", "/" + name, new ArrayList<>());
         this.plugin = plugin;
         this.messageConfig = plugin.getPluginConfig().getMessage();
     }
