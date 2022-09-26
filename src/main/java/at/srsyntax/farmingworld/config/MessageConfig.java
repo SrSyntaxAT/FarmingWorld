@@ -46,8 +46,10 @@ public class MessageConfig {
   private final String worldDeleted, nothingToConfirm, confirmExpired, confirm;
   private final String disabled, enabled, alreadyEnabled, alreadyDisabled, isDisabled;
 
-  private String cooldownError, cooldownOtherError;
-  private String countdown, countdownActivError;
+  private final String cooldownError, cooldownOtherError;
+  private final String countdown, countdownActivError, countdownCanceledMoved;
+
+  private final String spawnDisabled, onlyPlayers, spawnTeleported;
 
   public MessageConfig() {
     this(
@@ -80,7 +82,11 @@ public class MessageConfig {
         "&cYou may not teleport to this farmworld until <date>.",
         "&cThis player will not be allowed to teleport to this farmworld until <date>.",
         "&cYou will be teleported in &e<time> &cseconds.",
-        "&cYou are already teleported to a farmworld!"
+        "&cYou are already teleported to a farmworld!",
+        "&cThe countdown was canceled because you moved.",
+        "&cSpawn command is currently disabled.",
+        "&cOnly players can use this command.",
+        "&aYou have been teleported to the spawn."
     );
   }
 }

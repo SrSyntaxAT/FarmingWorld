@@ -6,21 +6,27 @@ import at.srsyntax.farmingworld.api.display.DisplayPosition;
 import at.srsyntax.farmingworld.api.display.DisplayType;
 import at.srsyntax.farmingworld.command.FarmingCommand;
 import at.srsyntax.farmingworld.command.FarmingWorldAdminCommand;
+import at.srsyntax.farmingworld.command.SpawnCommand;
 import at.srsyntax.farmingworld.command.TeleportFarmingWorldCommand;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import at.srsyntax.farmingworld.config.PluginConfig;
+import at.srsyntax.farmingworld.config.SpawnConfig;
 import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.database.SQLiteDatabase;
 import at.srsyntax.farmingworld.listener.ActionBarListeners;
 import at.srsyntax.farmingworld.listener.BossBarListeners;
 import at.srsyntax.farmingworld.listener.ConfirmListener;
 import at.srsyntax.farmingworld.listener.PlayerDataListeners;
+import at.srsyntax.farmingworld.registry.CommandRegistry;
 import at.srsyntax.farmingworld.runnable.RunnableManager;
 import at.srsyntax.farmingworld.util.ConfirmData;
+import at.srsyntax.farmingworld.util.location.LocationCache;
 import at.srsyntax.farmingworld.util.version.VersionCheck;
 import at.srsyntax.farmingworld.util.world.FarmingWorldLoader;
 import lombok.Getter;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.boss.BarColor;
@@ -29,11 +35,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /*
@@ -69,6 +73,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
   @Getter private Database database;
   @Getter private final Map<CommandSender, ConfirmData> needConfirm = new ConcurrentHashMap<>();
   private RunnableManager runnableManager;
+  @Getter private CommandRegistry commandRegistry;
 
   @Override
   public void onLoad() {
@@ -81,14 +86,18 @@ public class FarmingWorldPlugin extends JavaPlugin {
       pluginConfig = loadConfig();
       this.database = new SQLiteDatabase(this);
       this.database.connect();
+
       api = new APIImpl(this);
       new Metrics(this, BSTATS_ID);
+
+      this.commandRegistry = new CommandRegistry(getName());
+
       loadFarmingWorlds();
 
       this.runnableManager = new RunnableManager(api, this);
       this.runnableManager.startScheduler();
       registerListeners();
-      registerCommands(pluginConfig.getMessage());
+      registerCommands();
     } catch (Exception exception) {
       getLogger().severe("Plugin could not be loaded successfully!");
       exception.printStackTrace();
@@ -101,10 +110,14 @@ public class FarmingWorldPlugin extends JavaPlugin {
     this.database.disconnect();
   }
 
-  private void registerCommands(MessageConfig messageConfig) {
-    getCommand("farming").setExecutor(new FarmingCommand(api, this));
-    getCommand("teleportfarmingworld").setExecutor(new TeleportFarmingWorldCommand(api, this));
-    getCommand("farmingworldadmin").setExecutor(new FarmingWorldAdminCommand(api, this, messageConfig));
+  private void registerCommands() {
+    this.commandRegistry.register(
+            new FarmingCommand("farming", api, this),
+            new TeleportFarmingWorldCommand("teleportfarmingworld", api, this),
+            new FarmingWorldAdminCommand("farmingworldadmin", api, this)
+    );
+    if (this.pluginConfig.getSpawn().isEnabled())
+      this.commandRegistry.register(new SpawnCommand("spawn", this));
   }
 
   private void registerListeners() {
@@ -162,11 +175,18 @@ public class FarmingWorldPlugin extends JavaPlugin {
         null
     );
 
+    final SpawnConfig spawn = new SpawnConfig(
+            true,
+            3,
+            new LocationCache(getDefaultSpawnLocation())
+    );
+
     return PluginConfig.load(
         this,
         new PluginConfig(
             getDescription().getVersion(),
-            "world",
+            spawn,
+            false,
             false,
             DisplayPosition.BOSS_BAR,
             DisplayType.REMAINING,
@@ -178,5 +198,12 @@ public class FarmingWorldPlugin extends JavaPlugin {
             new MessageConfig()
         )
     );
+  }
+
+  private Location getDefaultSpawnLocation() throws IOException {
+    final World world = Bukkit.getWorld(((APIImpl) api).readServerPropertiesWorldName());
+    if (world == null)
+      return new Location(null, 0, 100, 0);
+    return world.getSpawnLocation();
   }
 }

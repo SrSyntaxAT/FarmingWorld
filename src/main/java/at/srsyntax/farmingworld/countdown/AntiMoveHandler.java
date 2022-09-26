@@ -1,10 +1,14 @@
-package at.srsyntax.farmingworld.command;
+package at.srsyntax.farmingworld.countdown;
 
-import at.srsyntax.farmingworld.api.API;
-import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.message.Message;
-import at.srsyntax.farmingworld.config.MessageConfig;
-import org.bukkit.command.CommandSender;
+import lombok.AllArgsConstructor;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerMoveEvent;
 
 /*
  * MIT License
@@ -29,27 +33,30 @@ import org.bukkit.command.CommandSender;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface AdminCommand {
+@AllArgsConstructor
+public class AntiMoveHandler implements Listener {
 
-  default void sendAllowedWorlds(API api, MessageConfig messageConfig, CommandSender sender) {
-    final Message message;
+    private final Location location;
+    private final Countdown countdown;
 
-    if (api.getFarmingWorlds().isEmpty())
-      message = new Message(messageConfig.getNoWorlds());
-    else
-      message = new Message(messageConfig.getFarmingWorldList()).add("<list>", listWorlds(api));
+    @EventHandler
+    public void onPlayerMoveEvent(PlayerMoveEvent event) {
+        if (!event.getPlayer().equals(countdown.getPlayer())) return;
+        if (!countdown.isActiv()) return;
 
-    sender.sendMessage(message.replace());
-  }
-
-  default String listWorlds(API api) {
-    final StringBuilder builder = new StringBuilder();
-    for (FarmingWorld farmingWorld : api.getFarmingWorlds()) {
-      if (!builder.isEmpty())
-        builder.append("&8, ");
-      builder.append("&7").append(farmingWorld.getName());
+        final Player player = countdown.getPlayer();
+        if (player.getLocation().distance(location) > 0.7D) {
+            countdown.cancel();
+            final var rawMessage = countdown.getPlugin().getPluginConfig().getMessage().getCountdownCanceledMoved();
+            player.sendMessage(new Message(rawMessage).replace());
+        }
     }
-    return builder.toString();
-  }
 
+    public void register() {
+        Bukkit.getPluginManager().registerEvents(this, countdown.getPlugin());
+    }
+
+    public void unregister() {
+        HandlerList.unregisterAll(this);
+    }
 }

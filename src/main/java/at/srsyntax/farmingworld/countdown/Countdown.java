@@ -2,6 +2,7 @@ package at.srsyntax.farmingworld.countdown;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.util.EmptyMetadataValue;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -33,16 +34,19 @@ public class Countdown {
 
   private static final String METADATA_KEY = "fw:cd";
 
-  private final FarmingWorldPlugin plugin;
+  @Getter private final FarmingWorldPlugin plugin;
   private final CountdownCallback callback;
-  private final Player player;
+  @Getter private final Player player;
 
   private BukkitTask task;
+  private AntiMoveHandler antiMoveHandler;
 
   public Countdown(FarmingWorldPlugin plugin, CountdownCallback callback, Player player) {
     this.plugin = plugin;
     this.callback = callback;
     this.player = player;
+    if (plugin.getPluginConfig().isCountdownMovable())
+      this.antiMoveHandler = new AntiMoveHandler(player.getLocation().clone(), this);
   }
 
   public void start(int time) {
@@ -54,12 +58,19 @@ public class Countdown {
     );
     addMetadata();
     task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, runnable, 0L, 20L);
+    if (antiMoveHandler != null)
+      antiMoveHandler.register();
   }
 
   public void finish() {
-    if (task != null && !task.isCancelled()) task.cancel();
+    cancel();
     callback.done();
+  }
+
+  public void cancel() {
     removeMetadata();
+    if (task != null && !task.isCancelled()) task.cancel();
+    if (antiMoveHandler != null) antiMoveHandler.unregister();
   }
 
   public boolean isActiv() {

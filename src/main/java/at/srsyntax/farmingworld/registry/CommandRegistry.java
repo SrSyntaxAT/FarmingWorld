@@ -1,10 +1,12 @@
-package at.srsyntax.farmingworld.command;
+package at.srsyntax.farmingworld.registry;
 
-import at.srsyntax.farmingworld.api.API;
-import at.srsyntax.farmingworld.api.FarmingWorld;
-import at.srsyntax.farmingworld.api.message.Message;
-import at.srsyntax.farmingworld.config.MessageConfig;
-import org.bukkit.command.CommandSender;
+import at.srsyntax.farmingworld.FarmingWorldPlugin;
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.plugin.SimplePluginManager;
+
+import java.lang.reflect.Field;
 
 /*
  * MIT License
@@ -29,27 +31,28 @@ import org.bukkit.command.CommandSender;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface AdminCommand {
+public class CommandRegistry {
 
-  default void sendAllowedWorlds(API api, MessageConfig messageConfig, CommandSender sender) {
-    final Message message;
+    private final String name;
+    private final SimpleCommandMap commandMap;
 
-    if (api.getFarmingWorlds().isEmpty())
-      message = new Message(messageConfig.getNoWorlds());
-    else
-      message = new Message(messageConfig.getFarmingWorldList()).add("<list>", listWorlds(api));
-
-    sender.sendMessage(message.replace());
-  }
-
-  default String listWorlds(API api) {
-    final StringBuilder builder = new StringBuilder();
-    for (FarmingWorld farmingWorld : api.getFarmingWorlds()) {
-      if (!builder.isEmpty())
-        builder.append("&8, ");
-      builder.append("&7").append(farmingWorld.getName());
+    public CommandRegistry(String name) throws Exception {
+        this.name = name;
+        this.commandMap = getCommandMap();
     }
-    return builder.toString();
-  }
 
+    private SimpleCommandMap getCommandMap() throws Exception {
+        final Field field = SimplePluginManager.class.getDeclaredField("commandMap");
+        field.setAccessible(true);
+        return  (SimpleCommandMap) field.get(Bukkit.getPluginManager());
+    }
+
+    public void register(Command... commands) {
+        for (Command command : commands)
+            commandMap.register(name, command);
+    }
+
+    public void unregister(Command command) {
+        command.unregister(commandMap);
+    }
 }

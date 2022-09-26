@@ -39,7 +39,8 @@ import java.util.List;
 public class PluginConfig extends ConfigLoader {
 
   private String version;
-  private final String fallbackWorld;
+  private final SpawnConfig spawn;
+  private final boolean countdownMovable;
 
   private boolean offline;
 

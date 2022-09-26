@@ -13,15 +13,13 @@ import at.srsyntax.farmingworld.config.MessageConfig;
 import at.srsyntax.farmingworld.countdown.Countdown;
 import at.srsyntax.farmingworld.countdown.CountdownCallback;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /*
  * MIT License
@@ -46,20 +44,22 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class FarmingCommand implements CommandExecutor, TabCompleter {
+public class FarmingCommand extends Command {
 
   private final API api;
   private final FarmingWorldPlugin plugin;
 
-  public FarmingCommand(API api, FarmingWorldPlugin plugin) {
+  public FarmingCommand(@NotNull String name, API api, FarmingWorldPlugin plugin) {
+    super(name);
     this.api = api;
     this.plugin = plugin;
   }
 
+
   @Override
-  public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+  public boolean execute(@NotNull CommandSender commandSender, @NotNull String s, @NotNull String[] strings) {
     if (!(commandSender instanceof final Player player))
-      return new TeleportFarmingWorldCommand(this.api, this.plugin).onCommand(commandSender, command, s, strings);
+      return Objects.requireNonNull(plugin.getCommand("teleportfarmingworld")).execute(commandSender, s, strings);
 
     try {
       if (strings.length == 0)
@@ -76,9 +76,9 @@ public class FarmingCommand implements CommandExecutor, TabCompleter {
     return false;
   }
 
-  @Nullable
+  @NotNull
   @Override
-  public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+  public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws IllegalArgumentException {
     final List<String> result = new ArrayList<>();
 
     if (args.length == 1) {

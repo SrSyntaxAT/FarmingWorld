@@ -103,11 +103,20 @@ public final class APIImpl implements API {
 
   @Override
   public @Nullable World getFallbackWorld() throws IOException {
-    String worldName = this.plugin.getPluginConfig().getFallbackWorld();
-    if (worldName == null)
-      worldName = readServerPropertiesWorldName();
-    if (worldName == null) throw new NullPointerException();
-    return Bukkit.getWorld(worldName);
+    final Location location = this.plugin.getPluginConfig().getSpawn().getLocation().toBukkit();
+    final World world;
+    if (location == null || location.getWorld() == null)
+       world = Bukkit.getWorld(readServerPropertiesWorldName());
+    else
+      world = location.getWorld();
+    if (world == null) throw new NullPointerException();
+    return world;
+  }
+
+  public String readServerPropertiesWorldName() throws IOException {
+    final Properties properties = new Properties();
+    properties.load(new FileReader("server.properties"));
+    return properties.getProperty("level-name");
   }
 
   @Override
@@ -124,12 +133,6 @@ public final class APIImpl implements API {
   private void unloadWorld(World world) {
     if (world == null) return;
     sync(() -> Bukkit.unloadWorld(world, true));
-  }
-
-  private String readServerPropertiesWorldName() throws IOException {
-    final Properties properties = new Properties();
-    properties.load(new FileReader("server.properties"));
-    return properties.getProperty("level-name");
   }
 
   @Override

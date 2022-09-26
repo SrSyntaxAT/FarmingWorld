@@ -14,12 +14,9 @@ import at.srsyntax.farmingworld.command.exception.TargetHasNoPermissionException
 import at.srsyntax.farmingworld.config.MessageConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +44,7 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class TeleportFarmingWorldCommand implements CommandExecutor, TabCompleter {
+public class TeleportFarmingWorldCommand extends Command {
 
   private static final String PERMISSION, PERMISSION_IGNORE;
 
@@ -60,14 +57,15 @@ public class TeleportFarmingWorldCommand implements CommandExecutor, TabComplete
   private final FarmingWorldPlugin plugin;
   private final MessageConfig messageConfig;
 
-  public TeleportFarmingWorldCommand(API api, FarmingWorldPlugin plugin) {
-    this.api = api;
+  public TeleportFarmingWorldCommand(@NotNull String name, API api, FarmingWorldPlugin plugin) {
+    super(name);
     this.plugin = plugin;
+    this.api = api;
     this.messageConfig = plugin.getPluginConfig().getMessage();
   }
 
   @Override
-  public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+  public boolean execute(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] strings) {
     // tfw <player> [world]
 
     try {
@@ -79,20 +77,20 @@ public class TeleportFarmingWorldCommand implements CommandExecutor, TabComplete
     }
   }
 
-  @Nullable
+  @NotNull
   @Override
-  public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-    if (!commandSender.hasPermission(PERMISSION)) return new ArrayList<>(0);
+  public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws IllegalArgumentException {
+    if (!sender.hasPermission(PERMISSION)) return new ArrayList<>(0);
     if (args.length == 1) {
-     final List<String> result = new ArrayList<>();
-     final String arg = args[0];
+      final List<String> result = new ArrayList<>();
+      final String arg = args[0];
 
-     for (Player player : Bukkit.getOnlinePlayers()) {
-       if (player.getName().toLowerCase().startsWith(arg.toLowerCase()))
-         result.add(player.getName());
-     }
+      for (Player player : Bukkit.getOnlinePlayers()) {
+        if (player.getName().toLowerCase().startsWith(arg.toLowerCase()))
+          result.add(player.getName());
+      }
 
-     return result;
+      return result;
     }
     return DefaultTabCompleter.onTabComplete(this.api, args, 1);
   }

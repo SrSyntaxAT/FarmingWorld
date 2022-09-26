@@ -9,9 +9,12 @@ import at.srsyntax.farmingworld.api.message.MessageBuilder;
 import at.srsyntax.farmingworld.command.completer.FWATabCompleter;
 import at.srsyntax.farmingworld.command.exception.*;
 import at.srsyntax.farmingworld.config.MessageConfig;
+import at.srsyntax.farmingworld.config.PluginConfig;
 import at.srsyntax.farmingworld.util.ConfirmAction;
 import at.srsyntax.farmingworld.util.ConfirmData;
+import at.srsyntax.farmingworld.util.location.LocationCache;
 import lombok.AllArgsConstructor;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -46,8 +49,8 @@ import java.util.Objects;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-public class FarmingWorldAdminCommand implements AdminCommand {
+//TODO: add: setspawn & togglespawn
+public class FarmingWorldAdminCommand extends Command implements AdminCommand {
 
   private static final String PERMISSION = "farmingworld.admin.";
 
@@ -55,8 +58,15 @@ public class FarmingWorldAdminCommand implements AdminCommand {
   private final FarmingWorldPlugin plugin;
   private final MessageConfig messageConfig;
 
+  public FarmingWorldAdminCommand(@NotNull String name, API api, FarmingWorldPlugin plugin) {
+    super(name);
+    this.api = api;
+    this.plugin = plugin;
+    this.messageConfig = plugin.getPluginConfig().getMessage();
+  }
+
   @Override
-  public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+  public boolean execute(@NotNull CommandSender sender, @NotNull String s, @NotNull String[] args) {
     try {
       if (!hasPermissionToUse(sender)) throw new NoPermissionException(this.messageConfig);
       if (args.length == 0) return sendUsage(sender);
@@ -80,10 +90,10 @@ public class FarmingWorldAdminCommand implements AdminCommand {
     return false;
   }
 
-  @Nullable
+  @NotNull
   @Override
-  public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String arg, @NotNull String[] args) {
-    return new FWATabCompleter(this.api, this).onTabComplete(commandSender, args);
+  public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws IllegalArgumentException {
+    return new FWATabCompleter(this.api, this).onTabComplete(sender, args);
   }
 
   public boolean hasPermissionToUse(CommandSender sender) {
