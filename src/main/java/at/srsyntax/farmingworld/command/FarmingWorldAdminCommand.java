@@ -296,14 +296,11 @@ public class FarmingWorldAdminCommand extends Command implements AdminCommand {
     try {
       final SpawnConfig config = plugin.getPluginConfig().getSpawn();
       final Message message;
-      final CommandRegistry registry = plugin.getCommandRegistry();
 
       if (config.isEnabled()) {
         message = new Message(messageConfig.getSpawnDisabled());
-        registry.unregister(Objects.requireNonNull(plugin.getCommand("spawn")));
       } else {
         message = new Message(messageConfig.getSpawnEnabled());
-        registry.register(new SpawnCommand("spawn", plugin));
       }
 
       config.setEnabled(!config.isEnabled());

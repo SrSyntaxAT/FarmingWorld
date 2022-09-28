@@ -64,7 +64,6 @@ public class SpawnCommand extends Command {
 
             return true;
         } catch (Exception exception) {
-            exception.printStackTrace();
             commandSender.sendMessage(exception.getMessage());
             return false;
         }

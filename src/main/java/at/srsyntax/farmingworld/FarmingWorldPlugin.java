@@ -114,10 +114,9 @@ public class FarmingWorldPlugin extends JavaPlugin {
     this.commandRegistry.register(
             new FarmingCommand("farming", api, this),
             new TeleportFarmingWorldCommand("teleportfarmingworld", api, this),
-            new FarmingWorldAdminCommand("farmingworldadmin", api, this)
+            new FarmingWorldAdminCommand("farmingworldadmin", api, this),
+            new SpawnCommand("spawn", this)
     );
-    if (this.pluginConfig.getSpawn().isEnabled())
-      this.commandRegistry.register(new SpawnCommand("spawn", this));
   }
 
   private void registerListeners() {

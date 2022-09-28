@@ -55,4 +55,8 @@ public class CommandRegistry {
     public void unregister(Command command) {
         command.unregister(commandMap);
     }
+
+    public Command getCommand(String name) {
+        return commandMap.getCommand(name);
+    }
 }
