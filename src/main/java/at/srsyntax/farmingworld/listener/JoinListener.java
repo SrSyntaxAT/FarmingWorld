@@ -1,9 +1,12 @@
-package at.srsyntax.farmingworld.config;
+package at.srsyntax.farmingworld.listener;
 
-import at.srsyntax.farmingworld.util.location.LocationCache;
+import at.srsyntax.farmingworld.FarmingWorldPlugin;
+import at.srsyntax.farmingworld.config.SpawnConfig;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 /*
  * MIT License
@@ -29,11 +32,22 @@ import lombok.Setter;
  * SOFTWARE.
  */
 @AllArgsConstructor
-@Getter @Setter
-public class SpawnConfig {
+public class JoinListener implements Listener {
 
-    private boolean enabled, newbiesOnly;
-    private int countdown;
-    private LocationCache location;
+    private final FarmingWorldPlugin plugin;
 
+    @EventHandler
+    public void onPlayerJoinEvent(PlayerJoinEvent event) {
+        final SpawnConfig config = plugin.getPluginConfig().getSpawn();
+        if (config.isEnabled()) {
+            final Player player = event.getPlayer();
+
+            if (config.isNewbiesOnly()) {
+                if (!player.hasPlayedBefore())
+                    player.teleport(config.getLocation().toBukkit());
+            } else {
+                player.teleport(config.getLocation().toBukkit());
+            }
+        }
+    }
 }

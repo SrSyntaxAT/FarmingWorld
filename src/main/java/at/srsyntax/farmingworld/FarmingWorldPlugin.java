@@ -14,10 +14,7 @@ import at.srsyntax.farmingworld.config.PluginConfig;
 import at.srsyntax.farmingworld.config.SpawnConfig;
 import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.database.SQLiteDatabase;
-import at.srsyntax.farmingworld.listener.ActionBarListeners;
-import at.srsyntax.farmingworld.listener.BossBarListeners;
-import at.srsyntax.farmingworld.listener.ConfirmListener;
-import at.srsyntax.farmingworld.listener.PlayerDataListeners;
+import at.srsyntax.farmingworld.listener.*;
 import at.srsyntax.farmingworld.registry.CommandRegistry;
 import at.srsyntax.farmingworld.runnable.RunnableManager;
 import at.srsyntax.farmingworld.util.ConfirmData;
@@ -127,6 +124,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
       pluginManager.registerEvents(new ActionBarListeners(api), this);
     pluginManager.registerEvents(new ConfirmListener(this), this);
     pluginManager.registerEvents(new PlayerDataListeners(getDatabase()), this);
+    pluginManager.registerEvents(new JoinListener(this), this);
   }
 
   private void loadFarmingWorlds() {
@@ -175,6 +173,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
     );
 
     final SpawnConfig spawn = new SpawnConfig(
+            true,
             true,
             3,
             new LocationCache(getDefaultSpawnLocation())
