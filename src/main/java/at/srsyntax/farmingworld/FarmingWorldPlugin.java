@@ -83,12 +83,12 @@ public class FarmingWorldPlugin extends JavaPlugin {
   @Override
   public void onEnable() {
     try {
+      api = new APIImpl(this);
+      new Metrics(this, BSTATS_ID);
+
       pluginConfig = loadConfig();
       this.database = new SQLiteDatabase(this);
       this.database.connect();
-
-      api = new APIImpl(this);
-      new Metrics(this, BSTATS_ID);
 
       this.commandRegistry = new CommandRegistry(getName());
 

@@ -45,7 +45,7 @@ public class Countdown {
     this.plugin = plugin;
     this.callback = callback;
     this.player = player;
-    if (plugin.getPluginConfig().isCountdownMovable())
+    if (!plugin.getPluginConfig().isCountdownMovable())
       this.antiMoveHandler = new AntiMoveHandler(player.getLocation().clone(), this);
   }
 

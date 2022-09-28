@@ -6,6 +6,7 @@ import at.srsyntax.farmingworld.config.MessageConfig;
 import at.srsyntax.farmingworld.config.SpawnConfig;
 import at.srsyntax.farmingworld.countdown.Countdown;
 import at.srsyntax.farmingworld.countdown.CountdownCallback;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -78,8 +79,10 @@ public class SpawnCommand extends Command {
 
     private CountdownCallback createCallback(Player player, Location location) {
         return () -> {
-            player.teleport(location);
-            player.sendMessage(new Message(messageConfig.getSpawnTeleported()).replace());
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                player.teleport(location);
+                player.sendMessage(new Message(messageConfig.getSpawnTeleported()).replace());
+            });
         };
     }
 }

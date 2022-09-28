@@ -293,21 +293,28 @@ public class FarmingWorldAdminCommand extends Command implements AdminCommand {
 
   private boolean toggleSpawn(CommandSender sender) throws FarmingWorldException {
     checkPermission(sender, "spawn.toggle");
-    final SpawnConfig config = plugin.getPluginConfig().getSpawn();
-    final Message message;
-    final CommandRegistry registry = plugin.getCommandRegistry();
+    try {
+      final SpawnConfig config = plugin.getPluginConfig().getSpawn();
+      final Message message;
+      final CommandRegistry registry = plugin.getCommandRegistry();
 
-    if (config.isEnabled()) {
-      message = new Message(messageConfig.getSpawnDisabled());
-      registry.unregister(Objects.requireNonNull(plugin.getCommand("spawn")));
-    } else {
-      message = new Message(messageConfig.getSpawnEnabled());
-      registry.register(new SpawnCommand("spawn", plugin));
+      if (config.isEnabled()) {
+        message = new Message(messageConfig.getSpawnDisabled());
+        registry.unregister(Objects.requireNonNull(plugin.getCommand("spawn")));
+      } else {
+        message = new Message(messageConfig.getSpawnEnabled());
+        registry.register(new SpawnCommand("spawn", plugin));
+      }
+
+      config.setEnabled(!config.isEnabled());
+      plugin.getPluginConfig().save(plugin);
+      sender.sendMessage(message.replace());
+      return true;
+    } catch (Exception exception) {
+      exception.printStackTrace();
+      sender.sendMessage(exception.getMessage());
+      return false;
     }
-
-    config.setEnabled(!config.isEnabled());
-    sender.sendMessage(message.replace());
-    return true;
   }
 
   public boolean setSpawn(CommandSender sender) throws FarmingWorldException {
@@ -315,8 +322,15 @@ public class FarmingWorldAdminCommand extends Command implements AdminCommand {
     if (!(sender instanceof Player player))
       throw new FarmingWorldException(new Message(messageConfig.getOnlyPlayers()).replace());
 
-    plugin.getPluginConfig().getSpawn().setLocation(new LocationCache(player.getLocation()));
-    player.sendMessage(new Message(messageConfig.getSpawnSet()).replace());
-    return true;
+    try {
+      plugin.getPluginConfig().getSpawn().setLocation(new LocationCache(player.getLocation()));
+      plugin.getPluginConfig().save(plugin);
+      player.sendMessage(new Message(messageConfig.getSpawnSet()).replace());
+      return true;
+    } catch (Exception exception) {
+      exception.printStackTrace();
+      sender.sendMessage(exception.getMessage());
+      return false;
+    }
   }
 }
