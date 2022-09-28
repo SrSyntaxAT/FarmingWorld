@@ -49,7 +49,8 @@ public class MessageConfig {
   private final String cooldownError, cooldownOtherError;
   private final String countdown, countdownActivError, countdownCanceledMoved;
 
-  private final String spawnDisabled, onlyPlayers, spawnTeleported;
+  private final String spawnDisabledError, onlyPlayers, spawnTeleported;
+  private final String spawnDisabled, spawnEnabled, spawnSet;
 
   public MessageConfig() {
     this(
@@ -86,7 +87,10 @@ public class MessageConfig {
         "&cThe countdown was canceled because you moved.",
         "&cSpawn command is currently disabled.",
         "&cOnly players can use this command.",
-        "&aYou have been teleported to the spawn."
+        "&aYou have been teleported to the spawn.",
+        "&cThe spawn has been disabled.",
+        "&aThe spawn has been enabled.",
+        "&aThe spawn has been set."
     );
   }
 }

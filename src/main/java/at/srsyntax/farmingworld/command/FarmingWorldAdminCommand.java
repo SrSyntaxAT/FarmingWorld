@@ -10,6 +10,8 @@ import at.srsyntax.farmingworld.command.completer.FWATabCompleter;
 import at.srsyntax.farmingworld.command.exception.*;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import at.srsyntax.farmingworld.config.PluginConfig;
+import at.srsyntax.farmingworld.config.SpawnConfig;
+import at.srsyntax.farmingworld.registry.CommandRegistry;
 import at.srsyntax.farmingworld.util.ConfirmAction;
 import at.srsyntax.farmingworld.util.ConfirmData;
 import at.srsyntax.farmingworld.util.location.LocationCache;
@@ -50,7 +52,6 @@ import java.util.Objects;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-//TODO: add: setspawn & togglespawn
 public class FarmingWorldAdminCommand extends Command implements AdminCommand {
 
   private static final String PERMISSION = "farmingworld.admin.";
@@ -80,6 +81,8 @@ public class FarmingWorldAdminCommand extends Command implements AdminCommand {
         case "enable" -> enable(sender, args);
         case "disable" -> sendConfirm(sender, ConfirmAction.DISABLE, args);
         case "list" -> list(sender);
+        case "togglespawn" -> toggleSpawn(sender);
+        case "setspawn" -> setSpawn(sender);
         default -> sendUsage(sender);
       };
     } catch (FarmingWorldException exception) {
@@ -285,6 +288,35 @@ public class FarmingWorldAdminCommand extends Command implements AdminCommand {
 
     if (needMessage)
       sender.sendMessage(message);
+    return true;
+  }
+
+  private boolean toggleSpawn(CommandSender sender) throws FarmingWorldException {
+    checkPermission(sender, "spawn.toggle");
+    final SpawnConfig config = plugin.getPluginConfig().getSpawn();
+    final Message message;
+    final CommandRegistry registry = plugin.getCommandRegistry();
+
+    if (config.isEnabled()) {
+      message = new Message(messageConfig.getSpawnDisabled());
+      registry.unregister(Objects.requireNonNull(plugin.getCommand("spawn")));
+    } else {
+      message = new Message(messageConfig.getSpawnEnabled());
+      registry.register(new SpawnCommand("spawn", plugin));
+    }
+
+    config.setEnabled(!config.isEnabled());
+    sender.sendMessage(message.replace());
+    return true;
+  }
+
+  public boolean setSpawn(CommandSender sender) throws FarmingWorldException {
+    checkPermission(sender, "spawn.set");
+    if (!(sender instanceof Player player))
+      throw new FarmingWorldException(new Message(messageConfig.getOnlyPlayers()).replace());
+
+    plugin.getPluginConfig().getSpawn().setLocation(new LocationCache(player.getLocation()));
+    player.sendMessage(new Message(messageConfig.getSpawnSet()).replace());
     return true;
   }
 }

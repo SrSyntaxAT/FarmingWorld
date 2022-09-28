@@ -73,7 +73,7 @@ public class SpawnCommand extends Command {
         if (!(sender instanceof Player))
             throw new RuntimeException(new Message(messageConfig.getOnlyPlayers()).replace());
         if (!config.isEnabled())
-            throw new RuntimeException(new Message(messageConfig.getSpawnDisabled()).replace());
+            throw new RuntimeException(new Message(messageConfig.getSpawnDisabledError()).replace());
     }
 
     private CountdownCallback createCallback(Player player, Location location) {
