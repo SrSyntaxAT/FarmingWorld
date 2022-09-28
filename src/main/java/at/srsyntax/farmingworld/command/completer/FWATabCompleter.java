@@ -48,7 +48,7 @@ public class FWATabCompleter {
   }
 
   private List<String> getTabCompleteFirstArgs(CommandSender sender, String[] args) {
-    final List<String> allowedArgs = Arrays.asList("reload", "list", "confirm", "info", "delete", "reset", "enable", "disable"),
+    final List<String> allowedArgs = Arrays.asList("reload", "list", "confirm", "info", "delete", "reset", "enable", "disable", "setspawn", "togglespawn"),
         result = new ArrayList<>();
 
     for (String s : allowedArgs) {
