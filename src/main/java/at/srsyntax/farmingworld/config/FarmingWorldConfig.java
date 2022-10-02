@@ -5,7 +5,9 @@ import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.exception.GenerateLocationException;
 import at.srsyntax.farmingworld.api.exception.TeleportFarmingWorldException;
+import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.database.data.FarmingWorldData;
+import at.srsyntax.farmingworld.sign.SignCache;
 import at.srsyntax.farmingworld.util.Tasks;
 import at.srsyntax.farmingworld.util.Displayer;
 import at.srsyntax.farmingworld.util.world.FarmingWorldDeleter;
@@ -16,12 +18,15 @@ import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -65,6 +70,7 @@ public class FarmingWorldConfig implements FarmingWorld, Tasks {
   private World.Environment environment;
   private int cooldown = 60*60, countdown = 3;
   private List<String> aliases = new ArrayList<>();
+  private transient final List<SignCache> signs = new LinkedList<>();
 
   public FarmingWorldConfig(String name, String permission, String currentWorldName, String nextWorldName, long created, int timer, World.Environment environment, int rtpArenaSize, double borderSize, String generator) {
     this.name = name;
@@ -119,11 +125,48 @@ public class FarmingWorldConfig implements FarmingWorld, Tasks {
   @Override
   public void updateDisplay() {
     this.displayer.updateDisplay();
+    Bukkit.getScheduler().runTask(plugin, () -> replaceSignLines());
   }
 
   @Override
   public void updateDisplay(Player player) {
     this.displayer.updateDisplay(player);
+  }
+
+  public void replaceSignLines() {
+    for (SignCache cache : signs) {
+      final Block block = cache.location().getBlock();
+      if (block.isEmpty() || !(block.getState() instanceof Sign sign)) continue;
+      replaceSignLines(sign);
+    }
+  }
+
+  public void replaceSignLines(Sign sign) {
+    Bukkit.getScheduler().runTask(plugin, () -> {
+      final SignConfig config = plugin.getPluginConfig().getSign();
+      final var lines = activ ? config.getLines() : config.getDisabled();
+      for (int i = 0; i < lines.length; i++) {
+        sign.setLine(i, replaceLine(lines[i]));
+      }
+      sign.update(true);
+    });
+  }
+
+  private String replaceLine(String line) {
+    final API api = FarmingWorldPlugin.getApi();
+    final SignConfig config = plugin.getPluginConfig().getSign();
+
+    long reset = getReset();
+
+    if (getRemaining() > TimeUnit.SECONDS.toMillis(60))
+      reset+=TimeUnit.SECONDS.toMillis(60);
+
+    final Message message = new Message(line)
+            .add("§farmingworldname", name)
+            .add("§reset_remaining", api.getRemainingTime(reset))
+            .add("§reset_date", api.getDate(config.getResetDateFormat(), getReset()))
+            .add("§reset_time", api.getDate(config.getResetTimeFormat(), getReset()));
+    return message.replace();
   }
 
   @Override
@@ -152,6 +195,7 @@ public class FarmingWorldConfig implements FarmingWorld, Tasks {
   public void enable() {
     setActiv(true);
     new FarmingWorldLoader(getPlugin().getLogger(), FarmingWorldPlugin.getApi(), getPlugin(), getPlugin().getDatabase()).enable(this);
+    replaceSignLines();
     save();
   }
 

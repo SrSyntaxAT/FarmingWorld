@@ -53,6 +53,7 @@ public interface API {
 
   String getDate(long date);
   String getDate();
+  String getDate(String format, long date);
 
   CooldownHandler newCooldownHandler(Player player, FarmingWorld farmingWorld);
 

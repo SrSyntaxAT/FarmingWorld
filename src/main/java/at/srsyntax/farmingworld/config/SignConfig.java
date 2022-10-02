@@ -1,15 +1,6 @@
 package at.srsyntax.farmingworld.config;
 
-import at.srsyntax.farmingworld.api.display.DisplayPosition;
-import at.srsyntax.farmingworld.api.display.DisplayType;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
-import org.bukkit.Material;
-import org.bukkit.boss.BarColor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /*
  * MIT License
@@ -34,27 +25,28 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-@Getter @Setter
-public class PluginConfig extends ConfigLoader {
+@Getter
+public class SignConfig {
 
-  private String version;
-  private final SpawnConfig spawn;
-  private final boolean countdownMovable;
-  private final SignConfig sign;
+    private final boolean enabled;
+    private final String[] lines, disabled;
+    private final String resetDateFormat, resetTimeFormat;
 
-  private boolean offline;
-
-  private final DisplayPosition displayPosition;
-  private final DisplayType displayType;
-  private final int dateRefresh;
-  private final List<Material> spawnBlockBlacklist;
-
-  private final BarColor barColor;
-
-  private final String defaultFarmingWorld;
-  private final ArrayList<FarmingWorldConfig> farmingWorlds;
-
-  private final MessageConfig message;
-
+    public SignConfig() {
+        this.enabled = true;
+        this.lines = new String[]{
+                "&7[&bFarmingWorld&7]",
+                "&6§farmingworldname",
+                "&c§reset_date at §reset_time",
+                "&c§reset_remaining",
+        };
+        this.disabled = new String[]{
+                "&7[&bFarmingWorld&7]",
+                "&6§farmingworldname",
+                "",
+                "&cdisabled",
+        };
+        this.resetDateFormat = "dd.MM";
+        this.resetTimeFormat = "HH:mm";
+    }
 }

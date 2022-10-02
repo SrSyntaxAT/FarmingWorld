@@ -59,15 +59,7 @@ public class Displayer implements Displayable {
     final API api = FarmingWorldPlugin.getApi();
     final Message message = new Message(messageConfig.getRemaining())
         .add("<remaining>", api.getRemainingTime(reset))
-        .add("<date>", api.getDate(reset))
-        .add("<second>", messageConfig.getSecond())
-        .add("<seconds>", messageConfig.getSeconds())
-        .add("<minute>", messageConfig.getMinute())
-        .add("<minutes>", messageConfig.getMinutes())
-        .add("<hour>", messageConfig.getHour())
-        .add("<hours>", messageConfig.getHours())
-        .add("<day>", messageConfig.getDay())
-        .add("<days>", messageConfig.getDays());
+        .add("<date>", api.getDate(reset));
 
     return message.replace();
   }

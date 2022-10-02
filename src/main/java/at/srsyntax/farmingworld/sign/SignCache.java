@@ -1,15 +1,7 @@
-package at.srsyntax.farmingworld.config;
+package at.srsyntax.farmingworld.sign;
 
-import at.srsyntax.farmingworld.api.display.DisplayPosition;
-import at.srsyntax.farmingworld.api.display.DisplayType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import org.bukkit.Material;
-import org.bukkit.boss.BarColor;
-
-import java.util.ArrayList;
-import java.util.List;
+import at.srsyntax.farmingworld.config.FarmingWorldConfig;
+import org.bukkit.Location;
 
 /*
  * MIT License
@@ -34,27 +26,5 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-@Getter @Setter
-public class PluginConfig extends ConfigLoader {
-
-  private String version;
-  private final SpawnConfig spawn;
-  private final boolean countdownMovable;
-  private final SignConfig sign;
-
-  private boolean offline;
-
-  private final DisplayPosition displayPosition;
-  private final DisplayType displayType;
-  private final int dateRefresh;
-  private final List<Material> spawnBlockBlacklist;
-
-  private final BarColor barColor;
-
-  private final String defaultFarmingWorld;
-  private final ArrayList<FarmingWorldConfig> farmingWorlds;
-
-  private final MessageConfig message;
-
+public record SignCache(FarmingWorldConfig farmingWorld, Location location) {
 }

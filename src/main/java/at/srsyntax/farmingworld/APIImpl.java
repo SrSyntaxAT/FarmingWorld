@@ -6,7 +6,9 @@ import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.api.event.DeleteFarmingWorldEvent;
 import at.srsyntax.farmingworld.api.event.GenerateNewFarmingWorldEvent;
 import at.srsyntax.farmingworld.api.exception.TeleportFarmingWorldException;
+import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
+import at.srsyntax.farmingworld.config.MessageConfig;
 import at.srsyntax.farmingworld.util.CooldownHandlerImpl;
 import lombok.AllArgsConstructor;
 import org.bukkit.*;
@@ -22,6 +24,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /*
  * MIT License
@@ -258,7 +261,21 @@ public final class APIImpl implements API {
     if (seconds != 0 && showSeconds)
       stringBuilder.append(seconds == 1 ? seconds + " <second> " : seconds + " <seconds> ");
 
-    return stringBuilder.toString();
+    return replaceRemaining(stringBuilder.toString());
+  }
+
+  private String replaceRemaining(String remaining) {
+    final MessageConfig messageConfig = plugin.getPluginConfig().getMessage();
+    final Message message = new Message(remaining)
+            .add("<second>", messageConfig.getSecond())
+            .add("<seconds>", messageConfig.getSeconds())
+            .add("<minute>", messageConfig.getMinute())
+            .add("<minutes>", messageConfig.getMinutes())
+            .add("<hour>", messageConfig.getHour())
+            .add("<hours>", messageConfig.getHours())
+            .add("<day>", messageConfig.getDay())
+            .add("<days>", messageConfig.getDays());
+    return message.replace();
   }
 
   @Override
@@ -268,12 +285,16 @@ public final class APIImpl implements API {
   }
 
   public String getDate(long date) {
-    final DateFormat format = new SimpleDateFormat(this.plugin.getPluginConfig().getMessage().getDateFormat());
-    return format.format(new Date(date));
+    return getDate(this.plugin.getPluginConfig().getMessage().getDateFormat(), date);
   }
 
   public String getDate() {
     return getDate(System.currentTimeMillis());
+  }
+
+  @Override
+  public String getDate(String format, long date) {
+    return new SimpleDateFormat(format).format(new Date(date));
   }
 
   @Override

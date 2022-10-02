@@ -8,15 +8,13 @@ import at.srsyntax.farmingworld.command.FarmingCommand;
 import at.srsyntax.farmingworld.command.FarmingWorldAdminCommand;
 import at.srsyntax.farmingworld.command.SpawnCommand;
 import at.srsyntax.farmingworld.command.TeleportFarmingWorldCommand;
-import at.srsyntax.farmingworld.config.FarmingWorldConfig;
-import at.srsyntax.farmingworld.config.MessageConfig;
-import at.srsyntax.farmingworld.config.PluginConfig;
-import at.srsyntax.farmingworld.config.SpawnConfig;
+import at.srsyntax.farmingworld.config.*;
 import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.database.SQLiteDatabase;
 import at.srsyntax.farmingworld.listener.*;
 import at.srsyntax.farmingworld.registry.CommandRegistry;
 import at.srsyntax.farmingworld.runnable.RunnableManager;
+import at.srsyntax.farmingworld.sign.SignRegistry;
 import at.srsyntax.farmingworld.util.ConfirmData;
 import at.srsyntax.farmingworld.util.location.LocationCache;
 import at.srsyntax.farmingworld.util.version.VersionCheck;
@@ -71,6 +69,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
   @Getter private final Map<CommandSender, ConfirmData> needConfirm = new ConcurrentHashMap<>();
   private RunnableManager runnableManager;
   @Getter private CommandRegistry commandRegistry;
+  @Getter private SignRegistry signRegistry;
 
   @Override
   public void onLoad() {
@@ -95,6 +94,8 @@ public class FarmingWorldPlugin extends JavaPlugin {
       this.runnableManager.startScheduler();
       registerListeners();
       registerCommands();
+
+      this.signRegistry = new SignRegistry(this);
     } catch (Exception exception) {
       getLogger().severe("Plugin could not be loaded successfully!");
       exception.printStackTrace();
@@ -185,6 +186,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
             getDescription().getVersion(),
             spawn,
             false,
+            new SignConfig(),
             false,
             DisplayPosition.BOSS_BAR,
             DisplayType.REMAINING,

@@ -5,10 +5,12 @@ import at.srsyntax.farmingworld.api.FarmingWorld;
 import at.srsyntax.farmingworld.config.FarmingWorldConfig;
 import at.srsyntax.farmingworld.database.data.CooldownData;
 import at.srsyntax.farmingworld.database.data.FarmingWorldData;
+import at.srsyntax.farmingworld.sign.SignCache;
 import at.srsyntax.farmingworld.util.location.LocationCache;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
@@ -61,6 +63,7 @@ public final class SQLiteDatabase implements Database {
     execute("CREATE TABLE IF NOT EXISTS farmingworld (name TEXT, current_world TEXT, next_world TEXT, created INTEGER)");
     execute("CREATE TABLE IF NOT EXISTS location_cache (farmingworld TEXT, id TEXT, location TEXT)");
     execute("CREATE TABLE IF NOT EXISTS player (id TEXT, cooldown TEXT)");
+    execute("CREATE TABLE IF NOT EXISTS sign (farmingWorld TEXT, location TEXT)");
   }
 
   @Override
@@ -268,5 +271,44 @@ public final class SQLiteDatabase implements Database {
     });
 
     return new GsonBuilder().disableHtmlEscaping().create().toJson(data);
+  }
+
+  @Override
+  public void saveSign(SignCache cache) throws SQLException {
+    final String sql = "INSERT INTO sign (farmingWorld, location) VALUES (?,?)";
+    final PreparedStatement statement = getConnection().prepareStatement(sql);
+    statement.setString(1, cache.farmingWorld().getName());
+    statement.setString(2, new LocationCache(cache.location()).toString());
+    statement.execute();
+  }
+
+  @Override
+  public void deleteSign(Location location) throws SQLException {
+    final String sql = "DELETE FROM sign WHERE location = ?";
+    final PreparedStatement statement = getConnection().prepareStatement(sql);
+    statement.setString(1, new LocationCache(location).toString());
+    statement.execute();
+  }
+
+  @Override
+  public List<SignCache> getSignCache() throws SQLException {
+    final List<SignCache> list = new ArrayList<>();
+    final String sql = "SELECT * FROM sign";
+    final ResultSet resultSet = getConnection().createStatement().executeQuery(sql);
+
+    while (resultSet.next()) {
+      final String farmingWorldName = resultSet.getString("farmingWorld");
+      final FarmingWorld farmingWorld = FarmingWorldPlugin.getApi().getFarmingWorld(farmingWorldName);
+      final Location location = LocationCache.fromJson(resultSet.getString("location")).toBukkit();
+
+      if (farmingWorld == null) {
+        plugin.getLogger().severe(String.format("The farm world %s for the sign on %s no longer exists.", farmingWorldName, location));
+        deleteSign(location);
+      } else {
+        list.add(new SignCache((FarmingWorldConfig) farmingWorld, location));
+      }
+    }
+
+    return list;
   }
 }
