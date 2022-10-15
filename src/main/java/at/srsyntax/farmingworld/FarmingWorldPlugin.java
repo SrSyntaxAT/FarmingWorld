@@ -1,5 +1,6 @@
 package at.srsyntax.farmingworld;
 
+import at.srsyntax.farmingworld.util.SpigotVersionCheck;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /*
@@ -28,6 +29,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class FarmingWorldPlugin extends JavaPlugin {
 
   private static final int BSTATS_ID = 14550, RESOURCE_ID = 100640;
+
+  @Override
+  public void onLoad() {
+    SpigotVersionCheck.checkWithError(this, RESOURCE_ID, "The plugin is no longer up to date, please update the plugin.");
+  }
 
   @Override
   public void onEnable() {
