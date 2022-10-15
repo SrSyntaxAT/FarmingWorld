@@ -1,9 +1,11 @@
 package at.srsyntax.farmingworld;
 
+import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.database.DatabaseException;
 import at.srsyntax.farmingworld.database.sqlite.SQLiteDatabase;
 import at.srsyntax.farmingworld.util.SpigotVersionCheck;
+import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /*
@@ -32,6 +34,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class FarmingWorldPlugin extends JavaPlugin {
 
     private static final int BSTATS_ID = 14550, RESOURCE_ID = 100640;
+    @Getter private static API api;
 
     private Database database;
 
@@ -43,6 +46,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         try {
+            api = new APIImpl();
             new Metrics(this, BSTATS_ID);
             this.database = new SQLiteDatabase(this);
             this.database.connect();
