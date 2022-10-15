@@ -1,10 +1,13 @@
-package at.srsyntax.farmingworld;
+package at.srsyntax.farmingworld.database.sqlite;
 
 import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.database.DatabaseException;
-import at.srsyntax.farmingworld.database.sqlite.SQLiteDatabase;
-import at.srsyntax.farmingworld.util.SpigotVersionCheck;
-import org.bukkit.plugin.java.JavaPlugin;
+import lombok.Getter;
+import org.bukkit.plugin.Plugin;
+
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 /*
  * MIT License
@@ -29,37 +32,32 @@ import org.bukkit.plugin.java.JavaPlugin;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class FarmingWorldPlugin extends JavaPlugin {
+public class SQLiteDatabase implements Database {
 
-    private static final int BSTATS_ID = 14550, RESOURCE_ID = 100640;
+    private final Plugin plugin;
+    @Getter private Connection connection;
 
-    private Database database;
-
-    @Override
-    public void onLoad() {
-        SpigotVersionCheck.checkWithError(this, RESOURCE_ID, "The plugin is no longer up to date, please update the plugin.");
+    public SQLiteDatabase(Plugin plugin) {
+        this.plugin = plugin;
     }
 
     @Override
-    public void onEnable() {
+    public void connect() throws DatabaseException {
         try {
-            new Metrics(this, BSTATS_ID);
-            this.database = new SQLiteDatabase(this);
-            this.database.connect();
+            final File file = new File(plugin.getDataFolder(), "database.db");
+            this.connection = DriverManager.getConnection("jdbc:sqlite:" + file.getPath());
         } catch (Exception exception) {
-            getLogger().severe("Plugin could not be loaded successfully!");
-            exception.printStackTrace();
+            throw new DatabaseException("An error occurred while connecting to the database.", exception);
         }
     }
 
     @Override
-    public void onDisable() {
+    public void disconnect() throws DatabaseException {
         try {
-            this.database.disconnect();
-        } catch (DatabaseException e) {
-            getLogger().severe("Plugin could not be disabled successfully.");
-            e.printStackTrace();
+            if (connection != null && !connection.isClosed())
+                connection.close();
+        } catch (Exception exception) {
+            throw new DatabaseException("The connection to the database could not be closed safely.", exception);
         }
     }
-
 }
