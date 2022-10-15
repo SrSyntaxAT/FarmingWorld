@@ -28,25 +28,25 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class FarmingWorldPlugin extends JavaPlugin {
 
-  private static final int BSTATS_ID = 14550, RESOURCE_ID = 100640;
+    private static final int BSTATS_ID = 14550, RESOURCE_ID = 100640;
 
-  @Override
-  public void onLoad() {
-    SpigotVersionCheck.checkWithError(this, RESOURCE_ID, "The plugin is no longer up to date, please update the plugin.");
-  }
-
-  @Override
-  public void onEnable() {
-    try {
-      new Metrics(this, BSTATS_ID);
-    } catch (Exception exception) {
-      getLogger().severe("Plugin could not be loaded successfully!");
-      exception.printStackTrace();
+    @Override
+    public void onLoad() {
+        SpigotVersionCheck.checkWithError(this, RESOURCE_ID, "The plugin is no longer up to date, please update the plugin.");
     }
-  }
 
-  @Override
-  public void onDisable() {
-  }
+    @Override
+    public void onEnable() {
+        try {
+            new Metrics(this, BSTATS_ID);
+        } catch (Exception exception) {
+            getLogger().severe("Plugin could not be loaded successfully!");
+            exception.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onDisable() {
+    }
 
 }
