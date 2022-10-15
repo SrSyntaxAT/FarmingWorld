@@ -1,6 +1,8 @@
 package at.srsyntax.farmingworld;
 
 import at.srsyntax.farmingworld.api.API;
+import at.srsyntax.farmingworld.config.ConfigLoader;
+import at.srsyntax.farmingworld.config.PluginConfig;
 import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.database.DatabaseException;
 import at.srsyntax.farmingworld.database.sqlite.SQLiteDatabase;
@@ -37,6 +39,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
     @Getter private static API api;
 
     private Database database;
+    @Getter private PluginConfig pluginConfig;
 
     @Override
     public void onLoad() {
@@ -48,8 +51,11 @@ public class FarmingWorldPlugin extends JavaPlugin {
         try {
             api = new APIImpl();
             new Metrics(this, BSTATS_ID);
+
             this.database = new SQLiteDatabase(this);
             this.database.connect();
+
+            this.pluginConfig = ConfigLoader.load(this, new PluginConfig(this));
         } catch (Exception exception) {
             getLogger().severe("Plugin could not be loaded successfully!");
             exception.printStackTrace();
