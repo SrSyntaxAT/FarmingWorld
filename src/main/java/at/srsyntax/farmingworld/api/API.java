@@ -1,5 +1,10 @@
 package at.srsyntax.farmingworld.api;
 
+import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
+import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
 /*
  * MIT License
  *
@@ -23,5 +28,24 @@ package at.srsyntax.farmingworld.api;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+/**
+ * Represents the plugin interface
+ */
 public interface API {
+
+    /**
+     * Get a countdown handler for the player.
+     * @param player on which the countdown is related.
+     * @param callback - To be notified when the countdown has ended.
+     * @return the current countdown or a new countdown if there is no current countdown.
+     */
+    Countdown getCountdown(@NotNull Player player, @NotNull CountdownCallback callback);
+
+    /**
+     * Check if a player has a countdown running.
+     * @param player to which the query refers.
+     * @return whether it has a countdown running.
+     */
+    boolean hasCountdown(Player player);
 }

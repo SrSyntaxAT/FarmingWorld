@@ -6,8 +6,12 @@ import at.srsyntax.farmingworld.config.PluginConfig;
 import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.database.DatabaseException;
 import at.srsyntax.farmingworld.database.sqlite.SQLiteDatabase;
+import at.srsyntax.farmingworld.handler.countdown.CountdownListener;
+import at.srsyntax.farmingworld.handler.countdown.CountdownRegistry;
 import at.srsyntax.farmingworld.util.SpigotVersionCheck;
 import lombok.Getter;
+import org.bukkit.Bukkit;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /*
@@ -41,6 +45,8 @@ public class FarmingWorldPlugin extends JavaPlugin {
     private Database database;
     @Getter private PluginConfig pluginConfig;
 
+    @Getter private CountdownRegistry countdownRegistry;
+
     @Override
     public void onLoad() {
         SpigotVersionCheck.checkWithError(this, RESOURCE_ID, "The plugin is no longer up to date, please update the plugin.");
@@ -49,17 +55,28 @@ public class FarmingWorldPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         try {
-            api = new APIImpl();
+            api = new APIImpl(this);
             new Metrics(this, BSTATS_ID);
 
             this.database = new SQLiteDatabase(this);
             this.database.connect();
 
             this.pluginConfig = ConfigLoader.load(this, new PluginConfig(this));
+
+            this.countdownRegistry = new CountdownRegistry();
+            registerListeners(
+                    new CountdownListener(countdownRegistry)
+            );
+
         } catch (Exception exception) {
             getLogger().severe("Plugin could not be loaded successfully!");
             exception.printStackTrace();
         }
+    }
+
+    private void registerListeners(Listener... listeners) {
+        for (Listener listener : listeners)
+            Bukkit.getPluginManager().registerEvents(listener, this);
     }
 
     @Override

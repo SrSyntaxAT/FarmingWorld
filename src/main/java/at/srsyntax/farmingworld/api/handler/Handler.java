@@ -1,12 +1,6 @@
-package at.srsyntax.farmingworld;
+package at.srsyntax.farmingworld.api.handler;
 
-import at.srsyntax.farmingworld.api.API;
-import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
-import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
-import at.srsyntax.farmingworld.handler.countdown.CountdownImpl;
-import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 /*
  * MIT License
@@ -31,20 +25,30 @@ import org.jetbrains.annotations.NotNull;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-public class APIImpl implements API {
 
-    private final FarmingWorldPlugin plugin;
+/**
+ * Represents the base class of a handler.
+ * One example is the countdown.
+ * @see at.srsyntax.farmingworld.api.handler.countdown.Countdown
+ */
+public interface Handler {
 
-    @Override
-    public Countdown getCountdown(@NotNull Player player, @NotNull CountdownCallback callback) {
-        if (hasCountdown(player))
-            return plugin.getCountdownRegistry().getCountdown(player);
-        return new CountdownImpl(plugin, player, callback);
-    }
+    /**
+     * Check if a player can skip the action.
+     * @return whether the player has the rights to skip the action.
+     */
+    boolean canBypass();
 
-    @Override
-    public boolean hasCountdown(Player player) {
-        return plugin.getCountdownRegistry().hasCountdown(player);
-    }
+    /**
+     * Trigger the action of the handler.
+     * @throws HandleException - To catch plugin relevant errors.
+     */
+    void handle() throws HandleException;
+
+    /**
+     * Get the player on which the handler is based.
+     * @return the player on which the handler is based.
+     */
+    Player getPlayer();
+
 }

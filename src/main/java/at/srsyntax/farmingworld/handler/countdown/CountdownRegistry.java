@@ -1,12 +1,10 @@
-package at.srsyntax.farmingworld;
+package at.srsyntax.farmingworld.handler.countdown;
 
-import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
-import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
-import at.srsyntax.farmingworld.handler.countdown.CountdownImpl;
-import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /*
  * MIT License
@@ -31,20 +29,23 @@ import org.jetbrains.annotations.NotNull;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-public class APIImpl implements API {
+public class CountdownRegistry {
 
-    private final FarmingWorldPlugin plugin;
+    private final Map<Player, Countdown> countdowns = new ConcurrentHashMap<>();
 
-    @Override
-    public Countdown getCountdown(@NotNull Player player, @NotNull CountdownCallback callback) {
-        if (hasCountdown(player))
-            return plugin.getCountdownRegistry().getCountdown(player);
-        return new CountdownImpl(plugin, player, callback);
+    public void register(Countdown countdown) {
+        countdowns.put(countdown.getPlayer(), countdown);
     }
 
-    @Override
+    public void unregister(Player player) {
+        countdowns.remove(player);
+    }
+
+    public Countdown getCountdown(Player player) {
+        return countdowns.get(player);
+    }
+
     public boolean hasCountdown(Player player) {
-        return plugin.getCountdownRegistry().hasCountdown(player);
+        return countdowns.containsKey(player);
     }
 }

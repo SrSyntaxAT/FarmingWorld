@@ -1,11 +1,7 @@
-package at.srsyntax.farmingworld;
+package at.srsyntax.farmingworld.api.event.countdown;
 
-import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
-import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
-import at.srsyntax.farmingworld.handler.countdown.CountdownImpl;
-import lombok.AllArgsConstructor;
-import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -31,20 +27,28 @@ import org.jetbrains.annotations.NotNull;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-public class APIImpl implements API {
 
-    private final FarmingWorldPlugin plugin;
+/**
+ * Represents a countdown related event
+ */
+public abstract class CountdownEvent extends Event {
 
-    @Override
-    public Countdown getCountdown(@NotNull Player player, @NotNull CountdownCallback callback) {
-        if (hasCountdown(player))
-            return plugin.getCountdownRegistry().getCountdown(player);
-        return new CountdownImpl(plugin, player, callback);
+    private final Countdown countdown;
+
+    public CountdownEvent(@NotNull Countdown countdown) {
+        this.countdown = countdown;
     }
 
-    @Override
-    public boolean hasCountdown(Player player) {
-        return plugin.getCountdownRegistry().hasCountdown(player);
+    public CountdownEvent(boolean isAsync, @NotNull Countdown countdown) {
+        super(isAsync);
+        this.countdown = countdown;
+    }
+
+    /**
+     * Get the affected countdown.
+     * @return the affected countdown.
+     */
+    public @NotNull Countdown getCountdown() {
+        return countdown;
     }
 }

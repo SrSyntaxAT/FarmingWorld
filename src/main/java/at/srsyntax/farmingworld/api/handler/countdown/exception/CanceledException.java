@@ -1,11 +1,6 @@
-package at.srsyntax.farmingworld;
+package at.srsyntax.farmingworld.api.handler.countdown.exception;
 
-import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
-import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
-import at.srsyntax.farmingworld.handler.countdown.CountdownImpl;
-import lombok.AllArgsConstructor;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -31,20 +26,31 @@ import org.jetbrains.annotations.NotNull;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-public class APIImpl implements API {
 
-    private final FarmingWorldPlugin plugin;
+/**
+ * Signals that the countdown has not elapsed correctly.
+ */
+public class CanceledException extends CountdownException {
 
-    @Override
-    public Countdown getCountdown(@NotNull Player player, @NotNull CountdownCallback callback) {
-        if (hasCountdown(player))
-            return plugin.getCountdownRegistry().getCountdown(player);
-        return new CountdownImpl(plugin, player, callback);
+    private final Result result;
+
+    public CanceledException(@NotNull String message, @NotNull Countdown countdown, @NotNull Result result) {
+        super(message, countdown);
+        this.result = result;
     }
 
-    @Override
-    public boolean hasCountdown(Player player) {
-        return plugin.getCountdownRegistry().hasCountdown(player);
+    /**
+     * Get the reason why the countdown has been interrupted with an error.
+     * @return the reason for the error.
+     */
+    public Result getResult() {
+        return result;
+    }
+
+    public enum Result {
+        SUCCESSFUL,
+        QUIT,
+        MOVED,
+        UNKNOWN
     }
 }

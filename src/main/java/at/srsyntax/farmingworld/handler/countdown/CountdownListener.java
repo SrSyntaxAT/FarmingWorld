@@ -1,12 +1,10 @@
-package at.srsyntax.farmingworld;
+package at.srsyntax.farmingworld.handler.countdown;
 
-import at.srsyntax.farmingworld.api.API;
-import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
-import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
-import at.srsyntax.farmingworld.handler.countdown.CountdownImpl;
+import at.srsyntax.farmingworld.api.handler.countdown.exception.CanceledException;
 import lombok.AllArgsConstructor;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 /*
  * MIT License
@@ -32,19 +30,13 @@ import org.jetbrains.annotations.NotNull;
  * SOFTWARE.
  */
 @AllArgsConstructor
-public class APIImpl implements API {
+public class CountdownListener implements Listener {
 
-    private final FarmingWorldPlugin plugin;
+    private final CountdownRegistry registry;
 
-    @Override
-    public Countdown getCountdown(@NotNull Player player, @NotNull CountdownCallback callback) {
-        if (hasCountdown(player))
-            return plugin.getCountdownRegistry().getCountdown(player);
-        return new CountdownImpl(plugin, player, callback);
-    }
-
-    @Override
-    public boolean hasCountdown(Player player) {
-        return plugin.getCountdownRegistry().hasCountdown(player);
+    @EventHandler
+    public void onPlayerQuitEvent(PlayerQuitEvent event) {
+        if (!registry.hasCountdown(event.getPlayer())) return;
+        registry.getCountdown(event.getPlayer()).cancel(true, CanceledException.Result.QUIT);
     }
 }

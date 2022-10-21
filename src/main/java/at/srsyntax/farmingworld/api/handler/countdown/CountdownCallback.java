@@ -1,12 +1,4 @@
-package at.srsyntax.farmingworld;
-
-import at.srsyntax.farmingworld.api.API;
-import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
-import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
-import at.srsyntax.farmingworld.handler.countdown.CountdownImpl;
-import lombok.AllArgsConstructor;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+package at.srsyntax.farmingworld.api.handler.countdown;
 
 /*
  * MIT License
@@ -31,20 +23,22 @@ import org.jetbrains.annotations.NotNull;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-public class APIImpl implements API {
 
-    private final FarmingWorldPlugin plugin;
+/**
+ * Represents a class to be notified should the countdown finish or have an error.
+ */
+public interface CountdownCallback {
 
-    @Override
-    public Countdown getCountdown(@NotNull Player player, @NotNull CountdownCallback callback) {
-        if (hasCountdown(player))
-            return plugin.getCountdownRegistry().getCountdown(player);
-        return new CountdownImpl(plugin, player, callback);
-    }
+    /**
+     * Triggered when the countdown has been successfully completed.
+     * @param countdown which has been finished.
+     */
+    void finished(Countdown countdown);
 
-    @Override
-    public boolean hasCountdown(Player player) {
-        return plugin.getCountdownRegistry().hasCountdown(player);
-    }
+    /**
+     * Triggered when the countdown has not elapsed correctly.
+     * @param countdown that triggered the callback.
+     * @param throwable - The error why the countdown has been interrupted.
+     */
+    void error(Countdown countdown, Throwable throwable);
 }

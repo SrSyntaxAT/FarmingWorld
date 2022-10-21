@@ -1,12 +1,7 @@
-package at.srsyntax.farmingworld;
+package at.srsyntax.farmingworld.config;
 
-import at.srsyntax.farmingworld.api.API;
-import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
-import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
-import at.srsyntax.farmingworld.handler.countdown.CountdownImpl;
 import lombok.AllArgsConstructor;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import lombok.Getter;
 
 /*
  * MIT License
@@ -32,19 +27,15 @@ import org.jetbrains.annotations.NotNull;
  * SOFTWARE.
  */
 @AllArgsConstructor
-public class APIImpl implements API {
+@Getter
+public class MessageConfig {
 
-    private final FarmingWorldPlugin plugin;
+    private final CountdownMessages countdown;
 
-    @Override
-    public Countdown getCountdown(@NotNull Player player, @NotNull CountdownCallback callback) {
-        if (hasCountdown(player))
-            return plugin.getCountdownRegistry().getCountdown(player);
-        return new CountdownImpl(plugin, player, callback);
-    }
-
-    @Override
-    public boolean hasCountdown(Player player) {
-        return plugin.getCountdownRegistry().hasCountdown(player);
+    @AllArgsConstructor
+    @Getter
+    public static class CountdownMessages {
+        private final String alreadyStarted, moved;
+        private final String message;
     }
 }

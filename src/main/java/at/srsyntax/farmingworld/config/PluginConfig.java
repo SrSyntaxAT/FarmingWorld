@@ -40,10 +40,24 @@ import java.util.Arrays;
 public class PluginConfig {
 
     private String version;
+    private final CountdownConfig countdown;
+    private final MessageConfig messages;
 
     public PluginConfig(Plugin plugin) {
         this(
-                plugin.getDescription().getVersion()
+                plugin.getDescription().getVersion(),
+                new CountdownConfig(
+                        5,
+                        .7D,
+                        false
+                ),
+                new MessageConfig(
+                        new MessageConfig.CountdownMessages(
+                                "&cA countdown is already underway.",
+                                "&cThe countdown was interrupted because you moved.",
+                                "&7You will be teleported in &e%s &7seconds."
+                        )
+                )
         );
     }
 
@@ -63,6 +77,14 @@ public class PluginConfig {
                 Arrays.asList(json.split("\n")),
                 StandardCharsets.UTF_8
         );
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class CountdownConfig {
+        private final int time;
+        private final double permittedDistance;
+        private final boolean movementAllowed;
     }
 
 }
