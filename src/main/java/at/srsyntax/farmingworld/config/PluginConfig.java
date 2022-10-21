@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -49,7 +50,8 @@ public class PluginConfig {
                 new CountdownConfig(
                         5,
                         .7D,
-                        false
+                        false,
+                        ChatMessageType.ACTION_BAR
                 ),
                 new MessageConfig(
                         new MessageConfig.CountdownMessages(
@@ -85,6 +87,7 @@ public class PluginConfig {
         private final int time;
         private final double permittedDistance;
         private final boolean movementAllowed;
+        private final ChatMessageType messageType;
     }
 
 }

@@ -2,6 +2,7 @@ package at.srsyntax.farmingworld.handler.countdown;
 
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.exception.CanceledException;
+import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import at.srsyntax.farmingworld.config.PluginConfig;
 import org.bukkit.Location;
@@ -54,10 +55,9 @@ public class CountdownRunnable implements Runnable {
         }
 
         switch (time) {
-            case 60, 45, 30, 15, 10, 5, 3, 2, 1 -> {
-                final String message = String.format(messages.getMessage().replace("&", "§"), time);
-                countdown.getPlayer().sendMessage(message);
-            }
+            case 60, 45, 30, 15, 10, 5, 3, 2, 1 -> new Message(messages.getMessage(), config.getMessageType())
+                    .replace("%s", time)
+                    .send(countdown.getPlayer());
             case 0 -> countdown.finish();
         }
         time--;
