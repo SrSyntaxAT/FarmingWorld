@@ -30,6 +30,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+/**
+ * A message class to replace placeholders more elegantly and send the messages.
+ */
 public class Message {
 
     private final String message;
@@ -37,22 +41,42 @@ public class Message {
 
     private final Map<String, Object> replaces = new ConcurrentHashMap<>();
 
+    /**
+     * The message class constructor.
+     * @param message - The raw message to be sent.
+     * @param type - The position of the message.
+     */
     public Message(String message, ChatMessageType type) {
         this.message = message;
         this.type = type;
     }
 
+    /**
+     * Add a placeholder to be replaced in the message.
+     * @param key to search for.
+     * @param value to be substituted instead of the key.
+     * @return the message instances.
+     */
     public Message replace(String key, Object value) {
         replaces.put(key, value);
         return this;
     }
 
+    /**
+     * Send the revised message to the players.
+     * @param players to whom the message should be sent.
+     */
     public void send(Player... players) {
         final TextComponent component = new TextComponent(toString());
         for (Player player : players)
             player.spigot().sendMessage(type, component);
     }
 
+    /**
+     * Revise the raw message and replace it with all placeholders.
+     * & is automatically replaced to §.
+     * @return the edited message.
+     */
     @Override
     public String toString() {
         String result = message;
