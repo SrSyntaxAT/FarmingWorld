@@ -1,7 +1,8 @@
-package at.srsyntax.farmingworld.config;
+package at.srsyntax.farmingworld.api.handler.economy;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import at.srsyntax.farmingworld.api.handler.HandleException;
+import net.milkbowl.vault.economy.EconomyResponse;
+import org.jetbrains.annotations.NotNull;
 
 /*
  * MIT License
@@ -26,17 +27,34 @@ import lombok.Getter;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-@Getter
-public class MessageConfig {
+/**
+ * Signals that something went wrong with the economy handler.
+ * This class is the base for economy related errors.
+ */
+public class EconomyException extends HandleException {
 
-    private final String notEnoughMoney;
-    private final CountdownMessages countdown;
+    private final Economy economy;
+    private final EconomyResponse response;
 
-    @AllArgsConstructor
-    @Getter
-    public static class CountdownMessages {
-        private final String alreadyStarted, moved;
-        private final String message;
+    public EconomyException(@NotNull String message, @NotNull Economy economy, @NotNull EconomyResponse response) {
+        super(message);
+        this.economy = economy;
+        this.response = response;
+    }
+
+    /**
+     * Get the economy handler on which the exception is related.
+     * @return the economy handler on which the exception is related.
+     */
+    public @NotNull Economy getEconomy() {
+        return economy;
+    }
+
+    /**
+     * Provides the response from Vault economy;
+     * @return the response from Vault.
+     */
+    public @NotNull EconomyResponse getResponse() {
+        return response;
     }
 }

@@ -47,4 +47,9 @@ public class APIImpl implements API {
     public boolean hasCountdown(Player player) {
         return plugin.getCountdownRegistry().hasCountdown(player);
     }
+
+    @Override
+    public boolean vaultSupported() {
+        return plugin.getEconomy() != null;
+    }
 }

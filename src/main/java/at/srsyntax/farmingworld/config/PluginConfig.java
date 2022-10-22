@@ -41,12 +41,14 @@ import java.util.Arrays;
 public class PluginConfig {
 
     private String version;
+    private final double refund;
     private final CountdownConfig countdown;
     private final MessageConfig messages;
 
     public PluginConfig(Plugin plugin) {
         this(
                 plugin.getDescription().getVersion(),
+                1D,
                 new CountdownConfig(
                         5,
                         .7D,
@@ -54,6 +56,7 @@ public class PluginConfig {
                         ChatMessageType.ACTION_BAR
                 ),
                 new MessageConfig(
+                        "&cYou don't have enough money.",
                         new MessageConfig.CountdownMessages(
                                 "&cA countdown is already underway.",
                                 "&cThe countdown was interrupted because you moved.",

@@ -48,4 +48,10 @@ public interface API {
      * @return whether it has a countdown running.
      */
     boolean hasCountdown(Player player);
+
+    /**
+     * Returns if Vault Economy is supported.
+     * @return if Vault Economy is supported.
+     */
+    boolean vaultSupported();
 }

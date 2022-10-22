@@ -3,5 +3,8 @@ name: FarmingWorld
 version: ${version}
 api-version: 1.19
 
+softdepend:
+  - Vault
+
 author: SrSyntaxAT
 website: https://srsyntax.at/

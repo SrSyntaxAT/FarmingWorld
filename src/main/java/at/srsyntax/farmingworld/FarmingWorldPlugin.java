@@ -10,8 +10,10 @@ import at.srsyntax.farmingworld.handler.countdown.CountdownListener;
 import at.srsyntax.farmingworld.handler.countdown.CountdownRegistry;
 import at.srsyntax.farmingworld.util.SpigotVersionCheck;
 import lombok.Getter;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /*
@@ -46,6 +48,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
     @Getter private PluginConfig pluginConfig;
 
     @Getter private CountdownRegistry countdownRegistry;
+    @Getter private Economy economy;
 
     @Override
     public void onLoad() {
@@ -63,6 +66,8 @@ public class FarmingWorldPlugin extends JavaPlugin {
 
             this.pluginConfig = ConfigLoader.load(this, new PluginConfig(this));
 
+            this.economy = setupEconomy();
+
             this.countdownRegistry = new CountdownRegistry();
             registerListeners(
                     new CountdownListener(countdownRegistry)
@@ -77,6 +82,13 @@ public class FarmingWorldPlugin extends JavaPlugin {
     private void registerListeners(Listener... listeners) {
         for (Listener listener : listeners)
             Bukkit.getPluginManager().registerEvents(listener, this);
+    }
+
+    private Economy setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) return null;
+        final RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) return null;
+        return rsp.getProvider();
     }
 
     @Override

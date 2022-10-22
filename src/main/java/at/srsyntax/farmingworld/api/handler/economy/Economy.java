@@ -1,7 +1,6 @@
-package at.srsyntax.farmingworld.config;
+package at.srsyntax.farmingworld.api.handler.economy;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import at.srsyntax.farmingworld.api.handler.Handler;
 
 /*
  * MIT License
@@ -26,17 +25,14 @@ import lombok.Getter;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-@Getter
-public class MessageConfig {
+/**
+ * Represents the economy handler.
+ */
+public interface Economy extends Handler {
 
-    private final String notEnoughMoney;
-    private final CountdownMessages countdown;
-
-    @AllArgsConstructor
-    @Getter
-    public static class CountdownMessages {
-        private final String alreadyStarted, moved;
-        private final String message;
-    }
+    /**
+     * Ask if the player has enough money to buy it.
+     * @return whether the player has enough money to buy it.
+     */
+    boolean canBuy();
 }

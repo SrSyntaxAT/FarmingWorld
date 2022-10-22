@@ -1,5 +1,7 @@
 package at.srsyntax.farmingworld.api.handler;
 
+import at.srsyntax.farmingworld.api.message.Message;
+import net.md_5.bungee.api.ChatMessageType;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -33,5 +35,14 @@ import org.jetbrains.annotations.NotNull;
 public class HandleException extends Exception {
     public HandleException(@NotNull String message) {
         super(message);
+    }
+
+    /**
+     * Create a message from the exception to simplify it and send a player.
+     * @param type - The position of the message where it should be sent.
+     * @return new message instance with the error message.
+     */
+    public Message constructMessage(ChatMessageType type) {
+        return new Message(getMessage(), type);
     }
 }
