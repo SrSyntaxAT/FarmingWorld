@@ -77,4 +77,12 @@ public class EconomyImpl implements Economy {
     public boolean canBuy() {
         return plugin.getEconomy().getBalance(player) >= price;
     }
+
+    @Override
+    public double refund() {
+        if (!FarmingWorldPlugin.getApi().vaultSupported()) return 0;
+        final double refund = price * config.getRefund();
+        plugin.getEconomy().depositPlayer(player, refund);
+        return refund;
+    }
 }

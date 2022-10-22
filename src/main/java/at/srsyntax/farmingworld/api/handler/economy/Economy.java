@@ -35,4 +35,10 @@ public interface Economy extends Handler {
      * @return whether the player has enough money to buy it.
      */
     boolean canBuy();
+
+    /**
+     * Refund the player his purchase.
+     * @return the money he got back from his purchase.
+     */
+    double refund();
 }
