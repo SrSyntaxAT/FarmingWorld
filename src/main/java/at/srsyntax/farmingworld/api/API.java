@@ -1,5 +1,7 @@
 package at.srsyntax.farmingworld.api;
 
+import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
+import at.srsyntax.farmingworld.api.handler.cooldown.Cooldown;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
 import org.bukkit.entity.Player;
@@ -48,6 +50,22 @@ public interface API {
      * @return whether it has a countdown running.
      */
     boolean hasCountdown(Player player);
+
+    /**
+     * Get a cooldown handler for the player and farm world.
+     * @param player on which the cooldown is related.
+     * @param farmWorld on which the cooldown is related.
+     * @return a cooldown handler.
+     */
+    Cooldown getCooldown(Player player, FarmWorld farmWorld);
+
+    /**
+     * Check if a player currently has a cooldown.
+     * @param player on which the cooldown is related.
+     * @param farmWorld on which the cooldown is related.
+     * @return whether the player currently has a cooldown.
+     */
+    boolean hasCooldown(Player player, FarmWorld farmWorld);
 
     /**
      * Returns if Vault Economy is supported.

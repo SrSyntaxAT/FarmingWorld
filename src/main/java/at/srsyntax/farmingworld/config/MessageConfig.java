@@ -32,11 +32,18 @@ public class MessageConfig {
 
     private final String notEnoughMoney;
     private final CountdownMessages countdown;
+    private final CooldownMessages cooldown;
 
     @AllArgsConstructor
     @Getter
     public static class CountdownMessages {
         private final String alreadyStarted, moved;
         private final String message;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class CooldownMessages {
+        private final String hasCooldown;
     }
 }

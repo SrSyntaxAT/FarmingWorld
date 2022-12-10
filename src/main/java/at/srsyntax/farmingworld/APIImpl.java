@@ -1,8 +1,11 @@
 package at.srsyntax.farmingworld;
 
 import at.srsyntax.farmingworld.api.API;
+import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
+import at.srsyntax.farmingworld.api.handler.cooldown.Cooldown;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
+import at.srsyntax.farmingworld.handler.cooldown.CooldownImpl;
 import at.srsyntax.farmingworld.handler.countdown.CountdownImpl;
 import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
@@ -46,6 +49,16 @@ public class APIImpl implements API {
     @Override
     public boolean hasCountdown(Player player) {
         return plugin.getCountdownRegistry().hasCountdown(player);
+    }
+
+    @Override
+    public Cooldown getCooldown(Player player, FarmWorld farmWorld) {
+        return new CooldownImpl(plugin, plugin.getPluginConfig().getMessages().getCooldown(), player, farmWorld);
+    }
+
+    @Override
+    public boolean hasCooldown(Player player, FarmWorld farmWorld) {
+        return getCooldown(player, farmWorld).hasCooldown();
     }
 
     @Override
