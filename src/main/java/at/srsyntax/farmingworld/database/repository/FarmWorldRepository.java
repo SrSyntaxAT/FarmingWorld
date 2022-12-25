@@ -1,6 +1,7 @@
-package at.srsyntax.farmingworld.api.farmworld;
+package at.srsyntax.farmingworld.database.repository;
 
-import org.bukkit.World;
+import at.srsyntax.farmingworld.farmworld.FarmWorldData;
+import at.srsyntax.farmingworld.farmworld.FarmWorldImpl;
 
 /*
  * CONFIDENTIAL
@@ -22,41 +23,9 @@ import org.bukkit.World;
  * INFORMATION DOES NOT CONVEY OR IMPLY ANY RIGHTS TO REPRODUCE, DISCLOSE OR DISTRIBUTE ITS CONTENTS, OR TO
  * MANUFACTURE, USE, OR SELL ANYTHING THAT IT  MAY DESCRIBE, IN WHOLE OR IN PART.
  */
-/**
- * Represents the farm world.
- */
-public interface FarmWorld extends WorldOwner, Playable {
-
-    /**
-     * Get the name of the farm world
-     * @return name of the farm world
-     */
-    String getName();
-
-    /**
-     * Get the permission to enter the world.
-     * @return permission to enter the world.
-     */
-    String getPermission();
-
-    /**
-     * Get the time in minutes when the world should be deleted since the world was created.
-     * @return time in minutes
-     */
-    int getTimer();
-
-    /**
-     * Get the value if the farm world is activated.
-     * @return whether the farm world is activated
-     */
-    boolean isActive();
-
-    /**
-     * Activate or deactivate the farm world.
-     * When deactivated, all worlds belonging to the farm world are unloaded and players are teleported to the fallback location.
-     * There is no longer a check to see if the world needs to be reset.
-     * @param active - whether to enable or disable the farm world
-     */
-    void setActive(boolean active);
-
+public interface FarmWorldRepository {
+    boolean exists(FarmWorldImpl farmWorld);
+    void save(FarmWorldImpl farmWorld);
+    void delete(FarmWorldImpl farmWorld);
+    FarmWorldData getFarmWorldData(String farmWorld);
 }

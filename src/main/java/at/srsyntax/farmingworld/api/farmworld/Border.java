@@ -1,6 +1,7 @@
 package at.srsyntax.farmingworld.api.farmworld;
 
-import org.bukkit.World;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /*
  * CONFIDENTIAL
@@ -22,41 +23,14 @@ import org.bukkit.World;
  * INFORMATION DOES NOT CONVEY OR IMPLY ANY RIGHTS TO REPRODUCE, DISCLOSE OR DISTRIBUTE ITS CONTENTS, OR TO
  * MANUFACTURE, USE, OR SELL ANYTHING THAT IT  MAY DESCRIBE, IN WHOLE OR IN PART.
  */
+
 /**
- * Represents the farm world.
+ * Represents the Border data class.
+ * This class is used to store data for the borders of the farm world.
  */
-public interface FarmWorld extends WorldOwner, Playable {
-
-    /**
-     * Get the name of the farm world
-     * @return name of the farm world
-     */
-    String getName();
-
-    /**
-     * Get the permission to enter the world.
-     * @return permission to enter the world.
-     */
-    String getPermission();
-
-    /**
-     * Get the time in minutes when the world should be deleted since the world was created.
-     * @return time in minutes
-     */
-    int getTimer();
-
-    /**
-     * Get the value if the farm world is activated.
-     * @return whether the farm world is activated
-     */
-    boolean isActive();
-
-    /**
-     * Activate or deactivate the farm world.
-     * When deactivated, all worlds belonging to the farm world are unloaded and players are teleported to the fallback location.
-     * There is no longer a check to see if the world needs to be reset.
-     * @param active - whether to enable or disable the farm world
-     */
-    void setActive(boolean active);
-
+@AllArgsConstructor
+@Getter
+public class Border {
+    private final int size;
+    private final double centerX, centerZ;
 }

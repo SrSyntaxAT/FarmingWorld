@@ -8,3 +8,6 @@ softdepend:
 
 author: SrSyntaxAT
 website: https://srsyntax.at/
+
+commands:
+  test:

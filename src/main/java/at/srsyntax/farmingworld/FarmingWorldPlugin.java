@@ -1,20 +1,28 @@
 package at.srsyntax.farmingworld;
 
 import at.srsyntax.farmingworld.api.API;
+import at.srsyntax.farmingworld.command.TestCommand;
 import at.srsyntax.farmingworld.config.ConfigLoader;
 import at.srsyntax.farmingworld.config.PluginConfig;
 import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.database.DatabaseException;
 import at.srsyntax.farmingworld.database.sqlite.SQLiteDatabase;
+import at.srsyntax.farmingworld.farmworld.FarmWorldLoader;
 import at.srsyntax.farmingworld.handler.countdown.CountdownListener;
 import at.srsyntax.farmingworld.handler.countdown.CountdownRegistry;
 import at.srsyntax.farmingworld.util.SpigotVersionCheck;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Properties;
 
 /*
  * MIT License
@@ -44,7 +52,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
     private static final int BSTATS_ID = 14550, RESOURCE_ID = 100640;
     @Getter private static API api;
 
-    private Database database;
+    @Getter private Database database;
     @Getter private PluginConfig pluginConfig;
 
     @Getter private CountdownRegistry countdownRegistry;
@@ -61,10 +69,10 @@ public class FarmingWorldPlugin extends JavaPlugin {
             api = new APIImpl(this);
             new Metrics(this, BSTATS_ID);
 
+            this.pluginConfig = ConfigLoader.load(this, new PluginConfig(this, getDefaultFallbackLocation()));
+
             this.database = new SQLiteDatabase(this);
             this.database.connect();
-
-            this.pluginConfig = ConfigLoader.load(this, new PluginConfig(this));
 
             this.economy = setupEconomy();
 
@@ -72,6 +80,9 @@ public class FarmingWorldPlugin extends JavaPlugin {
             registerListeners(
                     new CountdownListener(countdownRegistry)
             );
+
+            this.pluginConfig.getFarmWorlds().forEach(farmWorld -> new FarmWorldLoader(this, farmWorld).load());
+            getCommand("test").setExecutor(new TestCommand());
 
         } catch (Exception exception) {
             getLogger().severe("Plugin could not be loaded successfully!");
@@ -101,4 +112,12 @@ public class FarmingWorldPlugin extends JavaPlugin {
         }
     }
 
+    private Location getDefaultFallbackLocation() throws IOException {
+        final Properties properties = new Properties();
+        properties.load(new FileReader("server.properties"));
+        final String levelName = properties.getProperty("level-name");
+        final World world = Bukkit.getWorld(levelName);
+        if (world == null) throw new NullPointerException("Default fallback location could not be read.");
+        return world.getSpawnLocation();
+    }
 }

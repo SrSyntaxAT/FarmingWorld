@@ -1,5 +1,7 @@
 package at.srsyntax.farmingworld.database;
 
+import at.srsyntax.farmingworld.database.repository.FarmWorldRepository;
+
 /*
  * MIT License
  *
@@ -26,4 +28,6 @@ package at.srsyntax.farmingworld.database;
 public interface Database {
     void connect() throws DatabaseException;
     void disconnect() throws DatabaseException;
+
+    FarmWorldRepository getFarmWorldRepository();
 }

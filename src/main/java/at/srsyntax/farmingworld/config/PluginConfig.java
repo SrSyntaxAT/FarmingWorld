@@ -1,10 +1,15 @@
 package at.srsyntax.farmingworld.config;
 
+import at.srsyntax.farmingworld.api.farmworld.Border;
+import at.srsyntax.farmingworld.api.farmworld.LocationCache;
+import at.srsyntax.farmingworld.farmworld.FarmWorldImpl;
 import com.google.gson.GsonBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import net.md_5.bungee.api.ChatMessageType;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -12,6 +17,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /*
  * MIT License
@@ -43,9 +50,11 @@ public class PluginConfig {
     private String version;
     private final double refund;
     private final CountdownConfig countdown;
+    private final List<FarmWorldImpl> farmWorlds;
+    private final LocationCache fallback;
     private final MessageConfig messages;
 
-    public PluginConfig(Plugin plugin) {
+    public PluginConfig(Plugin plugin, Location fallbackLocation) {
         this(
                 plugin.getDescription().getVersion(),
                 1D,
@@ -55,12 +64,25 @@ public class PluginConfig {
                         false,
                         ChatMessageType.ACTION_BAR
                 ),
+                Collections.singletonList(
+                        new FarmWorldImpl(
+                                "FarmWorld", 
+                                null,
+                                1800, 5, 43_200,
+                                World.Environment.NORMAL, null,
+                                new Border(10000, 0D, 0D)
+                        )
+                ),
+                new LocationCache(fallbackLocation),
                 new MessageConfig(
                         "&cYou don't have enough money.",
                         new MessageConfig.CountdownMessages(
                                 "&cA countdown is already underway.",
                                 "&cThe countdown was interrupted because you moved.",
                                 "&7You will be teleported in &e%s &7seconds."
+                        ),
+                        new MessageConfig.CooldownMessages(// TODO: 25.12.2022 Implement placeholder.
+                                "&cYou may use the command in &e%{remaining}&7."
                         )
                 )
         );

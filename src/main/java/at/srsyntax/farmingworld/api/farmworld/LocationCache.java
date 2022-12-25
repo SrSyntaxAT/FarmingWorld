@@ -1,6 +1,10 @@
 package at.srsyntax.farmingworld.api.farmworld;
 
-import org.bukkit.World;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import lombok.AllArgsConstructor;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 
 /*
  * CONFIDENTIAL
@@ -22,41 +26,39 @@ import org.bukkit.World;
  * INFORMATION DOES NOT CONVEY OR IMPLY ANY RIGHTS TO REPRODUCE, DISCLOSE OR DISTRIBUTE ITS CONTENTS, OR TO
  * MANUFACTURE, USE, OR SELL ANYTHING THAT IT  MAY DESCRIBE, IN WHOLE OR IN PART.
  */
+
 /**
- * Represents the farm world.
+ * A class to store a Bukkit location in JSON format and convert it back to a Bukkit location.
  */
-public interface FarmWorld extends WorldOwner, Playable {
+@AllArgsConstructor
+public class LocationCache {
 
-    /**
-     * Get the name of the farm world
-     * @return name of the farm world
-     */
-    String getName();
+    private final String world;
+    private final double x, y, z;
+    private final float pitch, yaw;
 
-    /**
-     * Get the permission to enter the world.
-     * @return permission to enter the world.
-     */
-    String getPermission();
+    public LocationCache(Location location) {
+        this(
+                location.getWorld().getName(),
+                location.getX(), location.getY(), location.getZ(),
+                location.getPitch(), location.getYaw()
+        );
+    }
 
-    /**
-     * Get the time in minutes when the world should be deleted since the world was created.
-     * @return time in minutes
-     */
-    int getTimer();
+    public static LocationCache fromJson(String json) {
+        return new Gson().fromJson(json, LocationCache.class);
+    }
 
-    /**
-     * Get the value if the farm world is activated.
-     * @return whether the farm world is activated
-     */
-    boolean isActive();
+    public Location toBukkit() {
+        return new Location(
+                Bukkit.getWorld(this.world),
+                this.x, this.y, this.z,
+                this.yaw, this.pitch
+        );
+    }
 
-    /**
-     * Activate or deactivate the farm world.
-     * When deactivated, all worlds belonging to the farm world are unloaded and players are teleported to the fallback location.
-     * There is no longer a check to see if the world needs to be reset.
-     * @param active - whether to enable or disable the farm world
-     */
-    void setActive(boolean active);
-
+    @Override
+    public String toString() {
+        return new GsonBuilder().disableHtmlEscaping().create().toJson(this);
+    }
 }

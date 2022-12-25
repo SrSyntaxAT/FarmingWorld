@@ -4,8 +4,12 @@ import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
 import at.srsyntax.farmingworld.api.handler.cooldown.Cooldown;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /*
  * MIT License
@@ -72,4 +76,47 @@ public interface API {
      * @return if Vault Economy is supported.
      */
     boolean vaultSupported();
+
+    /**
+     * Teleport the players to different random location of the farm world.
+     * There are no checks to see if the player has to wait for a countdown or cooldown, or has permission to teleport.
+     * @param players who are to be teleported.
+     */
+    void teleport(@NotNull FarmWorld farmWorld, @NotNull Player... players);
+
+    /**
+     * Teleport players to the same or different random locations in the farm world.
+     * There are no checks to see if the player has to wait for a countdown or cooldown, or has permission to teleport.
+     * @param sameLocation - Specifies whether the players should be teleported to the same location.
+     * @param players who are to be teleported.
+     */
+    void teleport(@NotNull FarmWorld farmWorld, boolean sameLocation, @NotNull Player... players);
+
+    /**
+     * Teleport the players to different random location of the farm world.
+     * There are no checks to see if the player has to wait for a countdown or cooldown, or has permission to teleport.
+     * @param players who are to be teleported.
+     */
+    void teleport(@NotNull FarmWorld farmWorld, @NotNull List<Player> players);
+
+    /**
+     * Teleport players to the same or different random locations in the farm world.
+     * There are no checks to see if the player has to wait for a countdown or cooldown, or has permission to teleport.
+     * @param sameLocation - Specifies whether the players should be teleported to the same location.
+     * @param players who are to be teleported.
+     */
+    void teleport(@NotNull FarmWorld farmWorld, boolean sameLocation, @NotNull List<Player> players);
+
+    /**
+     * Generate a new world with the parameters specified for the farm world.
+     * @return the newly generated world.
+     */
+    @NotNull World generateWorld(FarmWorld farmWorld);
+
+    /**
+     * Find a farm world with his name.
+     * @param name of the farm world.
+     * @return the farm world with the name or null if there is no farm world with the name.
+     */
+    @Nullable FarmWorld getFarmWorld(String name);
 }

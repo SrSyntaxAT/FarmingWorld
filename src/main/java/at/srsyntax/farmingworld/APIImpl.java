@@ -5,11 +5,17 @@ import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
 import at.srsyntax.farmingworld.api.handler.cooldown.Cooldown;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
+import at.srsyntax.farmingworld.farmworld.FarmWorldImpl;
+import at.srsyntax.farmingworld.farmworld.FarmWorldLoader;
 import at.srsyntax.farmingworld.handler.cooldown.CooldownImpl;
 import at.srsyntax.farmingworld.handler.countdown.CountdownImpl;
 import lombok.AllArgsConstructor;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /*
  * MIT License
@@ -64,5 +70,39 @@ public class APIImpl implements API {
     @Override
     public boolean vaultSupported() {
         return plugin.getEconomy() != null;
+    }
+
+    @Override
+    public void teleport(@NotNull FarmWorld farmWorld, @NotNull Player... players) {
+        farmWorld.teleport(players);
+    }
+
+    @Override
+    public void teleport(@NotNull FarmWorld farmWorld, boolean sameLocation, @NotNull Player... players) {
+        farmWorld.teleport(sameLocation, players);
+    }
+
+    @Override
+    public void teleport(@NotNull FarmWorld farmWorld, @NotNull List<Player> players) {
+        farmWorld.teleport(players);
+    }
+
+    @Override
+    public void teleport(@NotNull FarmWorld farmWorld, boolean sameLocation, @NotNull List<Player> players) {
+        farmWorld.teleport(sameLocation, players);
+    }
+
+    @Override
+    public @NotNull World generateWorld(FarmWorld farmWorld) {
+        return new FarmWorldLoader(plugin, (FarmWorldImpl) farmWorld).generateWorld();
+    }
+
+    @Override
+    public @Nullable FarmWorld getFarmWorld(String name) {
+        for (FarmWorld farmWorld : plugin.getPluginConfig().getFarmWorlds()) {
+            if (farmWorld.getName().equalsIgnoreCase(name))
+                return farmWorld;
+        }
+        return null;
     }
 }

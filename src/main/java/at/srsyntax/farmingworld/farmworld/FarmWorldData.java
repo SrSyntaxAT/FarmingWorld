@@ -1,6 +1,11 @@
-package at.srsyntax.farmingworld.api.farmworld;
+package at.srsyntax.farmingworld.farmworld;
 
-import org.bukkit.World;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /*
  * CONFIDENTIAL
@@ -22,41 +27,20 @@ import org.bukkit.World;
  * INFORMATION DOES NOT CONVEY OR IMPLY ANY RIGHTS TO REPRODUCE, DISCLOSE OR DISTRIBUTE ITS CONTENTS, OR TO
  * MANUFACTURE, USE, OR SELL ANYTHING THAT IT  MAY DESCRIBE, IN WHOLE OR IN PART.
  */
-/**
- * Represents the farm world.
- */
-public interface FarmWorld extends WorldOwner, Playable {
+@AllArgsConstructor
+@Getter @Setter
+public class FarmWorldData {
 
-    /**
-     * Get the name of the farm world
-     * @return name of the farm world
-     */
-    String getName();
+    private long created;
+    private String currentWorldName, nextWorldName;
 
-    /**
-     * Get the permission to enter the world.
-     * @return permission to enter the world.
-     */
-    String getPermission();
+    public FarmWorldData(ResultSet resultSet) throws SQLException {
+        this(
+                resultSet.getLong("created"),
+                resultSet.getString("current_world"),
+                resultSet.getString("next_world")
+        );
+    }
 
-    /**
-     * Get the time in minutes when the world should be deleted since the world was created.
-     * @return time in minutes
-     */
-    int getTimer();
-
-    /**
-     * Get the value if the farm world is activated.
-     * @return whether the farm world is activated
-     */
-    boolean isActive();
-
-    /**
-     * Activate or deactivate the farm world.
-     * When deactivated, all worlds belonging to the farm world are unloaded and players are teleported to the fallback location.
-     * There is no longer a check to see if the world needs to be reset.
-     * @param active - whether to enable or disable the farm world
-     */
-    void setActive(boolean active);
 
 }

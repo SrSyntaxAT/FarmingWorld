@@ -1,6 +1,12 @@
-package at.srsyntax.farmingworld.api.farmworld;
+package at.srsyntax.farmingworld.command;
 
-import org.bukkit.World;
+import at.srsyntax.farmingworld.FarmingWorldPlugin;
+import at.srsyntax.farmingworld.api.API;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 /*
  * CONFIDENTIAL
@@ -22,41 +28,11 @@ import org.bukkit.World;
  * INFORMATION DOES NOT CONVEY OR IMPLY ANY RIGHTS TO REPRODUCE, DISCLOSE OR DISTRIBUTE ITS CONTENTS, OR TO
  * MANUFACTURE, USE, OR SELL ANYTHING THAT IT  MAY DESCRIBE, IN WHOLE OR IN PART.
  */
-/**
- * Represents the farm world.
- */
-public interface FarmWorld extends WorldOwner, Playable {
-
-    /**
-     * Get the name of the farm world
-     * @return name of the farm world
-     */
-    String getName();
-
-    /**
-     * Get the permission to enter the world.
-     * @return permission to enter the world.
-     */
-    String getPermission();
-
-    /**
-     * Get the time in minutes when the world should be deleted since the world was created.
-     * @return time in minutes
-     */
-    int getTimer();
-
-    /**
-     * Get the value if the farm world is activated.
-     * @return whether the farm world is activated
-     */
-    boolean isActive();
-
-    /**
-     * Activate or deactivate the farm world.
-     * When deactivated, all worlds belonging to the farm world are unloaded and players are teleported to the fallback location.
-     * There is no longer a check to see if the world needs to be reset.
-     * @param active - whether to enable or disable the farm world
-     */
-    void setActive(boolean active);
-
+public class TestCommand implements CommandExecutor {
+    @Override
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+        final API api = FarmingWorldPlugin.getApi();
+        api.getFarmWorld(strings[0]).teleport((Player) commandSender);
+        return false;
+    }
 }
