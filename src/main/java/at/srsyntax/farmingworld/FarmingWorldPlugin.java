@@ -1,6 +1,7 @@
 package at.srsyntax.farmingworld;
 
 import at.srsyntax.farmingworld.api.API;
+import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
 import at.srsyntax.farmingworld.command.TestCommand;
 import at.srsyntax.farmingworld.config.ConfigLoader;
 import at.srsyntax.farmingworld.config.PluginConfig;
@@ -82,12 +83,24 @@ public class FarmingWorldPlugin extends JavaPlugin {
             );
 
             this.pluginConfig.getFarmWorlds().forEach(farmWorld -> new FarmWorldLoader(this, farmWorld).load());
+            checkDeletedWorlds();
+
             getCommand("test").setExecutor(new TestCommand());
 
         } catch (Exception exception) {
             getLogger().severe("Plugin could not be loaded successfully!");
             exception.printStackTrace();
         }
+    }
+
+    private void checkDeletedWorlds() {
+        database.getLocationRepository().getLocations().forEach((s, stringLocationCacheMap) -> {
+            final FarmWorld farmWorld = api.getFarmWorld(s);
+            if (farmWorld == null) {
+                stringLocationCacheMap.keySet().forEach(id -> database.getLocationRepository().delete(id));
+                database.getFarmWorldRepository().delete(s);
+            }
+        });
     }
 
     private void registerListeners(Listener... listeners) {

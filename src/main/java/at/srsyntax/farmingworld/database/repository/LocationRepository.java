@@ -1,11 +1,10 @@
-package at.srsyntax.farmingworld.api.farmworld;
+package at.srsyntax.farmingworld.database.repository;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.bukkit.Bukkit;
+import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
+import at.srsyntax.farmingworld.api.farmworld.LocationCache;
 import org.bukkit.Location;
+
+import java.util.Map;
 
 /*
  * CONFIDENTIAL
@@ -27,40 +26,11 @@ import org.bukkit.Location;
  * INFORMATION DOES NOT CONVEY OR IMPLY ANY RIGHTS TO REPRODUCE, DISCLOSE OR DISTRIBUTE ITS CONTENTS, OR TO
  * MANUFACTURE, USE, OR SELL ANYTHING THAT IT  MAY DESCRIBE, IN WHOLE OR IN PART.
  */
+public interface LocationRepository {
 
-/**
- * A class to store a Bukkit location in JSON format and convert it back to a Bukkit location.
- */
-@AllArgsConstructor
-@Getter
-public class LocationCache {
-
-    private final String world;
-    private final double x, y, z;
-    private final float pitch, yaw;
-
-    public LocationCache(Location location) {
-        this(
-                location.getWorld().getName(),
-                location.getX(), location.getY(), location.getZ(),
-                location.getPitch(), location.getYaw()
-        );
-    }
-
-    public static LocationCache fromJson(String json) {
-        return new Gson().fromJson(json, LocationCache.class);
-    }
-
-    public Location toBukkit() {
-        return new Location(
-                Bukkit.getWorld(this.world),
-                this.x, this.y, this.z,
-                this.yaw, this.pitch
-        );
-    }
-
-    @Override
-    public String toString() {
-        return new GsonBuilder().disableHtmlEscaping().create().toJson(this);
-    }
+    void save(FarmWorld farmWorld, String id, Location location);
+    void delete(String id);
+    void delete(FarmWorld farmWorld);
+    Map<String, LocationCache> getLocations(FarmWorld farmWorld);
+    Map<String, Map<String, LocationCache>> getLocations();
 }

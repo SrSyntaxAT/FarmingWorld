@@ -3,6 +3,7 @@ package at.srsyntax.farmingworld.database.sqlite;
 import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.database.DatabaseException;
 import at.srsyntax.farmingworld.database.repository.FarmWorldRepository;
+import at.srsyntax.farmingworld.database.repository.LocationRepository;
 import lombok.Getter;
 import org.bukkit.plugin.Plugin;
 
@@ -38,6 +39,7 @@ public class SQLiteDatabase implements Database {
     private final Plugin plugin;
     @Getter private Connection connection;
     private FarmWorldRepository farmWorldRepository;
+    private LocationRepository locationRepository;
 
     public SQLiteDatabase(Plugin plugin) {
         this.plugin = plugin;
@@ -49,6 +51,7 @@ public class SQLiteDatabase implements Database {
             final File file = new File(plugin.getDataFolder(), "database.db");
             this.connection = DriverManager.getConnection("jdbc:sqlite:" + file.getPath());
             this.farmWorldRepository = new SQLLiteFarmWorldRepository(connection);
+            this.locationRepository = new SQLiteLocationRepository(connection);
         } catch (Exception exception) {
             throw new DatabaseException("An error occurred while connecting to the database.", exception);
         }
@@ -67,5 +70,10 @@ public class SQLiteDatabase implements Database {
     @Override
     public FarmWorldRepository getFarmWorldRepository() {
         return farmWorldRepository;
+    }
+
+    @Override
+    public LocationRepository getLocationRepository() {
+        return locationRepository;
     }
 }

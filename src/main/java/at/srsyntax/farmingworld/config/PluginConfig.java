@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 
@@ -51,6 +52,8 @@ public class PluginConfig {
     private final double refund;
     private final CountdownConfig countdown;
     private final List<FarmWorldImpl> farmWorlds;
+    private final List<Material> blacklist;
+    private final int locationCache;
     private final LocationCache fallback;
     private final MessageConfig messages;
 
@@ -70,9 +73,11 @@ public class PluginConfig {
                                 null,
                                 1800, 5, 43_200,
                                 World.Environment.NORMAL, null,
-                                new Border(10000, 0D, 0D)
+                                new Border(10000, 0, 0)
                         )
                 ),
+                Arrays.asList(Material.AIR, Material.LAVA, Material.WATER),
+                3,
                 new LocationCache(fallbackLocation),
                 new MessageConfig(
                         "&cYou don't have enough money.",

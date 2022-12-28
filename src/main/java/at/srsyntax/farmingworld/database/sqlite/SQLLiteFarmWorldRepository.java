@@ -85,10 +85,15 @@ public class SQLLiteFarmWorldRepository implements FarmWorldRepository {
 
     @Override
     public void delete(FarmWorldImpl farmWorld) {
+        delete(farmWorld.getName());
+    }
+
+    @Override
+    public void delete(String name) {
         try {
             final String sql = "DELETE FROM farm_world WHERE name = ?";
             final PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1, farmWorld.getName());
+            statement.setString(1, name);
             statement.execute();
         } catch (SQLException exception) {
             exception.printStackTrace();

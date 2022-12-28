@@ -11,14 +11,16 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /*
  * CONFIDENTIAL
@@ -60,6 +62,7 @@ public class FarmWorldImpl implements FarmWorld {
     private transient FarmWorldData data;
     @Getter @Setter
     private transient boolean loaded = false, enabled = false;
+    @Getter private transient LinkedHashMap<String, Location> locations;
 
     public FarmWorldImpl(String name, String permission, int cooldown, int countdown, int timer, World.Environment environment, String generator, Border border) {
         this.name = name;
@@ -71,6 +74,7 @@ public class FarmWorldImpl implements FarmWorld {
         this.generator = generator;
         this.border = border;
         this.data = new FarmWorldData(0, null, null);
+        this.locations = new LinkedHashMap<>();
     }
 
     @Override
@@ -95,9 +99,9 @@ public class FarmWorldImpl implements FarmWorld {
 
     @Override
     public void teleport(boolean sameLocation, @NotNull Player... players) {
-        // TODO: 25.12.2022 Implement rtp
+        final Location location = sameLocation ? randomLocation() : null;
         for (Player player : players)
-            player.teleport(getWorld().getSpawnLocation());
+            player.teleport(location == null ? randomLocation() : location);
     }
 
     @Override
@@ -161,9 +165,6 @@ public class FarmWorldImpl implements FarmWorld {
     @SneakyThrows
     public void save(FarmingWorldPlugin plugin) {
         final FarmWorldRepository repository = plugin.getDatabase().getFarmWorldRepository();
-        if (!repository.exists(this)) {
-            setData(new FarmWorldData(0L, null, null));
-        }
         repository.save(this);
         plugin.getPluginConfig().save(plugin);
     }
@@ -175,11 +176,17 @@ public class FarmWorldImpl implements FarmWorld {
 
     @Override
     public void newWorld(@Nullable World nextWorld) {
-        System.out.println(data.getCurrentWorldName());
         final World world = getWorld();
         data.setCurrentWorldName(nextWorld == null ? null : nextWorld.getName());
         data.setCreated(System.currentTimeMillis());
 
+        if (locations == null) locations = new LinkedHashMap<>();
+        if (!locations.isEmpty()) {
+            plugin.getDatabase().getLocationRepository().delete(this);
+            locations.clear();
+        }
+
+        new FarmWorldLoader(plugin, this).checkLocations();
         if (nextWorld != null && world != null)
             teleport(world.getPlayers());
 
@@ -230,5 +237,26 @@ public class FarmWorldImpl implements FarmWorld {
         creator.environment(environment);
         if (generator != null) creator.generator(generator);
         return creator;
+    }
+
+    @Override
+    public void addLocation(String id, Location location) {
+        if (locations == null) locations = new LinkedHashMap<>();
+        locations.put(id, location);
+    }
+
+    @Override
+    public void removeLocation(String id) {
+        locations.remove(id);
+        plugin.getDatabase().getLocationRepository().delete(id);
+    }
+
+    @Override
+    public Location randomLocation() {
+        final Map.Entry<String, Location> location = locations.entrySet().stream().findFirst().get();
+        removeLocation(location.getKey());
+        if (locations.size() < plugin.getPluginConfig().getLocationCache())
+            new FarmWorldLoader(plugin, this).generateLocation(true);
+        return location.getValue();
     }
 }

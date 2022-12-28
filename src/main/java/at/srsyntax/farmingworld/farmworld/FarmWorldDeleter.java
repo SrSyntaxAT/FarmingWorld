@@ -42,6 +42,7 @@ public class FarmWorldDeleter {
 
         final Database database = plugin.getDatabase();
         database.getFarmWorldRepository().delete(farmWorld);
+        database.getLocationRepository().delete(farmWorld);
 
         farmWorld.setActive(false);
         // TODO: 18.12.2022 unregister commands

@@ -2,12 +2,17 @@ package at.srsyntax.farmingworld.farmworld;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.farmworld.Border;
+import at.srsyntax.farmingworld.api.farmworld.LocationCache;
+import at.srsyntax.farmingworld.api.farmworld.LocationRandomizer;
 import at.srsyntax.farmingworld.database.repository.FarmWorldRepository;
+import at.srsyntax.farmingworld.database.repository.LocationRepository;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -59,7 +64,7 @@ public class FarmWorldLoader {
         plugin.getLogger().info("Enable " + farmWorld.getName() + "...");
         loadCurrentWorld();
         if (farmWorld.hasNext()) generateWorld(farmWorld.getData().getNextWorldName());
-        // TODO: 17.12.2022 load cached spawn location
+        loadLocationCaches();
         setBorder(farmWorld.getWorld());
         setBorder(farmWorld.getNextWorld());
         farmWorld.setEnabled(true);
@@ -110,5 +115,39 @@ public class FarmWorldLoader {
         final WorldBorder worldBorder = world.getWorldBorder();
         worldBorder.setSize(border.getSize());
         worldBorder.setCenter(border.getCenterX(), border.getCenterZ());
+    }
+
+    private void loadLocationCaches() {
+         final Map<String, LocationCache> caches = getLocationRepository().getLocations(farmWorld);
+         caches.forEach((id, locationCache) -> {
+             if (farmWorld.getData() == null || !farmWorld.getData().getCurrentWorldName().equalsIgnoreCase(locationCache.getWorld()))
+                 getLocationRepository().delete(id);
+             else loadLocation(id, locationCache.toBukkit(), false);
+         });
+         checkLocations();
+    }
+
+    public void checkLocations() {
+        int need = plugin.getPluginConfig().getLocationCache() - farmWorld.getLocations().size();
+        if (need > 0) {
+            plugin.getLogger().info(String.format("%d new locations are generated for %s.", need, farmWorld.getName()));
+            for (; need > 0; need--)
+                generateLocation(true);
+        }
+    }
+
+    public void generateLocation(boolean save) {
+        final LocationRandomizer randomizer = FarmingWorldPlugin.getApi().createLocationRandomizer(farmWorld);
+        loadLocation(UUID.randomUUID().toString(), randomizer.random(), save);
+    }
+
+    private void loadLocation(String id, Location location, boolean save) {
+        farmWorld.addLocation(id, location);
+        if (save) getLocationRepository().save(farmWorld, UUID.randomUUID().toString(), location);
+        location.getWorld().loadChunk(location.getChunk());
+    }
+
+    private LocationRepository getLocationRepository() {
+        return plugin.getDatabase().getLocationRepository();
     }
 }

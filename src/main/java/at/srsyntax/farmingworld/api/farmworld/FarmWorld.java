@@ -1,7 +1,5 @@
 package at.srsyntax.farmingworld.api.farmworld;
 
-import org.bukkit.World;
-
 /*
  * CONFIDENTIAL
  *  Unpublished Copyright (c) 2022 Marcel Haberl, All Rights Reserved.
@@ -25,7 +23,7 @@ import org.bukkit.World;
 /**
  * Represents the farm world.
  */
-public interface FarmWorld extends WorldOwner, Playable {
+public interface FarmWorld extends WorldOwner, Playable, LocationCacher {
 
     /**
      * Get the name of the farm world

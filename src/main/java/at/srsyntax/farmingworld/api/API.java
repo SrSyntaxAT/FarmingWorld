@@ -1,9 +1,12 @@
 package at.srsyntax.farmingworld.api;
 
+import at.srsyntax.farmingworld.api.farmworld.Border;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
+import at.srsyntax.farmingworld.api.farmworld.LocationRandomizer;
 import at.srsyntax.farmingworld.api.handler.cooldown.Cooldown;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -119,4 +122,25 @@ public interface API {
      * @return the farm world with the name or null if there is no farm world with the name.
      */
     @Nullable FarmWorld getFarmWorld(String name);
+
+    /**
+     * Create a location randomizer.
+     * @param blacklist - A list of materials on which the player may not be spawned.
+     * @param world in which a site is to be selected
+     * @param border
+     * @return a randomizer.
+     */
+    @NotNull LocationRandomizer createLocationRandomizer(List<Material> blacklist, World world, Border border);
+    /**
+     * Create a location randomizer.
+     * @param blacklist - A list of materials on which the player may not be spawned.
+     * @param farmWorld in which a site is to be selected
+     * @return a randomizer.
+     */
+    @NotNull LocationRandomizer createLocationRandomizer(List<Material> blacklist, FarmWorld farmWorld);
+    /**
+     * Create a location randomizer.
+     * @return a randomizer.
+     */
+    @NotNull LocationRandomizer createLocationRandomizer(FarmWorld farmWorld);
 }

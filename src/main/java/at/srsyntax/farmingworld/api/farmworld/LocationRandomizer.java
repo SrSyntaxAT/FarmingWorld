@@ -1,11 +1,10 @@
 package at.srsyntax.farmingworld.api.farmworld;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+
+import java.util.List;
 
 /*
  * CONFIDENTIAL
@@ -27,40 +26,21 @@ import org.bukkit.Location;
  * INFORMATION DOES NOT CONVEY OR IMPLY ANY RIGHTS TO REPRODUCE, DISCLOSE OR DISTRIBUTE ITS CONTENTS, OR TO
  * MANUFACTURE, USE, OR SELL ANYTHING THAT IT  MAY DESCRIBE, IN WHOLE OR IN PART.
  */
+public abstract class LocationRandomizer {
 
-/**
- * A class to store a Bukkit location in JSON format and convert it back to a Bukkit location.
- */
-@AllArgsConstructor
-@Getter
-public class LocationCache {
+    protected final List<Material> blacklist;
+    protected final World world;
+    protected final Border border;
 
-    private final String world;
-    private final double x, y, z;
-    private final float pitch, yaw;
-
-    public LocationCache(Location location) {
-        this(
-                location.getWorld().getName(),
-                location.getX(), location.getY(), location.getZ(),
-                location.getPitch(), location.getYaw()
-        );
+    public LocationRandomizer(List<Material> blacklist, World world, Border border) {
+        this.blacklist = blacklist;
+        this.world = world;
+        this.border = border;
     }
 
-    public static LocationCache fromJson(String json) {
-        return new Gson().fromJson(json, LocationCache.class);
+    public LocationRandomizer(List<Material> blacklist, FarmWorld farmWorld) {
+        this(blacklist, farmWorld.getWorld(), farmWorld.getBorder());
     }
 
-    public Location toBukkit() {
-        return new Location(
-                Bukkit.getWorld(this.world),
-                this.x, this.y, this.z,
-                this.yaw, this.pitch
-        );
-    }
-
-    @Override
-    public String toString() {
-        return new GsonBuilder().disableHtmlEscaping().create().toJson(this);
-    }
+    public abstract Location random();
 }

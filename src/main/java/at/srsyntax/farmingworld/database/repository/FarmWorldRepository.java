@@ -27,5 +27,6 @@ public interface FarmWorldRepository {
     boolean exists(FarmWorldImpl farmWorld);
     void save(FarmWorldImpl farmWorld);
     void delete(FarmWorldImpl farmWorld);
+    void delete(String name);
     FarmWorldData getFarmWorldData(String farmWorld);
 }

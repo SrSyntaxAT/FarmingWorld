@@ -32,5 +32,5 @@ import lombok.Getter;
 @Getter
 public class Border {
     private final int size;
-    private final double centerX, centerZ;
+    private final int centerX, centerZ;
 }

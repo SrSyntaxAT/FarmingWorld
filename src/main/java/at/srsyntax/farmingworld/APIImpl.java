@@ -1,15 +1,19 @@
 package at.srsyntax.farmingworld;
 
 import at.srsyntax.farmingworld.api.API;
+import at.srsyntax.farmingworld.api.farmworld.Border;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
+import at.srsyntax.farmingworld.api.farmworld.LocationRandomizer;
 import at.srsyntax.farmingworld.api.handler.cooldown.Cooldown;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
 import at.srsyntax.farmingworld.farmworld.FarmWorldImpl;
 import at.srsyntax.farmingworld.farmworld.FarmWorldLoader;
+import at.srsyntax.farmingworld.farmworld.LocationRandomizerImpl;
 import at.srsyntax.farmingworld.handler.cooldown.CooldownImpl;
 import at.srsyntax.farmingworld.handler.countdown.CountdownImpl;
 import lombok.AllArgsConstructor;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -104,5 +108,20 @@ public class APIImpl implements API {
                 return farmWorld;
         }
         return null;
+    }
+
+    @Override
+    public @NotNull LocationRandomizer createLocationRandomizer(List<Material> blacklist, World world, Border border) {
+        return new LocationRandomizerImpl(blacklist, world, border);
+    }
+
+    @Override
+    public @NotNull LocationRandomizer createLocationRandomizer(List<Material> blacklist, FarmWorld farmWorld) {
+        return new LocationRandomizerImpl(blacklist, farmWorld);
+    }
+
+    @Override
+    public @NotNull LocationRandomizer createLocationRandomizer(FarmWorld farmWorld) {
+        return new LocationRandomizerImpl(plugin.getPluginConfig().getBlacklist(), farmWorld);
     }
 }
