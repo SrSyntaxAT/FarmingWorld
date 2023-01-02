@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -108,6 +109,11 @@ public class APIImpl implements API {
                 return farmWorld;
         }
         return null;
+    }
+
+    @Override
+    public @NotNull List<FarmWorld> getFarmWorlds() {
+        return new ArrayList<>(plugin.getPluginConfig().getFarmWorlds());
     }
 
     @Override

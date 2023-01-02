@@ -14,7 +14,6 @@ import org.bukkit.WorldBorder;
 
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /*
  * CONFIDENTIAL
@@ -72,16 +71,9 @@ public class FarmWorldLoader {
     }
 
     private void loadCurrentWorld() {
-        final FarmWorldData data = farmWorld.getData();
-        final boolean needNew = isNeedNew(data);
-
-        final World world = needNew ? generateWorld() : generateWorld(data.getCurrentWorldName());
+        final boolean needNew = farmWorld.needReset();
+        final World world = needNew ? generateWorld() : generateWorld(farmWorld.getData().getCurrentWorldName());
         if (needNew) farmWorld.newWorld(world);
-    }
-
-    private boolean isNeedNew(FarmWorldData data) {
-        if (data.getCurrentWorldName() == null) return true;
-        return data.getCreated() + TimeUnit.MINUTES.toMillis(farmWorld.getTimer()) <= System.currentTimeMillis();
     }
 
     private void setDataFromDatabase()  {

@@ -9,6 +9,7 @@ import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.database.DatabaseException;
 import at.srsyntax.farmingworld.database.sqlite.SQLiteDatabase;
 import at.srsyntax.farmingworld.farmworld.FarmWorldLoader;
+import at.srsyntax.farmingworld.farmworld.FarmWorldScheduler;
 import at.srsyntax.farmingworld.handler.countdown.CountdownListener;
 import at.srsyntax.farmingworld.handler.countdown.CountdownRegistry;
 import at.srsyntax.farmingworld.util.SpigotVersionCheck;
@@ -84,6 +85,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
 
             this.pluginConfig.getFarmWorlds().forEach(farmWorld -> new FarmWorldLoader(this, farmWorld).load());
             checkDeletedWorlds();
+            getServer().getScheduler().scheduleSyncRepeatingTask(this, new FarmWorldScheduler(api), 120L, 120L);
 
             getCommand("test").setExecutor(new TestCommand());
 

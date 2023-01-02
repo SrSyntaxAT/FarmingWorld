@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /*
  * CONFIDENTIAL
@@ -160,6 +161,17 @@ public class FarmWorldImpl implements FarmWorld {
     @Override
     public @Nullable Border getBorder() {
         return border;
+    }
+
+    @Override
+    public boolean needReset() {
+        if (data.getCurrentWorldName() == null) return true;
+        return data.getCreated() + TimeUnit.MINUTES.toMillis(timer) <= System.currentTimeMillis();
+    }
+
+    @Override
+    public boolean needNextWorld() {
+        return data.getCreated() + TimeUnit.MINUTES.toMillis(timer-1) <= System.currentTimeMillis() && !hasNext();
     }
 
     @SneakyThrows

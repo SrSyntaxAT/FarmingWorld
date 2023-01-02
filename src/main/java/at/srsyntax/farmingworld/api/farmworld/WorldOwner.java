@@ -99,4 +99,17 @@ public interface WorldOwner {
      * @return data of the borders.
      */
     @Nullable Border getBorder();
+
+    /**
+     * Check if the farm world needs to be reset.
+     * @return whether the farm world needs to be reset.
+     */
+    boolean needReset();
+
+    /**
+     * Checks if it is necessary to generate the next farm world.
+     * @return whether it is necessary to generate the next farm world.
+     */
+    boolean needNextWorld();
+
 }

@@ -124,6 +124,12 @@ public interface API {
     @Nullable FarmWorld getFarmWorld(String name);
 
     /**
+     * Get a copy of the list of all farm worlds.
+     * @return a copy of all farm worlds.
+     */
+    @NotNull List<FarmWorld> getFarmWorlds();
+
+    /**
      * Create a location randomizer.
      * @param blacklist - A list of materials on which the player may not be spawned.
      * @param world in which a site is to be selected
