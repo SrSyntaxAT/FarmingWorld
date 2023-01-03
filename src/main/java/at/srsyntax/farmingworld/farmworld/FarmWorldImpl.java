@@ -265,6 +265,8 @@ public class FarmWorldImpl implements FarmWorld {
 
     @Override
     public Location randomLocation() {
+        if (locations.isEmpty())
+            return new FarmWorldLoader(plugin, this).generateLocation(true);
         final Map.Entry<String, Location> location = locations.entrySet().stream().findFirst().get();
         removeLocation(location.getKey());
         if (locations.size() < plugin.getPluginConfig().getLocationCache())

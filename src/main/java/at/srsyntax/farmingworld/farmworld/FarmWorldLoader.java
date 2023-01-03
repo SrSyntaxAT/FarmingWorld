@@ -123,6 +123,7 @@ public class FarmWorldLoader {
     }
 
     public void checkLocations() {
+        if (plugin.getPluginConfig().getLocationCache() <= 0) return;
         int need = plugin.getPluginConfig().getLocationCache() - farmWorld.getLocations().size();
         if (need > 0) {
             plugin.getLogger().info(String.format("%d new locations are generated for %s.", need, farmWorld.getName()));
@@ -131,9 +132,10 @@ public class FarmWorldLoader {
         }
     }
 
-    public void generateLocation(boolean save) {
-        final LocationRandomizer randomizer = FarmingWorldPlugin.getApi().createLocationRandomizer(farmWorld);
-        loadLocation(UUID.randomUUID().toString(), randomizer.random(), save);
+    public Location generateLocation(boolean save) {
+        final Location location = FarmingWorldPlugin.getApi().createLocationRandomizer(farmWorld).random();
+        loadLocation(UUID.randomUUID().toString(), location, save);
+        return location;
     }
 
     private void loadLocation(String id, Location location, boolean save) {
