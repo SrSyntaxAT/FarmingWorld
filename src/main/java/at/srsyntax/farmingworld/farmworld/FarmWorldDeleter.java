@@ -72,18 +72,24 @@ public class FarmWorldDeleter {
     }
 
     private void deleteWhenEnabled() {
-        deleteWorld(farmWorld.getWorld());
-        deleteWorld(farmWorld.getNextWorld());
+        final FarmWorldData data = farmWorld.getData();
+        deleteWorld(data.getCurrentWorldName());
+        deleteWorld(data.getNextWorldName());
     }
 
     private void deleteWhenDisabled() {
         final FarmWorldData data = farmWorld.getData();
-        deletWorldByName(data.getCurrentWorldName());
-        deletWorldByName(data.getNextWorldName());
+        deleteWorldByName(data.getCurrentWorldName());
+        deleteWorldByName(data.getNextWorldName());
     }
 
-    private void deletWorldByName(String name) {
+    private void deleteWorldByName(String name) {
         if (name != null) deleteWorld(Bukkit.getWorld(name));
+    }
+
+    public void deleteWorld(String worldName) {
+        plugin.getLogger().info("Delete " + worldName + " (F)");
+        deleteFolder(new File(worldName));
     }
 
     public void deleteWorld(World world) {

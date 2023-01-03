@@ -71,9 +71,12 @@ public class FarmWorldLoader {
     }
 
     private void loadCurrentWorld() {
-        final boolean needNew = farmWorld.needReset();
-        final World world = needNew ? generateWorld() : generateWorld(farmWorld.getData().getCurrentWorldName());
-        if (needNew) farmWorld.newWorld(world);
+        if (farmWorld.needReset() || farmWorld.needNextWorld()) {
+            final FarmWorldData data = farmWorld.getData();
+            new FarmWorldDeleter(plugin, farmWorld).deleteWorld(data.getCurrentWorldName());
+            data.setCurrentWorldName(null);
+            farmWorld.next();
+        } else generateWorld(farmWorld.getData().getCurrentWorldName());
     }
 
     private void setDataFromDatabase()  {
