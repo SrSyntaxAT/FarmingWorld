@@ -73,7 +73,7 @@ public class FarmWorldLoader {
     }
 
     private void loadCurrentWorld() {
-        if (farmWorld.needReset() || farmWorld.needNextWorld()) {
+        if (farmWorld.getData().getCurrentWorldName() != null && (farmWorld.needReset() || farmWorld.needNextWorld())) {
             final FarmWorldData data = farmWorld.getData();
             new FarmWorldDeleter(plugin, farmWorld).deleteWorld(data.getCurrentWorldName());
             data.setCurrentWorldName(null);
