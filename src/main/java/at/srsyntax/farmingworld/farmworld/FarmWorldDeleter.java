@@ -2,6 +2,7 @@ package at.srsyntax.farmingworld.farmworld;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.database.Database;
+import at.srsyntax.farmingworld.util.FileUtil;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -45,7 +46,7 @@ public class FarmWorldDeleter {
 
         final Database database = plugin.getDatabase();
         database.getFarmWorldRepository().delete(farmWorld);
-        database.getLocationRepository().delete(farmWorld);
+        database.getLocationRepository().deleteByFarmWorldName(farmWorld.getName());
 
         farmWorld.setActive(false);
         // TODO: 18.12.2022 unregister commands
@@ -92,7 +93,7 @@ public class FarmWorldDeleter {
 
     public void deleteWorld(String worldName) {
         plugin.getLogger().info("Delete " + worldName + " (F)");
-        deleteFolder(new File(worldName));
+        FileUtil.deleteFolder(new File(worldName));
     }
 
     public void deleteWorld(World world) {
@@ -103,25 +104,6 @@ public class FarmWorldDeleter {
         world.getPlayers().forEach(player -> player.teleport(fallback));
 
         Bukkit.unloadWorld(world, false);
-        deleteFolder(world.getWorldFolder());
-    }
-
-    private boolean deleteFolder(File folder) {
-        if (!folder.exists()) return false;
-
-        if(folder.isDirectory()) {
-            final File[] files = folder.listFiles();
-
-            if(files != null) {
-                for (File file : files) {
-                    if (file.isDirectory())
-                        deleteFolder(file);
-                    else
-                        file.delete();
-                }
-            }
-        }
-
-        return folder.delete();
+        FileUtil.deleteFolder(world.getWorldFolder());
     }
 }

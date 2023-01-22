@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -73,12 +74,15 @@ public class FarmWorldLoader {
     }
 
     private void loadCurrentWorld() {
-        if (farmWorld.getData().getCurrentWorldName() != null && (farmWorld.needReset() || farmWorld.needNextWorld())) {
+        final String worldName = farmWorld.getData().getCurrentWorldName();
+        if (worldName != null && (farmWorld.needReset() || farmWorld.needNextWorld())) {
             final FarmWorldData data = farmWorld.getData();
-            new FarmWorldDeleter(plugin, farmWorld).deleteWorld(data.getCurrentWorldName());
+            new FarmWorldDeleter(plugin, farmWorld).deleteWorld(worldName);
             data.setCurrentWorldName(null);
             farmWorld.next();
-        } else generateWorld(farmWorld.getData().getCurrentWorldName());
+        } else {
+            farmWorld.getData().setCurrentWorldName(generateWorld(worldName).getName());
+        }
     }
 
     private void setDataFromDatabase()  {
@@ -97,7 +101,7 @@ public class FarmWorldLoader {
     }
 
     public World generateWorld(String worldName) {
-        if (worldName == null) return null;
+        if (worldName == null) return generateWorld();
         final World world = Bukkit.createWorld(farmWorld.createWorldCreator(worldName));
         setBorder(world);
         return world;
@@ -116,16 +120,20 @@ public class FarmWorldLoader {
 
     private void loadLocationCaches() {
          final Map<String, LocationCache> caches = getLocationRepository().getLocations(farmWorld);
-         caches.forEach((id, locationCache) -> {
-             if (farmWorld.getData() == null || !farmWorld.getData().getCurrentWorldName().equalsIgnoreCase(locationCache.getWorld()))
-                 getLocationRepository().delete(id);
-             else loadLocation(id, locationCache.toBukkit(), false);
-         });
+         if (caches != null && !caches.isEmpty()) {
+             caches.forEach((id, locationCache) -> {
+                 if (farmWorld.getData() == null || !farmWorld.getData().getCurrentWorldName().equalsIgnoreCase(locationCache.getWorld()))
+                     getLocationRepository().delete(id);
+                 else loadLocation(id, locationCache.toBukkit(), false);
+             });
+         }
          checkLocations();
     }
 
     public void checkLocations() {
         if (plugin.getPluginConfig().getLocationCache() <= 0) return;
+        if (farmWorld.getLocations() == null) farmWorld.setLocations(new LinkedHashMap<>());
+
         int need = plugin.getPluginConfig().getLocationCache() - farmWorld.getLocations().size();
         if (need > 0) {
             plugin.getLogger().info(String.format("%d new locations are generated for %s.", need, farmWorld.getName()));

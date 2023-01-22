@@ -66,7 +66,7 @@ public class FarmWorldImpl implements FarmWorld {
     private transient FarmWorldData data;
     @Getter @Setter
     private transient boolean loaded = false, enabled = false;
-    @Getter private transient LinkedHashMap<String, Location> locations;
+    @Getter @Setter private transient LinkedHashMap<String, Location> locations = new LinkedHashMap<>();
 
     public FarmWorldImpl(String name, String permission, int cooldown, int countdown, int timer, World.Environment environment, String generator, Border border) {
         this.name = name;
@@ -78,7 +78,6 @@ public class FarmWorldImpl implements FarmWorld {
         this.generator = generator;
         this.border = border;
         this.data = new FarmWorldData(0, null, null);
-        this.locations = new LinkedHashMap<>();
     }
 
     @Override
@@ -197,7 +196,7 @@ public class FarmWorldImpl implements FarmWorld {
 
         if (locations == null) locations = new LinkedHashMap<>();
         if (!locations.isEmpty()) {
-            plugin.getDatabase().getLocationRepository().delete(this);
+            plugin.getDatabase().getLocationRepository().deleteByFarmWorldName(name);
             locations.clear();
         }
 

@@ -33,7 +33,7 @@ public interface LocationRepository {
 
     void save(FarmWorld farmWorld, String id, Location location);
     void delete(String id);
-    void delete(FarmWorld farmWorld);
+    void deleteByFarmWorldName(String name);
     Map<String, LocationCache> getLocations(FarmWorld farmWorld);
     Map<String, Map<String, LocationCache>> getLocations();
 }

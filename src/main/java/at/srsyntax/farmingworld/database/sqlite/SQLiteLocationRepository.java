@@ -69,10 +69,10 @@ public class SQLiteLocationRepository implements LocationRepository {
 
     @SneakyThrows
     @Override
-    public void delete(FarmWorld farmWorld) {
+    public void deleteByFarmWorldName(String name) {
         final String sql = "DELETE FROM location_cache WHERE farm_world = ?";
         final PreparedStatement statement = connection.prepareStatement(sql);
-        statement.setString(1, farmWorld.getName());
+        statement.setString(1, name);
         statement.execute();
     }
 

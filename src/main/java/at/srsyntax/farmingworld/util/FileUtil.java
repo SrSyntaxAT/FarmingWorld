@@ -1,9 +1,6 @@
-package at.srsyntax.farmingworld.database.repository;
+package at.srsyntax.farmingworld.util;
 
-import at.srsyntax.farmingworld.farmworld.FarmWorldData;
-import at.srsyntax.farmingworld.farmworld.FarmWorldImpl;
-
-import java.util.List;
+import java.io.File;
 
 /*
  * MIT License
@@ -28,11 +25,25 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface FarmWorldRepository {
-    boolean exists(FarmWorldImpl farmWorld);
-    void save(FarmWorldImpl farmWorld);
-    void delete(FarmWorldImpl farmWorld);
-    void delete(String name);
-    FarmWorldData getFarmWorldData(String farmWorld);
-    List<String> getFarmWorlds();
+public class FileUtil {
+
+    public static boolean deleteFolder(File folder) {
+        if (!folder.exists()) return false;
+
+        if(folder.isDirectory()) {
+            final File[] files = folder.listFiles();
+
+            if(files != null) {
+                for (File file : files) {
+                    if (file.isDirectory())
+                        deleteFolder(file);
+                    else
+                        file.delete();
+                }
+            }
+        }
+
+        return folder.delete();
+    }
+
 }

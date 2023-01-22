@@ -8,10 +8,10 @@ import at.srsyntax.farmingworld.config.PluginConfig;
 import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.database.DatabaseException;
 import at.srsyntax.farmingworld.database.sqlite.SQLiteDatabase;
-import at.srsyntax.farmingworld.farmworld.FarmWorldLoader;
-import at.srsyntax.farmingworld.farmworld.FarmWorldScheduler;
+import at.srsyntax.farmingworld.farmworld.*;
 import at.srsyntax.farmingworld.handler.countdown.CountdownListener;
 import at.srsyntax.farmingworld.handler.countdown.CountdownRegistry;
+import at.srsyntax.farmingworld.util.FileUtil;
 import at.srsyntax.farmingworld.util.SpigotVersionCheck;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
@@ -22,6 +22,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
@@ -84,7 +85,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
             );
 
             this.pluginConfig.getFarmWorlds().forEach(farmWorld -> new FarmWorldLoader(this, farmWorld).load());
-            checkDeletedWorlds();
+            checkFarmWorlds();
             getServer().getScheduler().scheduleSyncRepeatingTask(this, new FarmWorldScheduler(api), 120L, 120L);
 
             getCommand("test").setExecutor(new TestCommand());
@@ -95,14 +96,33 @@ public class FarmingWorldPlugin extends JavaPlugin {
         }
     }
 
-    private void checkDeletedWorlds() {
-        database.getLocationRepository().getLocations().forEach((s, stringLocationCacheMap) -> {
-            final FarmWorld farmWorld = api.getFarmWorld(s);
+    private void checkFarmWorlds() {
+        database.getFarmWorldRepository().getFarmWorlds().forEach(name -> {
+            final FarmWorld farmWorld = api.getFarmWorld(name);
+
             if (farmWorld == null) {
-                stringLocationCacheMap.keySet().forEach(id -> database.getLocationRepository().delete(id));
-                database.getFarmWorldRepository().delete(s);
+                database.getFarmWorldRepository().delete(name);
+                database.getLocationRepository().deleteByFarmWorldName(name);
             }
+
+            checkLostWorlds(name, farmWorld);
         });
+    }
+
+    private void checkLostWorlds(String name, FarmWorld farmWorld) {
+        for (File file : getServer().getWorldContainer().listFiles()) {
+            if (!file.isDirectory()) continue;
+            if (!file.getName().startsWith(name)) continue;
+
+            if (farmWorld != null) {
+                final FarmWorldData data = ((FarmWorldImpl) farmWorld).getData();
+                if (data.getCurrentWorldName() != null && file.getName().equalsIgnoreCase(data.getCurrentWorldName())) continue;
+                if (data.getNextWorldName() != null && file.getName().equalsIgnoreCase(data.getNextWorldName())) continue;
+            }
+
+            getLogger().info("Delete " + file.getName() + " (F)");
+            FileUtil.deleteFolder(file);
+        }
     }
 
     private void registerListeners(Listener... listeners) {

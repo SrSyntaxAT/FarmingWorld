@@ -3,11 +3,14 @@ package at.srsyntax.farmingworld.database.sqlite;
 import at.srsyntax.farmingworld.database.repository.FarmWorldRepository;
 import at.srsyntax.farmingworld.farmworld.FarmWorldData;
 import at.srsyntax.farmingworld.farmworld.FarmWorldImpl;
+import lombok.SneakyThrows;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * MIT License
@@ -118,5 +121,20 @@ public class SQLLiteFarmWorldRepository implements FarmWorldRepository {
             exception.printStackTrace();
         }
         return null;
+    }
+
+    @SneakyThrows
+    @Override
+    public List<String> getFarmWorlds() {
+        final String sql = "SELECT name FROM farm_world";
+        final PreparedStatement statement = connection.prepareStatement(sql);
+
+        final List<String> list = new ArrayList<>();
+        final ResultSet resultSet = statement.executeQuery();
+        while (resultSet != null && resultSet.next()) {
+            list.add(resultSet.getString("name"));
+        }
+
+        return list;
     }
 }
