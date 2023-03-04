@@ -130,6 +130,12 @@ public interface API {
     @NotNull List<FarmWorld> getFarmWorlds();
 
     /**
+     * Get the default farm world.
+     * @return the default farm world
+     */
+    @Nullable FarmWorld getDefaultFarmWorld();
+
+    /**
      * Create a location randomizer.
      * @param blacklist - A list of materials on which the player may not be spawned.
      * @param world in which a site is to be selected

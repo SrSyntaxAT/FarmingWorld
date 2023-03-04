@@ -117,6 +117,12 @@ public class APIImpl implements API {
     }
 
     @Override
+    public @Nullable FarmWorld getDefaultFarmWorld() {
+        final String defaultWorld = plugin.getPluginConfig().getDefaultFarmWorld();
+        return defaultWorld == null ? (getFarmWorlds().isEmpty() ? null : getFarmWorlds().get(0)) : getFarmWorld(defaultWorld);
+    }
+
+    @Override
     public @NotNull LocationRandomizer createLocationRandomizer(List<Material> blacklist, World world, Border border) {
         return new LocationRandomizerImpl(blacklist, world, border);
     }

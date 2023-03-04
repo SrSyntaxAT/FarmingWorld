@@ -51,6 +51,7 @@ public class PluginConfig {
     private String version;
     private final double refund;
     private final CountdownConfig countdown;
+    private final String defaultFarmWorld;
     private final List<FarmWorldImpl> farmWorlds;
     private final List<Material> blacklist;
     private final int locationCache;
@@ -67,6 +68,7 @@ public class PluginConfig {
                         false,
                         ChatMessageType.ACTION_BAR
                 ),
+                "FarmWorld",
                 Collections.singletonList(
                         new FarmWorldImpl(
                                 "FarmWorld", 
@@ -88,7 +90,22 @@ public class PluginConfig {
                         ),
                         new MessageConfig.CooldownMessages(// TODO: 25.12.2022 Implement placeholder.
                                 "&cYou may use the command in &e%{remaining}&7."
-                        )
+                        ),
+                        new MessageConfig.CommandMessages(
+                                ChatMessageType.ACTION_BAR,
+                                "&cPlayer not found!",
+                                "&cFarm world not found!",
+                                "&cFarm world was not found.",
+                                "&cPlayer or farm world was not found.",
+                                "&cYou have no rights to enter the farm world.",
+                                "&cYou have no rights to teleport other players to the farm world.",
+                                "&aYou have been teleported to &e%{farmworld}&a.",
+                                "&aYou teleported &e%{player} &ato &e%{farmworld}&a."
+                        ),
+                        "second", "seconds",
+                        "minute", "minutes",
+                        "hour", "hours",
+                        "day", "days"
                 )
         );
     }

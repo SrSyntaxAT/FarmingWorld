@@ -2,6 +2,7 @@ package at.srsyntax.farmingworld.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.md_5.bungee.api.ChatMessageType;
 
 /*
  * MIT License
@@ -33,6 +34,12 @@ public class MessageConfig {
     private final String notEnoughMoney;
     private final CountdownMessages countdown;
     private final CooldownMessages cooldown;
+    private final CommandMessages command;
+
+    private final String second, seconds;
+    private final String minute, minutes;
+    private final String hour, hours;
+    private final String day, days;
 
     @AllArgsConstructor
     @Getter
@@ -45,5 +52,14 @@ public class MessageConfig {
     @Getter
     public static class CooldownMessages {
         private final String hasCooldown;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class CommandMessages {
+        private final ChatMessageType chatType;
+        private final String playerNotFound, farmWorldNotFound, defaultFarmWorldNotFound, playerOrfarmWorldNotFound;
+        private final String noPermission, noPermissionTeleportOther;
+        private final String teleported, teleportedOther;
     }
 }

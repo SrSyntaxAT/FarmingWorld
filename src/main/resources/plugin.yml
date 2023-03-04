@@ -10,4 +10,5 @@ author: SrSyntaxAT
 website: https://srsyntax.at/
 
 commands:
-  test:
+  farming:
+    description: Teleport yourself or another player to a farm world

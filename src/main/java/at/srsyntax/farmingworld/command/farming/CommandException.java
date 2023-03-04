@@ -1,12 +1,8 @@
-package at.srsyntax.farmingworld.command;
+package at.srsyntax.farmingworld.command.farming;
 
-import at.srsyntax.farmingworld.FarmingWorldPlugin;
-import at.srsyntax.farmingworld.api.API;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import at.srsyntax.farmingworld.api.message.Message;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /*
  * MIT License
@@ -31,11 +27,7 @@ import org.jetbrains.annotations.NotNull;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class TestCommand implements CommandExecutor {
-    @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        final API api = FarmingWorldPlugin.getApi();
-        api.getFarmWorld(strings[0]).teleport((Player) commandSender);
-        return false;
-    }
+@AllArgsConstructor @Getter
+public class CommandException extends Exception {
+    private final Message messages;
 }

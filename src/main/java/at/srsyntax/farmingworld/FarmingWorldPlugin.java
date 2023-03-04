@@ -2,7 +2,7 @@ package at.srsyntax.farmingworld;
 
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
-import at.srsyntax.farmingworld.command.TestCommand;
+import at.srsyntax.farmingworld.command.farming.FarmingCommand;
 import at.srsyntax.farmingworld.config.ConfigLoader;
 import at.srsyntax.farmingworld.config.PluginConfig;
 import at.srsyntax.farmingworld.database.Database;
@@ -80,15 +80,13 @@ public class FarmingWorldPlugin extends JavaPlugin {
             this.economy = setupEconomy();
 
             this.countdownRegistry = new CountdownRegistry();
-            registerListeners(
-                    new CountdownListener(countdownRegistry)
-            );
+            registerListeners(new CountdownListener(countdownRegistry));
 
             this.pluginConfig.getFarmWorlds().forEach(farmWorld -> new FarmWorldLoader(this, farmWorld).load());
             checkFarmWorlds();
             getServer().getScheduler().scheduleSyncRepeatingTask(this, new FarmWorldScheduler(api), 120L, 120L);
 
-            getCommand("test").setExecutor(new TestCommand());
+            getCommand("farming").setExecutor(new FarmingCommand(api, pluginConfig.getMessages().getCommand()));
 
         } catch (Exception exception) {
             getLogger().severe("Plugin could not be loaded successfully!");

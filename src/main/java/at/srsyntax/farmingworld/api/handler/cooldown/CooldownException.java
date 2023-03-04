@@ -1,6 +1,8 @@
 package at.srsyntax.farmingworld.api.handler.cooldown;
 
 import at.srsyntax.farmingworld.api.handler.HandleException;
+import at.srsyntax.farmingworld.api.message.Message;
+import net.md_5.bungee.api.ChatMessageType;
 import org.jetbrains.annotations.NotNull;
 
 /*
@@ -37,6 +39,13 @@ public class CooldownException extends HandleException {
     public CooldownException(@NotNull String message, @NotNull Cooldown cooldown) {
         super(message);
         this.cooldown = cooldown;
+    }
+
+    @Override
+    public String getMessage() {
+        return new Message(super.getMessage(), ChatMessageType.SYSTEM)
+                .replace("%{remaining}", cooldown.getRemaining())
+                .toString();
     }
 
     /**

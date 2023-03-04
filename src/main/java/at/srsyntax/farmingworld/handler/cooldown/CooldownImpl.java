@@ -8,7 +8,6 @@ import at.srsyntax.farmingworld.api.handler.cooldown.CooldownException;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -71,9 +70,7 @@ public class CooldownImpl implements Cooldown {
 
     @Override
     public boolean hasCooldown() {
-        if (!player.hasMetadata(METADATA_KEY)) return false;
-        final MetadataValue value = player.getMetadata(METADATA_KEY).get(0);
-        if (value.asLong() >= System.currentTimeMillis()) return true;
+        if (getRemaining() > 0) return true;
         remove();
         return false;
     }
@@ -82,5 +79,12 @@ public class CooldownImpl implements Cooldown {
     public void remove() {
         if (!player.hasMetadata(METADATA_KEY)) return;
         player.removeMetadata(METADATA_KEY, plugin);
+    }
+
+    @Override
+    public long getRemaining() {
+        if (!player.hasMetadata(METADATA_KEY)) return 0L;
+        final long end = player.getMetadata(METADATA_KEY).get(0).asLong();
+        return end <= System.currentTimeMillis() ? 0 : end - System.currentTimeMillis();
     }
 }

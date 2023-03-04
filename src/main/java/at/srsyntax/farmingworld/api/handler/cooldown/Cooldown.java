@@ -40,4 +40,10 @@ public interface Cooldown extends Handler {
      * Remove the player's cooldown.
      */
     void remove();
+
+    /**
+     * Get back the remaining time in milliseconds.
+     * @return the remaining time.
+     */
+    long getRemaining();
 }
