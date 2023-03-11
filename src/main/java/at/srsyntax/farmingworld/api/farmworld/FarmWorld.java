@@ -23,6 +23,9 @@ package at.srsyntax.farmingworld.api.farmworld;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+import java.util.List;
+
 /**
  * Represents the farm world.
  */
@@ -59,5 +62,11 @@ public interface FarmWorld extends WorldOwner, Playable, LocationCacher {
      * @param active - whether to enable or disable the farm world
      */
     void setActive(boolean active);
+
+    /**
+     * Get the command alias of the farm world.
+     * @return a list of aliases
+     */
+    List<String> getAliases();
 
 }

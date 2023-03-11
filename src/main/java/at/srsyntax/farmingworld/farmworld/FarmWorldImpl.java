@@ -61,6 +61,8 @@ public class FarmWorldImpl implements FarmWorld {
     private final Border border;
     @Getter
     private boolean active = false;
+    @Getter
+    private final List<String> aliases;
 
     @Getter @Setter
     private transient FarmWorldData data;
@@ -68,7 +70,7 @@ public class FarmWorldImpl implements FarmWorld {
     private transient boolean loaded = false, enabled = false;
     @Getter @Setter private transient LinkedHashMap<String, Location> locations = new LinkedHashMap<>();
 
-    public FarmWorldImpl(String name, String permission, int cooldown, int countdown, int timer, World.Environment environment, String generator, Border border) {
+    public FarmWorldImpl(String name, String permission, int cooldown, int countdown, int timer, World.Environment environment, String generator, Border border, List<String> aliases) {
         this.name = name;
         this.permission = permission;
         this.cooldown = cooldown;
@@ -77,6 +79,7 @@ public class FarmWorldImpl implements FarmWorld {
         this.environment = environment;
         this.generator = generator;
         this.border = border;
+        this.aliases = aliases;
         this.data = new FarmWorldData(0, null, null);
     }
 

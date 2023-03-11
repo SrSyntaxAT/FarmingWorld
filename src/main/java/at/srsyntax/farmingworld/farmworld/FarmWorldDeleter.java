@@ -49,7 +49,7 @@ public class FarmWorldDeleter {
         database.getLocationRepository().deleteByFarmWorldName(farmWorld.getName());
 
         farmWorld.setActive(false);
-        // TODO: 18.12.2022 unregister commands
+        plugin.getCommandRegistry().unregister(farmWorld);
 
         if (farmWorld.isEnabled())
             deleteWhenEnabled();
@@ -62,7 +62,7 @@ public class FarmWorldDeleter {
         farmWorld.setEnabled(false);
         farmWorld.setActive(false);
 
-        // TODO: 18.12.2022 unregister commands
+        plugin.getCommandRegistry().unregister(farmWorld);
 
         unloadWorld(farmWorld.getWorld());
         unloadWorld(farmWorld.getNextWorld());

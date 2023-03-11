@@ -53,7 +53,6 @@ public class FarmWorldLoader {
         plugin.getLogger().info("Load " + farmWorld.getName() + "...");
         farmWorld.setPlugin(plugin);
         setDataFromDatabase();
-        // TODO: 17.12.2022 Register farm world command
 
         farmWorld.setLoaded(true);
         if (!farmWorld.isActive())
@@ -70,6 +69,7 @@ public class FarmWorldLoader {
         setBorder(farmWorld.getWorld());
         setBorder(farmWorld.getNextWorld());
         farmWorld.setEnabled(true);
+        registerAliasCommand();
         farmWorld.save(plugin);
     }
 
@@ -152,6 +152,11 @@ public class FarmWorldLoader {
         farmWorld.addLocation(id, location);
         if (save) getLocationRepository().save(farmWorld, UUID.randomUUID().toString(), location);
         location.getWorld().loadChunk(location.getChunk());
+    }
+
+    private void registerAliasCommand() {
+        if (farmWorld.getAliases().isEmpty()) return;
+        plugin.getCommandRegistry().register(farmWorld);
     }
 
     private LocationRepository getLocationRepository() {

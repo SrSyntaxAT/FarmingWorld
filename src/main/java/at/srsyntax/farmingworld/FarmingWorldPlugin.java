@@ -11,6 +11,7 @@ import at.srsyntax.farmingworld.database.sqlite.SQLiteDatabase;
 import at.srsyntax.farmingworld.farmworld.*;
 import at.srsyntax.farmingworld.handler.countdown.CountdownListener;
 import at.srsyntax.farmingworld.handler.countdown.CountdownRegistry;
+import at.srsyntax.farmingworld.util.CommandRegistry;
 import at.srsyntax.farmingworld.util.FileUtil;
 import at.srsyntax.farmingworld.util.SpigotVersionCheck;
 import lombok.Getter;
@@ -60,6 +61,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
 
     @Getter private CountdownRegistry countdownRegistry;
     @Getter private Economy economy;
+    @Getter private CommandRegistry commandRegistry;
 
     @Override
     public void onLoad() {
@@ -80,6 +82,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
             this.economy = setupEconomy();
 
             this.countdownRegistry = new CountdownRegistry();
+            this.commandRegistry = new CommandRegistry(getName());
             registerListeners(new CountdownListener(countdownRegistry));
 
             this.pluginConfig.getFarmWorlds().forEach(farmWorld -> new FarmWorldLoader(this, farmWorld).load());

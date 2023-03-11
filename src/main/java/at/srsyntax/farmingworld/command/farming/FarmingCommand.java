@@ -7,10 +7,10 @@ import at.srsyntax.farmingworld.api.handler.cooldown.Cooldown;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
 import at.srsyntax.farmingworld.api.message.Message;
+import at.srsyntax.farmingworld.command.TabCompleterFilter;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import at.srsyntax.farmingworld.config.PluginConfig;
 import net.md_5.bungee.api.ChatMessageType;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -45,7 +45,7 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class FarmingCommand implements CommandExecutor, TabCompleter {
+public class FarmingCommand implements CommandExecutor, TabCompleter, TabCompleterFilter {
 
     private final APIImpl api;
     private final MessageConfig messages;
@@ -74,6 +74,7 @@ public class FarmingCommand implements CommandExecutor, TabCompleter {
                 cooldown.handle();
                 countdown.handle();
 
+                return true;
             } catch (CommandException exception) {
                 exception.getMessages().send(sender);
             } catch (HandleException exception) {
@@ -117,17 +118,6 @@ public class FarmingCommand implements CommandExecutor, TabCompleter {
         }
 
         return result;
-    }
-
-    private List<String> filterOnlinePlayers(String arg) {
-        final List<String> names = new ArrayList<>();
-
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.getName().toLowerCase().startsWith(arg.toLowerCase()))
-                names.add(player.getName());
-        }
-
-        return names;
     }
 
     private CountdownCallback teleportPlayer(Player sender, TeleportData data, Cooldown cooldown) throws HandleException {

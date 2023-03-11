@@ -75,7 +75,8 @@ public class PluginConfig {
                                 null,
                                 1800, 5, 43_200,
                                 World.Environment.NORMAL, null,
-                                new Border(10000, 0, 0)
+                                new Border(10000, 0, 0),
+                                Collections.singletonList("FarmWorld")
                         )
                 ),
                 Arrays.asList(Material.AIR, Material.LAVA, Material.WATER),
