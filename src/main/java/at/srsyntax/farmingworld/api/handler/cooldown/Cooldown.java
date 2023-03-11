@@ -46,4 +46,6 @@ public interface Cooldown extends Handler {
      * @return the remaining time.
      */
     long getRemaining();
+
+    long getEnd();
 }

@@ -1,7 +1,10 @@
 package at.srsyntax.farmingworld.api.handler.cooldown;
 
+import at.srsyntax.farmingworld.APIImpl;
+import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.handler.HandleException;
 import at.srsyntax.farmingworld.api.message.Message;
+import at.srsyntax.farmingworld.util.TimeUtil;
 import net.md_5.bungee.api.ChatMessageType;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,8 +46,11 @@ public class CooldownException extends HandleException {
 
     @Override
     public String getMessage() {
+        final FarmingWorldPlugin plugin = ((APIImpl) FarmingWorldPlugin.getApi()).getPlugin();
+        final String format = plugin.getPluginConfig().getMessages().getTime().getFormat();
         return new Message(super.getMessage(), ChatMessageType.SYSTEM)
-                .replace("%{remaining}", cooldown.getRemaining())
+                .replace("%{remaining}", TimeUtil.getRemainingTime(plugin, cooldown.getEnd()))
+                .replace("%{date}", TimeUtil.getDate(format, cooldown.getEnd()))
                 .toString();
     }
 

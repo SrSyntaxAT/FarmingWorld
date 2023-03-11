@@ -84,11 +84,11 @@ public class PluginConfig {
                 new MessageConfig(
                         "&cYou don't have enough money.",
                         new MessageConfig.CountdownMessages(
-                                "&cA countdown is already underway.",
+                                "&cA countdown is already running.",
                                 "&cThe countdown was interrupted because you moved.",
                                 "&7You will be teleported in &e%s &7seconds."
                         ),
-                        new MessageConfig.CooldownMessages(// TODO: 25.12.2022 Implement placeholder.
+                        new MessageConfig.CooldownMessages(
                                 "&cYou may use the command in &e%{remaining}&7."
                         ),
                         new MessageConfig.CommandMessages(
@@ -102,10 +102,13 @@ public class PluginConfig {
                                 "&aYou have been teleported to &e%{farmworld}&a.",
                                 "&aYou teleported &e%{player} &ato &e%{farmworld}&a."
                         ),
-                        "second", "seconds",
-                        "minute", "minutes",
-                        "hour", "hours",
-                        "day", "days"
+                        new MessageConfig.TimeMessages(
+                                "HH:mm:ss dd.MM.yyyy",
+                                "second", "seconds",
+                                "minute", "minutes",
+                                "hour", "hours",
+                                "day", "days"
+                        )
                 )
         );
     }

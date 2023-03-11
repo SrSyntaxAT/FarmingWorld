@@ -86,7 +86,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
             checkFarmWorlds();
             getServer().getScheduler().scheduleSyncRepeatingTask(this, new FarmWorldScheduler(api), 120L, 120L);
 
-            getCommand("farming").setExecutor(new FarmingCommand(api, pluginConfig.getMessages().getCommand()));
+            getCommand("farming").setExecutor(new FarmingCommand((APIImpl) api, pluginConfig));
 
         } catch (Exception exception) {
             getLogger().severe("Plugin could not be loaded successfully!");

@@ -58,6 +58,7 @@ public class CooldownImpl implements Cooldown {
 
     @Override
     public void handle() throws HandleException {
+        if (canBypass()) return;
         if (hasCooldown()) throw new CooldownException(messages.getHasCooldown(), this);
         final long end = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(farmWorld.getCooldown());
         player.setMetadata(METADATA_KEY, new FixedMetadataValue(plugin, end));
@@ -83,8 +84,13 @@ public class CooldownImpl implements Cooldown {
 
     @Override
     public long getRemaining() {
-        if (!player.hasMetadata(METADATA_KEY)) return 0L;
-        final long end = player.getMetadata(METADATA_KEY).get(0).asLong();
+        final long end = getEnd();
         return end <= System.currentTimeMillis() ? 0 : end - System.currentTimeMillis();
+    }
+
+    @Override
+    public long getEnd() {
+        if (!player.hasMetadata(METADATA_KEY)) return 0L;
+        return player.getMetadata(METADATA_KEY).get(0).asLong();
     }
 }

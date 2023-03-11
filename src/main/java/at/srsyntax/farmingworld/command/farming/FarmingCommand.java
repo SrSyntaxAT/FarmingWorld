@@ -1,13 +1,14 @@
 package at.srsyntax.farmingworld.command.farming;
 
-import at.srsyntax.farmingworld.api.API;
+import at.srsyntax.farmingworld.APIImpl;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
 import at.srsyntax.farmingworld.api.handler.HandleException;
+import at.srsyntax.farmingworld.api.handler.cooldown.Cooldown;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
 import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.config.MessageConfig;
-import lombok.AllArgsConstructor;
+import at.srsyntax.farmingworld.config.PluginConfig;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -44,11 +45,17 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
 public class FarmingCommand implements CommandExecutor, TabCompleter {
 
-    private final API api;
-    private final MessageConfig.CommandMessages messages;
+    private final APIImpl api;
+    private final MessageConfig messages;
+    private final MessageConfig.CommandMessages commandMessages;
+
+    public FarmingCommand(APIImpl api, PluginConfig config) {
+        this.api = api;
+        this.messages = config.getMessages();
+        this.commandMessages = config.getMessages().getCommand();
+    }
 
     //               0           1
     // farming [world/player] [player]
@@ -57,10 +64,16 @@ public class FarmingCommand implements CommandExecutor, TabCompleter {
         if (commandSender instanceof Player sender) {
 
             try {
-                final TeleportData data = TeleportData.create(messages, commandSender, strings);
+                final TeleportData data = TeleportData.create(commandMessages, commandSender, strings);
                 checkPermission(sender, data);
-                // todo api.getCooldown(data.getPlayer(), data.getFarmWorld()).handle();
-                api.getCountdown(data.getPlayer(), teleportPlayer(sender, data)).handle();
+
+                final var cooldown = api.getCooldown(data.getPlayer(), data.getFarmWorld());
+                final var countdown = api.getCountdown(data.getPlayer(), teleportPlayer(sender, data, cooldown));
+
+                if (countdown.isRunning()) throw new HandleException(messages.getCountdown().getAlreadyStarted());
+                cooldown.handle();
+                countdown.handle();
+
             } catch (CommandException exception) {
                 exception.getMessages().send(sender);
             } catch (HandleException exception) {
@@ -72,14 +85,14 @@ public class FarmingCommand implements CommandExecutor, TabCompleter {
     }
 
     private void checkPermission(Player sender, TeleportData data) throws CommandException {
-        final ChatMessageType chatType = messages.getChatType();
+        final ChatMessageType chatType = commandMessages.getChatType();
         if (data.getPlayer().equals(sender) && !data.getFarmWorld().hasPermission(sender)) {
-            throw new CommandException(new Message(messages.getNoPermission(), chatType));
+            throw new CommandException(new Message(commandMessages.getNoPermission(), chatType));
         } else if (!data.getPlayer().equals(sender)) {
             if (!sender.hasPermission("farmworld.teleport.other")) {
-                throw new CommandException(new Message(messages.getNoPermission(), chatType));
+                throw new CommandException(new Message(commandMessages.getNoPermission(), chatType));
             } else if (!data.getFarmWorld().hasPermission(sender)) {
-                throw new CommandException(new Message(messages.getNoPermissionTeleportOther(), chatType));
+                throw new CommandException(new Message(commandMessages.getNoPermissionTeleportOther(), chatType));
             }
         }
 
@@ -117,18 +130,18 @@ public class FarmingCommand implements CommandExecutor, TabCompleter {
         return names;
     }
 
-    private CountdownCallback teleportPlayer(Player sender, TeleportData data) throws HandleException {
+    private CountdownCallback teleportPlayer(Player sender, TeleportData data, Cooldown cooldown) throws HandleException {
         return new CountdownCallback() {
             @Override
             public void finished(Countdown countdown) {
                 data.getFarmWorld().teleport(data.getPlayer());
 
-               new Message(messages.getTeleported(), messages.getChatType())
+               new Message(commandMessages.getTeleported(), commandMessages.getChatType())
                         .replace("%{farmworld}", data.getFarmWorld().getName())
                         .send(data.getPlayer());
 
                 if (!sender.equals(data.getPlayer()))
-                    new Message(messages.getTeleportedOther(), messages.getChatType())
+                    new Message(commandMessages.getTeleportedOther(), commandMessages.getChatType())
                             .replace("%{farmworld}", data.getFarmWorld().getName())
                             .replace("%{player}", data.getPlayer().getName())
                             .send(sender);
@@ -136,7 +149,8 @@ public class FarmingCommand implements CommandExecutor, TabCompleter {
 
             @Override
             public void error(Countdown countdown, Throwable throwable) {
-                new Message(throwable.getMessage(), ChatMessageType.SYSTEM).send(sender);
+                cooldown.remove();
+                new Message(throwable.getMessage(), commandMessages.getChatType()).send(sender);
             }
         };
     }

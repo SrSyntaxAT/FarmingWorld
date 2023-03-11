@@ -13,6 +13,7 @@ import at.srsyntax.farmingworld.farmworld.LocationRandomizerImpl;
 import at.srsyntax.farmingworld.handler.cooldown.CooldownImpl;
 import at.srsyntax.farmingworld.handler.countdown.CountdownImpl;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -46,6 +47,7 @@ import java.util.List;
  * SOFTWARE.
  */
 @AllArgsConstructor
+@Getter
 public class APIImpl implements API {
 
     private final FarmingWorldPlugin plugin;

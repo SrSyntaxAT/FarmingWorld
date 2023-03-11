@@ -35,11 +35,7 @@ public class MessageConfig {
     private final CountdownMessages countdown;
     private final CooldownMessages cooldown;
     private final CommandMessages command;
-
-    private final String second, seconds;
-    private final String minute, minutes;
-    private final String hour, hours;
-    private final String day, days;
+    private final TimeMessages time;
 
     @AllArgsConstructor
     @Getter
@@ -61,5 +57,17 @@ public class MessageConfig {
         private final String playerNotFound, farmWorldNotFound, defaultFarmWorldNotFound, playerOrfarmWorldNotFound;
         private final String noPermission, noPermissionTeleportOther;
         private final String teleported, teleportedOther;
+    }
+
+
+    @AllArgsConstructor
+    @Getter
+    public static class TimeMessages {
+        private final String format;
+
+        private final String second, seconds;
+        private final String minute, minutes;
+        private final String hour, hours;
+        private final String day, days;
     }
 }

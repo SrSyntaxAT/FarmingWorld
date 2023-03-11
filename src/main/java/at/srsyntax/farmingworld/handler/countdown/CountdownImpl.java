@@ -66,7 +66,7 @@ public class CountdownImpl implements Countdown {
     @Override
     public void handle() throws HandleException {
         final CountdownRegistry registry = plugin.getCountdownRegistry();
-        if (registry.hasCountdown(player) || task != null)
+        if (isRunning())
             throw new AlreadyStartedException(messages.getAlreadyStarted(), this);
 
         if (canBypass()) {

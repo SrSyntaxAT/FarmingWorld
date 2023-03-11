@@ -54,12 +54,13 @@ public class CountdownRunnable implements Runnable {
             return;
         }
 
-        switch (time) {
-            case 60, 45, 30, 15, 10, 5, 3, 2, 1 -> new Message(messages.getMessage(), config.getMessageType())
+        if (time != 0) {
+            new Message(messages.getMessage(), config.getMessageType())
                     .replace("%s", time)
                     .send(countdown.getPlayer());
-            case 0 -> countdown.finish();
+            time--;
+        } else {
+            countdown.finish();
         }
-        time--;
     }
 }

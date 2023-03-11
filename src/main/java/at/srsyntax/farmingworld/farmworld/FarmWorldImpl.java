@@ -92,6 +92,7 @@ public class FarmWorldImpl implements FarmWorld {
 
     @Override
     public boolean hasPermission(@NotNull Player player) {
+        if (permission == null || permission.equalsIgnoreCase("null")) return true;
         return player.hasPermission("farmingworld.world.*") || player.hasPermission("farmingworld.world." + name);
     }
 
