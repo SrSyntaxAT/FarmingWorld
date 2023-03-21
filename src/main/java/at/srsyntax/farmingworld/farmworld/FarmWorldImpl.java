@@ -1,6 +1,7 @@
 package at.srsyntax.farmingworld.farmworld;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
+import at.srsyntax.farmingworld.api.event.farmworld.FarmWorldChangeWorldEvent;
 import at.srsyntax.farmingworld.api.farmworld.Border;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
 import at.srsyntax.farmingworld.api.handler.cooldown.Cooldown;
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -69,6 +71,7 @@ public class FarmWorldImpl implements FarmWorld {
     @Getter @Setter
     private transient boolean loaded = false, enabled = false;
     @Getter @Setter private transient LinkedHashMap<String, Location> locations = new LinkedHashMap<>();
+    @Getter private transient String oldWorldName;
 
     public FarmWorldImpl(String name, String permission, int cooldown, int countdown, int timer, World.Environment environment, String generator, Border border, List<String> aliases) {
         this.name = name;
@@ -195,8 +198,11 @@ public class FarmWorldImpl implements FarmWorld {
     @Override
     public void newWorld(@Nullable World nextWorld) {
         final World world = getWorld();
+        oldWorldName = world == null ? null : world.getName();
         data.setCurrentWorldName(nextWorld == null ? null : nextWorld.getName());
         data.setCreated(System.currentTimeMillis());
+
+        Bukkit.getPluginManager().callEvent(new FarmWorldChangeWorldEvent(this, world, getWorld()));
 
         if (locations == null) locations = new LinkedHashMap<>();
         if (!locations.isEmpty()) {
@@ -278,5 +284,24 @@ public class FarmWorldImpl implements FarmWorld {
         if (locations.size() < plugin.getPluginConfig().getLocationCache())
             new FarmWorldLoader(plugin, this).generateLocation(true);
         return location.getValue();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FarmWorldImpl farmWorld = (FarmWorldImpl) o;
+        return cooldown == farmWorld.cooldown && countdown == farmWorld.countdown && timer == farmWorld.timer
+                && active == farmWorld.active && loaded == farmWorld.loaded && enabled == farmWorld.enabled
+                && Objects.equals(name, farmWorld.name) && Objects.equals(permission, farmWorld.permission)
+                && environment == farmWorld.environment && Objects.equals(generator, farmWorld.generator)
+                && Objects.equals(border, farmWorld.border) && Objects.equals(aliases, farmWorld.aliases)
+                && Objects.equals(data, farmWorld.data) && Objects.equals(locations, farmWorld.locations)
+                && Objects.equals(oldWorldName, farmWorld.oldWorldName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, permission, cooldown, countdown, timer, environment, generator, border, active, aliases, data, loaded, enabled, locations, oldWorldName);
     }
 }

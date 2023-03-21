@@ -1,6 +1,9 @@
 package at.srsyntax.farmingworld.farmworld;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
+import at.srsyntax.farmingworld.api.event.farmworld.FarmWorldEnabledEvent;
+import at.srsyntax.farmingworld.api.event.farmworld.FarmWorldEvent;
+import at.srsyntax.farmingworld.api.event.farmworld.FarmWorldLoadedEvent;
 import at.srsyntax.farmingworld.api.farmworld.Border;
 import at.srsyntax.farmingworld.api.farmworld.LocationCache;
 import at.srsyntax.farmingworld.database.repository.FarmWorldRepository;
@@ -55,6 +58,7 @@ public class FarmWorldLoader {
         setDataFromDatabase();
 
         farmWorld.setLoaded(true);
+        FarmWorldEvent.call(FarmWorldLoadedEvent.class, farmWorld);
         if (!farmWorld.isActive())
             plugin.getLogger().warning(farmWorld.getName() + " is not active!");
         else enable();
@@ -71,6 +75,7 @@ public class FarmWorldLoader {
         farmWorld.setEnabled(true);
         registerAliasCommand();
         farmWorld.save(plugin);
+        FarmWorldEvent.call(FarmWorldEnabledEvent.class, farmWorld);
     }
 
     private void loadCurrentWorld() {

@@ -124,6 +124,13 @@ public interface API {
     @Nullable FarmWorld getFarmWorld(String name);
 
     /**
+     * Find the farm world to which the world belongs.
+     * @param world
+     * @return the farm world.
+     */
+    @Nullable FarmWorld getFarmWorld(World world);
+
+    /**
      * Get a copy of the list of all farm worlds.
      * @return a copy of all farm worlds.
      */

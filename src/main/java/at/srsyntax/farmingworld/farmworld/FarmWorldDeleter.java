@@ -1,6 +1,9 @@
 package at.srsyntax.farmingworld.farmworld;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
+import at.srsyntax.farmingworld.api.event.farmworld.FarmWorldDeletedEvent;
+import at.srsyntax.farmingworld.api.event.farmworld.FarmWorldDisabledEvent;
+import at.srsyntax.farmingworld.api.event.farmworld.FarmWorldEvent;
 import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.util.FileUtil;
 import lombok.AllArgsConstructor;
@@ -54,6 +57,8 @@ public class FarmWorldDeleter {
         if (farmWorld.isEnabled())
             deleteWhenEnabled();
         else deleteWhenDisabled();
+
+        FarmWorldEvent.call(FarmWorldDeletedEvent.class, farmWorld);
     }
 
     public void disable() {
@@ -66,6 +71,8 @@ public class FarmWorldDeleter {
 
         unloadWorld(farmWorld.getWorld());
         unloadWorld(farmWorld.getNextWorld());
+
+        FarmWorldEvent.call(FarmWorldDisabledEvent.class, farmWorld);
     }
 
     private void unloadWorld(World world) {

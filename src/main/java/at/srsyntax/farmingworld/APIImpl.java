@@ -114,6 +114,16 @@ public class APIImpl implements API {
     }
 
     @Override
+    public @Nullable FarmWorld getFarmWorld(World world) {
+        for (FarmWorldImpl farmWorld : plugin.getPluginConfig().getFarmWorlds()) {
+            if (farmWorld.getWorld().equals(world)) return farmWorld;
+            if (farmWorld.getNextWorld().equals(world)) return farmWorld;
+            if (farmWorld.getOldWorldName().equalsIgnoreCase(world.getName())) return farmWorld;
+        }
+        return null;
+    }
+
+    @Override
     public @NotNull List<FarmWorld> getFarmWorlds() {
         return new ArrayList<>(plugin.getPluginConfig().getFarmWorlds());
     }

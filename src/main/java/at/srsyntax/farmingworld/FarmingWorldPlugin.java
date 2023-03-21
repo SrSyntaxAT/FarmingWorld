@@ -83,7 +83,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
 
             this.countdownRegistry = new CountdownRegistry();
             this.commandRegistry = new CommandRegistry(getName());
-            registerListeners(new CountdownListener(countdownRegistry));
+            registerListeners(new CountdownListener(countdownRegistry), new PlayerChangedWorldListener());
 
             this.pluginConfig.getFarmWorlds().forEach(farmWorld -> new FarmWorldLoader(this, farmWorld).load());
             checkFarmWorlds();
