@@ -49,10 +49,14 @@ public class CommandRegistry {
         return (SimpleCommandMap) field.get(Bukkit.getPluginManager());
     }
 
+    public void register(Command command) {
+        commandMap.register(prefix, command);
+    }
+
     public void register(FarmWorld farmWorld) {
         if (farmWorld.getAliases().isEmpty()) throw new IllegalArgumentException();
         for (String alias : farmWorld.getAliases())
-            commandMap.register(prefix, createCommand(farmWorld, alias));
+            register(createCommand(farmWorld, alias));
     }
 
     public void unregister(FarmWorld farmWorld) {

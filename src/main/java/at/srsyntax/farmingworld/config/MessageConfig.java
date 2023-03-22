@@ -32,6 +32,7 @@ import net.md_5.bungee.api.ChatMessageType;
 public class MessageConfig {
 
     private final String notEnoughMoney;
+    private final SpawnMessages spawn;
     private final CountdownMessages countdown;
     private final CooldownMessages cooldown;
     private final CommandMessages command;
@@ -69,5 +70,12 @@ public class MessageConfig {
         private final String minute, minutes;
         private final String hour, hours;
         private final String day, days;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class SpawnMessages {
+        private final ChatMessageType chatType;
+        private final String notFound, teleported;
     }
 }

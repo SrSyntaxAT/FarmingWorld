@@ -55,6 +55,7 @@ public class PluginConfig {
     private final List<FarmWorldImpl> farmWorlds;
     private final List<Material> blacklist;
     private final int locationCache;
+    private final boolean spawnCommandEnabled;
     private final LocationCache fallback;
     private final MessageConfig messages;
 
@@ -81,9 +82,15 @@ public class PluginConfig {
                 ),
                 Arrays.asList(Material.AIR, Material.LAVA, Material.WATER),
                 3,
+                true,
                 new LocationCache(fallbackLocation),
                 new MessageConfig(
                         "&cYou don't have enough money.",
+                        new MessageConfig.SpawnMessages(
+                                ChatMessageType.ACTION_BAR,
+                                "&cNo spawn was found!",
+                                "&aYou have been teleported to the spawn."
+                        ),
                         new MessageConfig.CountdownMessages(
                                 "&cA countdown is already running.",
                                 "&cThe countdown was interrupted because you moved.",

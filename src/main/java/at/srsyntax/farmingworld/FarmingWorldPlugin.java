@@ -2,6 +2,7 @@ package at.srsyntax.farmingworld;
 
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
+import at.srsyntax.farmingworld.command.SpawnCommand;
 import at.srsyntax.farmingworld.command.farming.FarmingCommand;
 import at.srsyntax.farmingworld.config.ConfigLoader;
 import at.srsyntax.farmingworld.config.PluginConfig;
@@ -83,6 +84,8 @@ public class FarmingWorldPlugin extends JavaPlugin {
 
             this.countdownRegistry = new CountdownRegistry();
             this.commandRegistry = new CommandRegistry(getName());
+            if (pluginConfig.isSpawnCommandEnabled())
+                commandRegistry.register(new SpawnCommand(pluginConfig));
             registerListeners(new CountdownListener(countdownRegistry), new PlayerChangedWorldListener());
 
             this.pluginConfig.getFarmWorlds().forEach(farmWorld -> new FarmWorldLoader(this, farmWorld).load());
