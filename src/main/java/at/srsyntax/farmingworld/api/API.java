@@ -3,6 +3,7 @@ package at.srsyntax.farmingworld.api;
 import at.srsyntax.farmingworld.api.farmworld.Border;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
 import at.srsyntax.farmingworld.api.farmworld.LocationRandomizer;
+import at.srsyntax.farmingworld.api.farmworld.sign.SignRegistry;
 import at.srsyntax.farmingworld.api.handler.cooldown.Cooldown;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
@@ -162,4 +163,6 @@ public interface API {
      * @return a randomizer.
      */
     @NotNull LocationRandomizer createLocationRandomizer(FarmWorld farmWorld);
+
+    @NotNull SignRegistry getSignRegistry();
 }

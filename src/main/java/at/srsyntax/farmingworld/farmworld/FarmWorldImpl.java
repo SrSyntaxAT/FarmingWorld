@@ -4,6 +4,7 @@ import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.event.farmworld.FarmWorldChangeWorldEvent;
 import at.srsyntax.farmingworld.api.farmworld.Border;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
+import at.srsyntax.farmingworld.api.farmworld.sign.SignCache;
 import at.srsyntax.farmingworld.api.handler.cooldown.Cooldown;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
@@ -173,9 +174,14 @@ public class FarmWorldImpl implements FarmWorld {
     }
 
     @Override
+    public long getResetDate() {
+        return data.getCreated() + TimeUnit.MINUTES.toMillis(timer);
+    }
+
+    @Override
     public boolean needReset() {
         if (data.getCurrentWorldName() == null) return true;
-        return data.getCreated() + TimeUnit.MINUTES.toMillis(timer) <= System.currentTimeMillis();
+        return getResetDate() <= System.currentTimeMillis();
     }
 
     @Override
@@ -200,7 +206,7 @@ public class FarmWorldImpl implements FarmWorld {
         final World world = getWorld();
         oldWorldName = world == null ? null : world.getName();
         data.setCurrentWorldName(nextWorld == null ? null : nextWorld.getName());
-        data.setCreated(System.currentTimeMillis());
+        data.setCreated(TimeUnit.MINUTES.toMillis(TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis())));
 
         Bukkit.getPluginManager().callEvent(new FarmWorldChangeWorldEvent(this, world, getWorld()));
 
@@ -303,5 +309,15 @@ public class FarmWorldImpl implements FarmWorld {
     @Override
     public int hashCode() {
         return Objects.hash(name, permission, cooldown, countdown, timer, environment, generator, border, active, aliases, data, loaded, enabled, locations, oldWorldName);
+    }
+
+    @Override
+    public void updateSigns() {
+        plugin.getSignRegistry().update(this);
+    }
+
+    @Override
+    public List<SignCache> getSigns() {
+        return plugin.getSignRegistry().getCaches(this);
     }
 }

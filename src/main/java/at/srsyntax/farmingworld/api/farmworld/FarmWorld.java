@@ -24,12 +24,14 @@ package at.srsyntax.farmingworld.api.farmworld;
  * SOFTWARE.
  */
 
+import at.srsyntax.farmingworld.api.farmworld.sign.SignOwner;
+
 import java.util.List;
 
 /**
  * Represents the farm world.
  */
-public interface FarmWorld extends WorldOwner, Playable, LocationCacher {
+public interface FarmWorld extends WorldOwner, Playable, LocationCacher, SignOwner {
 
     /**
      * Get the name of the farm world

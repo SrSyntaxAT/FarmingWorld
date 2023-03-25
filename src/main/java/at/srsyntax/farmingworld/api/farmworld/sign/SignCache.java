@@ -1,13 +1,13 @@
-package at.srsyntax.farmingworld.database;
+package at.srsyntax.farmingworld.api.farmworld.sign;
 
-import at.srsyntax.farmingworld.database.repository.FarmWorldRepository;
-import at.srsyntax.farmingworld.database.repository.LocationRepository;
-import at.srsyntax.farmingworld.database.repository.SignRepository;
+import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
+import org.bukkit.block.Sign;
+import org.jetbrains.annotations.NotNull;
 
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcel Haberl
+ * Copyright (c) 2022-2023 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,11 +27,26 @@ import at.srsyntax.farmingworld.database.repository.SignRepository;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface Database {
-    void connect() throws DatabaseException;
-    void disconnect() throws DatabaseException;
 
-    FarmWorldRepository getFarmWorldRepository();
-    LocationRepository getLocationRepository();
-    SignRepository getSignRepository();
+/**
+ * Represents a shield to teleport to a farm world.
+ */
+public interface SignCache {
+
+    /**
+     * Get the physical sign.
+     * @return the physical sign.
+     */
+    @NotNull Sign getSign();
+
+    /**
+     * Get the farm world to which the players are teleported.
+     * @return the farm world.
+     */
+    @NotNull FarmWorld getFarmWorld();
+
+    /**
+     * Update the messages on the sign.
+     */
+    void update();
 }

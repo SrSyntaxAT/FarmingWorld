@@ -10,6 +10,9 @@ import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.database.DatabaseException;
 import at.srsyntax.farmingworld.database.sqlite.SQLiteDatabase;
 import at.srsyntax.farmingworld.farmworld.*;
+import at.srsyntax.farmingworld.farmworld.scheduler.FarmWorldScheduler;
+import at.srsyntax.farmingworld.farmworld.sign.SignListeners;
+import at.srsyntax.farmingworld.farmworld.sign.SignRegistryImpl;
 import at.srsyntax.farmingworld.handler.countdown.CountdownListener;
 import at.srsyntax.farmingworld.handler.countdown.CountdownRegistry;
 import at.srsyntax.farmingworld.util.CommandRegistry;
@@ -63,6 +66,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
     @Getter private CountdownRegistry countdownRegistry;
     @Getter private Economy economy;
     @Getter private CommandRegistry commandRegistry;
+    @Getter private SignRegistryImpl signRegistry;
 
     @Override
     public void onLoad() {
@@ -86,11 +90,16 @@ public class FarmingWorldPlugin extends JavaPlugin {
             this.commandRegistry = new CommandRegistry(getName());
             if (pluginConfig.isSpawnCommandEnabled())
                 commandRegistry.register(new SpawnCommand(pluginConfig));
-            registerListeners(new CountdownListener(countdownRegistry), new PlayerChangedWorldListener());
+            this.signRegistry = new SignRegistryImpl(getLogger(), database.getSignRepository());
+            registerListeners(
+                    new CountdownListener(countdownRegistry),
+                    new PlayerChangedWorldListener(),
+                    new SignListeners(signRegistry, pluginConfig.getMessages().getCommand())
+            );
 
             this.pluginConfig.getFarmWorlds().forEach(farmWorld -> new FarmWorldLoader(this, farmWorld).load());
             checkFarmWorlds();
-            getServer().getScheduler().scheduleSyncRepeatingTask(this, new FarmWorldScheduler(api), 120L, 120L);
+            getServer().getScheduler().scheduleSyncRepeatingTask(this, new FarmWorldScheduler(api, this), 120L, 1200L);
 
             getCommand("farming").setExecutor(new FarmingCommand((APIImpl) api, pluginConfig));
 
@@ -107,6 +116,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
             if (farmWorld == null) {
                 database.getFarmWorldRepository().delete(name);
                 database.getLocationRepository().deleteByFarmWorldName(name);
+                database.getSignRepository().delete(name);
             }
 
             checkLostWorlds(name, farmWorld);

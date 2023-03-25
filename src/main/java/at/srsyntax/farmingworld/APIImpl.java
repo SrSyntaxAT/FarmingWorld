@@ -4,6 +4,7 @@ import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.farmworld.Border;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
 import at.srsyntax.farmingworld.api.farmworld.LocationRandomizer;
+import at.srsyntax.farmingworld.api.farmworld.sign.SignRegistry;
 import at.srsyntax.farmingworld.api.handler.cooldown.Cooldown;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
@@ -147,5 +148,10 @@ public class APIImpl implements API {
     @Override
     public @NotNull LocationRandomizer createLocationRandomizer(FarmWorld farmWorld) {
         return new LocationRandomizerImpl(plugin.getPluginConfig().getBlacklist(), farmWorld);
+    }
+
+    @Override
+    public @NotNull SignRegistry getSignRegistry() {
+        return plugin.getSignRegistry();
     }
 }

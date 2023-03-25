@@ -4,6 +4,7 @@ import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.database.DatabaseException;
 import at.srsyntax.farmingworld.database.repository.FarmWorldRepository;
 import at.srsyntax.farmingworld.database.repository.LocationRepository;
+import at.srsyntax.farmingworld.database.repository.SignRepository;
 import lombok.Getter;
 import org.bukkit.plugin.Plugin;
 
@@ -34,12 +35,13 @@ import java.sql.DriverManager;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+@Getter
 public class SQLiteDatabase implements Database {
 
-    private final Plugin plugin;
-    @Getter private Connection connection;
+    private final Plugin plugin;private Connection connection;
     private FarmWorldRepository farmWorldRepository;
     private LocationRepository locationRepository;
+    private SignRepository signRepository;
 
     public SQLiteDatabase(Plugin plugin) {
         this.plugin = plugin;
@@ -52,6 +54,7 @@ public class SQLiteDatabase implements Database {
             this.connection = DriverManager.getConnection("jdbc:sqlite:" + file.getPath());
             this.farmWorldRepository = new SQLLiteFarmWorldRepository(connection);
             this.locationRepository = new SQLiteLocationRepository(connection);
+            this.signRepository = new SQLiteSignRepository(connection);
         } catch (Exception exception) {
             throw new DatabaseException("An error occurred while connecting to the database.", exception);
         }
@@ -65,15 +68,5 @@ public class SQLiteDatabase implements Database {
         } catch (Exception exception) {
             throw new DatabaseException("The connection to the database could not be closed safely.", exception);
         }
-    }
-
-    @Override
-    public FarmWorldRepository getFarmWorldRepository() {
-        return farmWorldRepository;
-    }
-
-    @Override
-    public LocationRepository getLocationRepository() {
-        return locationRepository;
     }
 }

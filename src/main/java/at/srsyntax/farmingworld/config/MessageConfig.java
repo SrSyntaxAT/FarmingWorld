@@ -55,6 +55,7 @@ public class MessageConfig {
     @Getter
     public static class CommandMessages {
         private final ChatMessageType chatType;
+        private final String disabled;
         private final String playerNotFound, farmWorldNotFound, defaultFarmWorldNotFound, playerOrfarmWorldNotFound;
         private final String noPermission, noPermissionTeleportOther;
         private final String teleported, teleportedOther;

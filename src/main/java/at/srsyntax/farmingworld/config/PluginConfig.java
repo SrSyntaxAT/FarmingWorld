@@ -54,6 +54,7 @@ public class PluginConfig {
     private final String defaultFarmWorld;
     private final List<FarmWorldImpl> farmWorlds;
     private final List<Material> blacklist;
+    private final SignConfig sign;
     private final int locationCache;
     private final boolean spawnCommandEnabled;
     private final LocationCache fallback;
@@ -81,6 +82,16 @@ public class PluginConfig {
                         )
                 ),
                 Arrays.asList(Material.AIR, Material.LAVA, Material.WATER),
+                new SignConfig(
+                        "dd.MM.yyyy",
+                        "HH:mm",
+                        new String[]{
+                                "&7[&bFarm World&7]",
+                                "&6%{farm_world}",
+                                "&cReset at:",
+                                "&e%{date}"
+                        }
+                ),
                 3,
                 true,
                 new LocationCache(fallbackLocation),
@@ -101,6 +112,7 @@ public class PluginConfig {
                         ),
                         new MessageConfig.CommandMessages(
                                 ChatMessageType.ACTION_BAR,
+                                "&cThe farm world is disabled.",
                                 "&cPlayer not found!",
                                 "&cFarm world not found!",
                                 "&cFarm world was not found.",
@@ -148,4 +160,10 @@ public class PluginConfig {
         private final ChatMessageType messageType;
     }
 
+    @AllArgsConstructor
+    @Getter
+    public static class SignConfig {
+        private final String daysFormat, hoursFormat;
+        private final String[] lines;
+    }
 }

@@ -1,8 +1,10 @@
-package at.srsyntax.farmingworld.farmworld;
+package at.srsyntax.farmingworld.farmworld.scheduler;
 
-import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import org.bukkit.Bukkit;
 
 /*
  * MIT License
@@ -27,17 +29,38 @@ import lombok.AllArgsConstructor;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-public class FarmWorldScheduler implements Runnable {
+public class FarmWorldUpdater implements Runnable {
+    private final FarmWorldScheduler scheduler;
+    @Getter @Setter private int taskId = -1;
 
-    private final API api;
+    public FarmWorldUpdater(FarmWorldScheduler scheduler) {
+        this.scheduler = scheduler;
+    }
 
     @Override
     public void run() {
-        for (FarmWorld farmWorld : api.getFarmWorlds()) {
-            if (!farmWorld.isActive()) continue;
-            if (farmWorld.needNextWorld()) farmWorld.newNextWorld(farmWorld.generateWorld());
-            if (farmWorld.needReset()) farmWorld.next();
+        for (FarmWorld farmWorld : scheduler.getUpdaterList()) {
+            update(farmWorld, true);
         }
+    }
+
+    public void update(FarmWorld farmWorld, boolean everySecond) {
+        if (!farmWorld.isActive()) {
+            removeUpdater(farmWorld, everySecond);
+            return;
+        }
+
+        if (farmWorld.needReset()) {
+            farmWorld.next();
+            removeUpdater(farmWorld, everySecond);
+            return;
+        }
+
+        if (farmWorld.needNextWorld()) farmWorld.newNextWorld(farmWorld.generateWorld());
+        farmWorld.updateSigns();
+    }
+
+    private void removeUpdater(FarmWorld farmWorld, boolean everySecond) {
+        if (everySecond) scheduler.removeUpdater(farmWorld);
     }
 }

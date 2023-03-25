@@ -1,13 +1,11 @@
-package at.srsyntax.farmingworld.database;
+package at.srsyntax.farmingworld.api.farmworld.sign;
 
-import at.srsyntax.farmingworld.database.repository.FarmWorldRepository;
-import at.srsyntax.farmingworld.database.repository.LocationRepository;
-import at.srsyntax.farmingworld.database.repository.SignRepository;
+import java.util.List;
 
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcel Haberl
+ * Copyright (c) 2022-2023 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,11 +25,16 @@ import at.srsyntax.farmingworld.database.repository.SignRepository;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface Database {
-    void connect() throws DatabaseException;
-    void disconnect() throws DatabaseException;
+public interface SignOwner {
 
-    FarmWorldRepository getFarmWorldRepository();
-    LocationRepository getLocationRepository();
-    SignRepository getSignRepository();
+    /**
+     * Update all signs.
+     */
+    void updateSigns();
+
+    /**
+     * Get all the signs of the farm world.
+     * @return all signs of the farm world.
+     */
+    List<SignCache> getSigns();
 }

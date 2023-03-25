@@ -63,6 +63,16 @@ public class Message {
     }
 
     /**
+     * Add a map that all should be replaced.
+     * @param map
+     * @return the message instances.
+     */
+    public Message replaces(Map<String, String> map) {
+        replaces.putAll(map);
+        return this;
+    }
+
+    /**
      * Send the revised message to the players.
      * @param players to whom the message should be sent.
      */

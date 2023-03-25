@@ -66,9 +66,13 @@ public class TimeUtil {
     }
 
     public static String getRemainingTime(FarmingWorldPlugin plugin, long time) {
+        return getRemainingTime(plugin, time, false);
+    }
+
+    public static String getRemainingTime(FarmingWorldPlugin plugin, long time, boolean sign) {
         final int[] end = getRemainingTimeArray(time);
         final StringBuilder builder = new StringBuilder();
-        final int days = end[0],
+        int days = end[0],
                 hours = end[1],
                 minutes = end[2],
                 seconds = end[3];
@@ -77,17 +81,21 @@ public class TimeUtil {
 
         if (days != 0) {
             builder.append(days == 1 ? days + " <day> " : days + " <days> ");
+            if (sign) return  replaceRemaining(plugin, builder.toString());
             showSeconds = false;
         }
 
         if (hours != 0) {
             builder.append(hours == 1 ? hours + " <hour>" : hours + " <hours>");
+            if (sign) return  replaceRemaining(plugin, builder.toString());
             showSeconds = false;
             if (days != 0) showMinutes = false;
         }
 
         if (minutes != 0 && showMinutes) {
+            if (sign) minutes++;
             builder.append(" ").append(minutes == 1 ? minutes + " <minute>" : minutes + " <minutes>");
+            if (sign) return replaceRemaining(plugin, builder.toString());
         }
 
         if (showSeconds)

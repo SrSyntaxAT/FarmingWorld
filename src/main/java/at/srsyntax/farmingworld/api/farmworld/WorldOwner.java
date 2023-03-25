@@ -104,6 +104,12 @@ public interface WorldOwner {
     @Nullable Border getBorder();
 
     /**
+     * Returns the date on which the world is reset.
+     * @return the date on which the world is reset.
+     */
+    long getResetDate();
+
+    /**
      * Check if the farm world needs to be reset.
      * @return whether the farm world needs to be reset.
      */
