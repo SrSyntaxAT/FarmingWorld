@@ -81,7 +81,7 @@ public class SignListeners implements Listener {
         final var block = event.getClickedBlock();
         if (block == null || !block.getType().name().endsWith("_SIGN")) return;
         final var cache = registry.getCache(block.getLocation());
-
+        if (cache == null) return;
         if (!cache.getFarmWorld().isActive()) {
             new Message(messages.getDisabled(), messages.getChatType()).send(event.getPlayer());
         } else if (cache.getFarmWorld().hasPermission(event.getPlayer())) {
