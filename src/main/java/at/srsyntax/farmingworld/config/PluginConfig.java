@@ -3,6 +3,7 @@ package at.srsyntax.farmingworld.config;
 import at.srsyntax.farmingworld.api.farmworld.Border;
 import at.srsyntax.farmingworld.api.farmworld.LocationCache;
 import at.srsyntax.farmingworld.farmworld.FarmWorldImpl;
+import at.srsyntax.farmingworld.farmworld.display.ResetDisplayType;
 import com.google.gson.GsonBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +12,8 @@ import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -57,6 +60,7 @@ public class PluginConfig {
     private final SignConfig sign;
     private final int locationCache;
     private final boolean spawnCommandEnabled;
+    private final ResetDisplayConfig resetDisplay;
     private final LocationCache fallback;
     private final MessageConfig messages;
 
@@ -94,6 +98,15 @@ public class PluginConfig {
                 ),
                 3,
                 true,
+                new ResetDisplayConfig(
+                        true,
+                        ResetDisplayType.BOSS_BAR,
+                        BarStyle.SEGMENTED_20,
+                        BarColor.BLUE,
+                        true,
+                        "&cReset:&e %{date}",
+                        "HH:mm:ss dd.MM.yyyy"
+                ),
                 new LocationCache(fallbackLocation),
                 new MessageConfig(
                         "&cYou don't have enough money.",
@@ -165,5 +178,21 @@ public class PluginConfig {
     public static class SignConfig {
         private final String daysFormat, hoursFormat;
         private final String[] lines;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class ResetDisplayConfig {
+        private final boolean enabled;
+        private final ResetDisplayType type;
+        private final BarStyle barStyle;
+        private final BarColor barColor;
+        private final boolean changeBossBarProgress;
+        private final String message;
+        private final String dateFormat;
+
+        public boolean isBossBar() {
+            return type != null && type == ResetDisplayType.BOSS_BAR;
+        }
     }
 }

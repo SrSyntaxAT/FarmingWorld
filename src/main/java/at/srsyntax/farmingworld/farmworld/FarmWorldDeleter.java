@@ -53,6 +53,7 @@ public class FarmWorldDeleter {
 
         farmWorld.setActive(false);
         plugin.getCommandRegistry().unregister(farmWorld);
+        plugin.getDisplayRegistry().unregister(farmWorld);
 
         if (farmWorld.isEnabled())
             deleteWhenEnabled();
@@ -68,6 +69,7 @@ public class FarmWorldDeleter {
         farmWorld.setActive(false);
 
         plugin.getCommandRegistry().unregister(farmWorld);
+        plugin.getDisplayRegistry().unregister(farmWorld);
 
         unloadWorld(farmWorld.getWorld());
         unloadWorld(farmWorld.getNextWorld());

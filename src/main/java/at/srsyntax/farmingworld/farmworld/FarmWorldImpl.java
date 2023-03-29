@@ -20,10 +20,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -95,6 +92,13 @@ public class FarmWorldImpl implements FarmWorld {
     @Override
     public String getPermission() {
         return permission;
+    }
+
+    @Override
+    public List<Player> getPlayers() {
+        final var world = getWorld();
+        if (world == null) return new ArrayList<>();
+        return world.getPlayers();
     }
 
     @Override
@@ -179,6 +183,11 @@ public class FarmWorldImpl implements FarmWorld {
     }
 
     @Override
+    public long getCreated() {
+        return data.getCreated();
+    }
+
+    @Override
     public boolean needReset() {
         if (data.getCurrentWorldName() == null) return true;
         return getResetDate() <= System.currentTimeMillis();
@@ -208,8 +217,6 @@ public class FarmWorldImpl implements FarmWorld {
         data.setCurrentWorldName(nextWorld == null ? null : nextWorld.getName());
         data.setCreated(TimeUnit.MINUTES.toMillis(TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis())));
 
-        Bukkit.getPluginManager().callEvent(new FarmWorldChangeWorldEvent(this, world, getWorld()));
-
         if (locations == null) locations = new LinkedHashMap<>();
         if (!locations.isEmpty()) {
             plugin.getDatabase().getLocationRepository().deleteByFarmWorldName(name);
@@ -220,6 +227,7 @@ public class FarmWorldImpl implements FarmWorld {
         if (nextWorld != null && world != null)
             teleport(world.getPlayers());
 
+        Bukkit.getPluginManager().callEvent(new FarmWorldChangeWorldEvent(this, world, getWorld()));
         new FarmWorldDeleter(plugin, this).deleteWorld(world);
         save(plugin);
     }

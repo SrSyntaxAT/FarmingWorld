@@ -1,6 +1,13 @@
-package at.srsyntax.farmingworld.farmworld.scheduler;
+package at.srsyntax.farmingworld.farmworld.display;
 
+import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
+import at.srsyntax.farmingworld.config.PluginConfig;
+import lombok.Getter;
+import org.bukkit.Bukkit;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /*
  * MIT License
@@ -25,38 +32,30 @@ import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class FarmWorldUpdater implements Runnable {
-    private final FarmWorldScheduler scheduler;
-    protected int taskId = -1;
+@Getter
+public class DisplayRegistry {
 
-    public FarmWorldUpdater(FarmWorldScheduler scheduler) {
-        this.scheduler = scheduler;
+    private final FarmingWorldPlugin plugin;
+    private final PluginConfig.ResetDisplayConfig config;
+
+    private final Map<String, Displayer> displayers = new ConcurrentHashMap<>();
+
+    public DisplayRegistry(FarmingWorldPlugin plugin, PluginConfig.ResetDisplayConfig config) {
+        this.plugin = plugin;
+        this.config = config;
+        if (config.isBossBar())
+            Bukkit.getPluginManager().registerEvents(new DisplayerListeners(this), plugin);
     }
 
-    @Override
-    public void run() {
-        for (FarmWorld farmWorld : scheduler.updaterList) {
-            update(farmWorld, true);
-        }
+    public void register(FarmWorld farmWorld) {
+        displayers.put(farmWorld.getName(), new Displayer(this, farmWorld));
     }
 
-    public void update(FarmWorld farmWorld, boolean everySecond) {
-        if (!farmWorld.isActive()) {
-            removeUpdater(farmWorld, everySecond);
-            return;
-        }
-
-        if (farmWorld.needReset()) {
-            farmWorld.next();
-            removeUpdater(farmWorld, everySecond);
-        } else if (farmWorld.needNextWorld()) farmWorld.newNextWorld(farmWorld.generateWorld());
-
-        farmWorld.updateSigns();
-        final var displayer = scheduler.plugin.getDisplayRegistry().getDisplayer(farmWorld);
-        if (displayer != null) displayer.display();
+    public void unregister(FarmWorld farmWorld) {
+        displayers.remove(farmWorld.getName());
     }
 
-    private void removeUpdater(FarmWorld farmWorld, boolean everySecond) {
-        if (everySecond) scheduler.removeUpdater(farmWorld);
+    public Displayer getDisplayer(FarmWorld farmWorld) {
+        return displayers.get(farmWorld.getName());
     }
 }

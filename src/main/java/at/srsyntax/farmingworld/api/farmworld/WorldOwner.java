@@ -110,6 +110,11 @@ public interface WorldOwner {
     long getResetDate();
 
     /**
+     * @return the date on which the current world was created.
+     */
+    long getCreated();
+
+    /**
      * Check if the farm world needs to be reset.
      * @return whether the farm world needs to be reset.
      */

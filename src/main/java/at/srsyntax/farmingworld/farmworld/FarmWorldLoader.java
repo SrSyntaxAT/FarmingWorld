@@ -72,6 +72,7 @@ public class FarmWorldLoader {
         loadLocationCaches();
         setBorder(farmWorld.getWorld());
         setBorder(farmWorld.getNextWorld());
+        plugin.getDisplayRegistry().register(farmWorld);
         farmWorld.setEnabled(true);
         registerAliasCommand();
         farmWorld.save(plugin);

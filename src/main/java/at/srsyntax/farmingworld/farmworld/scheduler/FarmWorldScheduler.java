@@ -3,10 +3,8 @@ package at.srsyntax.farmingworld.farmworld.scheduler;
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
-import lombok.Getter;
 import org.bukkit.Bukkit;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
@@ -37,9 +35,9 @@ import java.util.concurrent.TimeUnit;
 public class FarmWorldScheduler implements Runnable {
 
     private final API api;
-    private final FarmingWorldPlugin plugin;
+    protected final FarmingWorldPlugin plugin;
 
-    @Getter private final List<FarmWorld> updaterList = new CopyOnWriteArrayList<>();
+    protected final List<FarmWorld> updaterList = new CopyOnWriteArrayList<>();
     private final FarmWorldUpdater updater;
 
     public FarmWorldScheduler(API api, FarmingWorldPlugin plugin) {
@@ -70,15 +68,14 @@ public class FarmWorldScheduler implements Runnable {
     }
 
     private void createScheduler() {
-        if (updater.getTaskId() != -1) return;
-        final int id = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, updater, 20L, 20L);
-        updater.setTaskId(id);
+        if (updater.taskId != -1) return;
+        updater.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, updater, 20L, 20L);
     }
 
     protected void removeUpdater(FarmWorld farmWorld) {
         updaterList.remove(farmWorld);
         if (!updaterList.isEmpty()) return;
-        Bukkit.getScheduler().cancelTask(updater.getTaskId());
-        updater.setTaskId(-1);
+        Bukkit.getScheduler().cancelTask(updater.taskId);
+        updater.taskId = -1;
     }
 }

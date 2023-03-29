@@ -10,6 +10,7 @@ import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.database.DatabaseException;
 import at.srsyntax.farmingworld.database.sqlite.SQLiteDatabase;
 import at.srsyntax.farmingworld.farmworld.*;
+import at.srsyntax.farmingworld.farmworld.display.DisplayRegistry;
 import at.srsyntax.farmingworld.farmworld.scheduler.FarmWorldScheduler;
 import at.srsyntax.farmingworld.farmworld.sign.SignListeners;
 import at.srsyntax.farmingworld.farmworld.sign.SignRegistryImpl;
@@ -67,6 +68,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
     @Getter private Economy economy;
     @Getter private CommandRegistry commandRegistry;
     @Getter private SignRegistryImpl signRegistry;
+    @Getter private DisplayRegistry displayRegistry;
 
     @Override
     public void onLoad() {
@@ -91,9 +93,10 @@ public class FarmingWorldPlugin extends JavaPlugin {
             if (pluginConfig.isSpawnCommandEnabled())
                 commandRegistry.register(new SpawnCommand(pluginConfig));
             this.signRegistry = new SignRegistryImpl(getLogger(), database.getSignRepository());
+            this.displayRegistry = new DisplayRegistry(this, pluginConfig.getResetDisplay());
             registerListeners(
                     new CountdownListener(countdownRegistry),
-                    new PlayerChangedWorldListener(),
+                    new PlayerEventListeners(),
                     new SignListeners(signRegistry, pluginConfig.getMessages().getCommand())
             );
 

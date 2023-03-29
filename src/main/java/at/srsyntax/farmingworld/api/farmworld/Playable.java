@@ -38,6 +38,12 @@ import java.util.List;
 public interface Playable {
 
     /**
+     * Get all the players that are currently on the farm world.
+     * @return all the players that are currently on the farm world.
+     */
+    List<Player> getPlayers();
+
+    /**
      * Check if the player has the permission to enter the farm world.
      * @param player which should be checked.
      * @return the value whether the player has permission.
