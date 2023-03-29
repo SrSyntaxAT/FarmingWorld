@@ -9,6 +9,8 @@ import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 /*
  * MIT License
@@ -33,7 +35,7 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class PlayerChangedWorldListener implements Listener {
+public class PlayerEventListeners implements Listener {
 
     private final API api = FarmingWorldPlugin.getApi();
 
@@ -54,5 +56,19 @@ public class PlayerChangedWorldListener implements Listener {
                 FarmWorldPlayerEvent.call(FarmWorldPlayerEnteredEvent.class, to, player);
             }
         }
+    }
+
+    @EventHandler
+    public void onPlayerJoinEvent(PlayerJoinEvent event) {
+        final var farmWorld = api.getFarmWorld(event.getPlayer().getWorld());
+        if (farmWorld == null) return;
+        FarmWorldPlayerEvent.call(FarmWorldPlayerEnteredEvent.class, farmWorld, event.getPlayer());
+    }
+
+    @EventHandler
+    public void onPlayerQuitEvent(PlayerQuitEvent event) {
+        final var farmWorld = api.getFarmWorld(event.getPlayer().getWorld());
+        if (farmWorld == null) return;
+        FarmWorldPlayerEvent.call(FarmWorldPlayerLeavingEvent.class, farmWorld, event.getPlayer());
     }
 }
