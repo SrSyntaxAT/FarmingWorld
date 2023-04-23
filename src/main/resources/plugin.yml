@@ -12,3 +12,5 @@ website: https://srsyntax.at/
 commands:
   farming:
     description: Teleport yourself or another player to a farm world
+  fwa:
+    description: A command to manage the farm worlds

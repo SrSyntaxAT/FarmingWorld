@@ -3,6 +3,7 @@ package at.srsyntax.farmingworld;
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
 import at.srsyntax.farmingworld.command.SpawnCommand;
+import at.srsyntax.farmingworld.command.admin.AdminCommand;
 import at.srsyntax.farmingworld.command.farming.FarmingCommand;
 import at.srsyntax.farmingworld.config.ConfigLoader;
 import at.srsyntax.farmingworld.config.PluginConfig;
@@ -81,7 +82,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
             api = new APIImpl(this);
             new Metrics(this, BSTATS_ID);
 
-            this.pluginConfig = ConfigLoader.load(this, new PluginConfig(this, getDefaultFallbackLocation()));
+            loadConfig();
 
             this.database = new SQLiteDatabase(this);
             this.database.connect();
@@ -100,16 +101,25 @@ public class FarmingWorldPlugin extends JavaPlugin {
                     new SignListeners(signRegistry, pluginConfig.getMessages().getCommand())
             );
 
-            this.pluginConfig.getFarmWorlds().forEach(farmWorld -> new FarmWorldLoader(this, farmWorld).load());
-            checkFarmWorlds();
-            getServer().getScheduler().scheduleSyncRepeatingTask(this, new FarmWorldScheduler(api, this), 120L, 1200L);
+            loadFarmWorlds();
 
             getCommand("farming").setExecutor(new FarmingCommand((APIImpl) api, pluginConfig));
+            getCommand("fwa").setExecutor(new AdminCommand((APIImpl) api, pluginConfig.getMessages().getAdminCommand()));
 
         } catch (Exception exception) {
             getLogger().severe("Plugin could not be loaded successfully!");
             exception.printStackTrace();
         }
+    }
+
+    public void loadConfig() throws IOException {
+        pluginConfig = ConfigLoader.load(this, new PluginConfig(this, getDefaultFallbackLocation()));
+    }
+
+    public void loadFarmWorlds() {
+        pluginConfig.getFarmWorlds().forEach(farmWorld -> new FarmWorldLoader(this, farmWorld).load());
+        checkFarmWorlds();
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, new FarmWorldScheduler(api, this), 120L, 1200L);
     }
 
     private void checkFarmWorlds() {

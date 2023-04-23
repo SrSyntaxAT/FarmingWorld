@@ -54,15 +54,19 @@ public class CommandRegistry {
     }
 
     public void register(FarmWorld farmWorld) {
-        if (farmWorld.getAliases().isEmpty()) throw new IllegalArgumentException();
+        if (farmWorld.getAliases().isEmpty()) return;
         for (String alias : farmWorld.getAliases())
             register(createCommand(farmWorld, alias));
     }
 
     public void unregister(FarmWorld farmWorld) {
-        if (farmWorld.getAliases().isEmpty()) throw new IllegalArgumentException();
+        if (farmWorld.getAliases().isEmpty()) return;
         for (String alias : farmWorld.getAliases())
             commandMap.getCommand(alias).unregister(commandMap);
+    }
+
+    public Command getCommand(String command) {
+        return commandMap.getCommand(command);
     }
 
     private Command createCommand(FarmWorld farmWorld, String name) {

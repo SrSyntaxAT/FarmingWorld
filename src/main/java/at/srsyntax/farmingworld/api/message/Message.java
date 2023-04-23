@@ -2,6 +2,7 @@ package at.srsyntax.farmingworld.api.message;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
@@ -52,6 +53,15 @@ public class Message {
     }
 
     /**
+     * The message class constructor.
+     * @param message - The raw message to be sent.
+     */
+    public Message(String message) {
+        this.message = message;
+        this.type = ChatMessageType.SYSTEM;
+    }
+
+    /**
      * Add a placeholder to be replaced in the message.
      * @param key to search for.
      * @param value to be substituted instead of the key.
@@ -74,12 +84,16 @@ public class Message {
 
     /**
      * Send the revised message to the players.
-     * @param players to whom the message should be sent.
+     * @param senders to whom the message should be sent.
      */
-    public void send(Player... players) {
+    public void send(CommandSender... senders) {
         final TextComponent component = new TextComponent(toString());
-        for (Player player : players)
-            player.spigot().sendMessage(type, component);
+        for (CommandSender sender : senders) {
+            if (sender instanceof Player player)
+                player.spigot().sendMessage(type, component);
+            else
+                sender.spigot().sendMessage(component);
+        }
     }
 
     /**

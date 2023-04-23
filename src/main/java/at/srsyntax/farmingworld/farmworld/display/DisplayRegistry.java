@@ -52,7 +52,9 @@ public class DisplayRegistry {
     }
 
     public void unregister(FarmWorld farmWorld) {
-        displayers.remove(farmWorld.getName());
+        final Displayer displayer = displayers.remove(farmWorld.getName());
+        if (displayer == null) return;
+        displayer.removePlayers();
     }
 
     public Displayer getDisplayer(FarmWorld farmWorld) {

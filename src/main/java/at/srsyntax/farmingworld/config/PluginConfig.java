@@ -61,7 +61,7 @@ public class PluginConfig {
     private final int locationCache;
     private final boolean spawnCommandEnabled;
     private final ResetDisplayConfig resetDisplay;
-    private final LocationCache fallback;
+    private LocationCache fallback;
     private final MessageConfig messages;
 
     public PluginConfig(Plugin plugin, Location fallbackLocation) {
@@ -118,6 +118,7 @@ public class PluginConfig {
                         new MessageConfig.CountdownMessages(
                                 "&cA countdown is already running.",
                                 "&cThe countdown was interrupted because you moved.",
+                                "&cThe countdown was canceled for an unknown reason.",
                                 "&7You will be teleported in &e%s &7seconds."
                         ),
                         new MessageConfig.CooldownMessages(
@@ -134,6 +135,24 @@ public class PluginConfig {
                                 "&cYou have no rights to teleport other players to the farm world.",
                                 "&aYou have been teleported to &e%{farmworld}&a.",
                                 "&aYou teleported &e%{player} &ato &e%{farmworld}&a."
+                        ),
+                        new MessageConfig.AdminCommandMessages(
+                                "&cThe sender must be a player.",
+                                "&cYou have no rights to do this.",
+                                "&cUsage&8: &f/fwa %s",
+                                "&aThe spawn was set.",
+                                "&cThere was an error while setting the spawn.",
+                                "&cNo farm worlds found.",
+                                "&aThe farm world has been reset.",
+                                "&fConfirm the action within &a10 seconds &fwith &e/fwa confirm&f.",
+                                "&cThe confirmation request has expired or none was found for you.",
+                                "&cConfigurations will be reloaded.",
+                                "&cAn error occurred while reloading the configuration.",
+                                "&cThe countdown has been stopped as the farm worlds are reloaded.",
+                                "&cFarm world was deleted.",
+                                "&cAn error occurred while deleting the farm world.",
+                                "&eFarm world &chas been disabled.",
+                                "&eFarm world &ahas been enabled."
                         ),
                         new MessageConfig.TimeMessages(
                                 "HH:mm:ss dd.MM.yyyy",

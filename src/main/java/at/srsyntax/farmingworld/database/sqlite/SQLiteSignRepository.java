@@ -90,6 +90,7 @@ public class SQLiteSignRepository implements SignRepository {
 
         while (resultSet != null && resultSet.next()) {
             final String worldName = resultSet.getString("farm_world");
+            if (worldName == null) continue;
             if (deleted.contains(worldName)) continue;
 
             final var farmWorld = api.getFarmWorld(worldName);
@@ -108,7 +109,7 @@ public class SQLiteSignRepository implements SignRepository {
             }
 
             final Sign sign = (Sign) location.getBlock().getState();
-            result.add(new SignCacheImpl(sign, farmWorld));
+            result.add(new SignCacheImpl(sign, cache, farmWorld));
         }
 
         return result;

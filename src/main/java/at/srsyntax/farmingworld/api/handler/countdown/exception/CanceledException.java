@@ -49,6 +49,7 @@ public class CanceledException extends CountdownException {
 
     public enum Result {
         SUCCESSFUL,
+        RELOAD,
         QUIT,
         MOVED,
         UNKNOWN

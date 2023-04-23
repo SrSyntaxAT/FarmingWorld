@@ -1,12 +1,4 @@
-package at.srsyntax.farmingworld.command;
-
-import at.srsyntax.farmingworld.FarmingWorldPlugin;
-import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.List;
+package at.srsyntax.farmingworld.command.admin.cache;
 
 /*
  * MIT License
@@ -31,27 +23,6 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface TabCompleterFilter {
-
-    default List<String> filterOnlinePlayers(String arg) {
-        final List<String> names = new ArrayList<>();
-
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.getName().toLowerCase().startsWith(arg.toLowerCase()))
-                names.add(player.getName());
-        }
-
-        return names;
-    }
-
-    default List<String> filterFarmWorlds(String arg) {
-        final List<String> result = new ArrayList<>();
-
-        for (FarmWorld farmWorld : FarmingWorldPlugin.getApi().getFarmWorlds()) {
-            if (farmWorld.getName().toLowerCase().startsWith(arg.toLowerCase()))
-                result.add(farmWorld.getName());
-        }
-
-        return result;
-    }
+public interface CacheCallback {
+    void call(CacheData data);
 }

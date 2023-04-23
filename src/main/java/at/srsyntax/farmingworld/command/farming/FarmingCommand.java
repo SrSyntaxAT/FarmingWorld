@@ -1,7 +1,6 @@
 package at.srsyntax.farmingworld.command.farming;
 
 import at.srsyntax.farmingworld.APIImpl;
-import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
 import at.srsyntax.farmingworld.api.handler.HandleException;
 import at.srsyntax.farmingworld.api.handler.cooldown.Cooldown;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
@@ -79,7 +78,7 @@ public class FarmingCommand implements CommandExecutor, TabCompleter, TabComplet
                 exception.getMessages().send(sender);
             } catch (HandleException exception) {
                 new Message(exception.getMessage(), ChatMessageType.SYSTEM)
-                        .send((Player) commandSender);
+                        .send(commandSender);
             }
         }
         return false;
@@ -102,17 +101,12 @@ public class FarmingCommand implements CommandExecutor, TabCompleter, TabComplet
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        List<String> result = new ArrayList<>();
+        final List<String> result = new ArrayList<>();
 
         if (strings.length == 1) {
-            final String arg = strings[0].toLowerCase();
-
+            final String arg = strings[0];
             result.addAll(filterOnlinePlayers(arg));
-
-            for (FarmWorld farmWorld : api.getFarmWorlds()) {
-                if (farmWorld.getName().toLowerCase().startsWith(arg))
-                    result.add(farmWorld.getName());
-            }
+            result.addAll(filterFarmWorlds(arg));
         } else if (strings.length == 2) {
             result.addAll(filterOnlinePlayers(strings[1]));
         }

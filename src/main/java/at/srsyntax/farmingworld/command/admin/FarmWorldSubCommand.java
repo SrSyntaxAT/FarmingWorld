@@ -1,12 +1,8 @@
-package at.srsyntax.farmingworld.command;
+package at.srsyntax.farmingworld.command.admin;
 
-import at.srsyntax.farmingworld.FarmingWorldPlugin;
+import at.srsyntax.farmingworld.APIImpl;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.List;
+import at.srsyntax.farmingworld.config.MessageConfig;
 
 /*
  * MIT License
@@ -31,27 +27,19 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface TabCompleterFilter {
+public abstract class FarmWorldSubCommand extends SubCommand {
 
-    default List<String> filterOnlinePlayers(String arg) {
-        final List<String> names = new ArrayList<>();
-
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.getName().toLowerCase().startsWith(arg.toLowerCase()))
-                names.add(player.getName());
-        }
-
-        return names;
+    public FarmWorldSubCommand(String usage, MessageConfig.AdminCommandMessages messages, APIImpl api) {
+        super(usage, messages, api);
     }
 
-    default List<String> filterFarmWorlds(String arg) {
-        final List<String> result = new ArrayList<>();
+    protected FarmWorld getFarmWorld(String[] args, int index) throws Exception {
+        if (args.length <= index)
+            throw new Exception(String.format(messages.getUsage(), getUsage()));
+        final var farmWorld = api.getFarmWorld(args[index]);
 
-        for (FarmWorld farmWorld : FarmingWorldPlugin.getApi().getFarmWorlds()) {
-            if (farmWorld.getName().toLowerCase().startsWith(arg.toLowerCase()))
-                result.add(farmWorld.getName());
-        }
-
-        return result;
+        if (farmWorld == null)
+            throw new Exception(api.getPlugin().getPluginConfig().getMessages().getCommand().getFarmWorldNotFound());
+        return farmWorld;
     }
 }

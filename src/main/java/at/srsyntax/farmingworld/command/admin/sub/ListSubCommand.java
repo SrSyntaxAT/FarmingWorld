@@ -1,12 +1,11 @@
-package at.srsyntax.farmingworld.command;
+package at.srsyntax.farmingworld.command.admin.sub;
 
-import at.srsyntax.farmingworld.FarmingWorldPlugin;
+import at.srsyntax.farmingworld.APIImpl;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.List;
+import at.srsyntax.farmingworld.api.message.Message;
+import at.srsyntax.farmingworld.command.admin.SubCommand;
+import at.srsyntax.farmingworld.config.MessageConfig;
+import org.bukkit.command.CommandSender;
 
 /*
  * MIT License
@@ -31,27 +30,29 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface TabCompleterFilter {
+public class ListSubCommand extends SubCommand {
 
-    default List<String> filterOnlinePlayers(String arg) {
-        final List<String> names = new ArrayList<>();
-
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.getName().toLowerCase().startsWith(arg.toLowerCase()))
-                names.add(player.getName());
-        }
-
-        return names;
+    public ListSubCommand(String usage, MessageConfig.AdminCommandMessages messages, APIImpl api) {
+        super(usage, messages, api);
     }
 
-    default List<String> filterFarmWorlds(String arg) {
-        final List<String> result = new ArrayList<>();
+    @Override
+    public void execute(CommandSender sender, String[] args) throws Exception {
+        new Message(api.getFarmWorlds().isEmpty() ? messages.getNoFarmWorlds() : listWorlds(api)).send(sender);
+    }
 
-        for (FarmWorld farmWorld : FarmingWorldPlugin.getApi().getFarmWorlds()) {
-            if (farmWorld.getName().toLowerCase().startsWith(arg.toLowerCase()))
-                result.add(farmWorld.getName());
+    private String listWorlds(APIImpl api) {
+        final StringBuilder builder = new StringBuilder();
+
+        for (FarmWorld farmWorld : api.getFarmWorlds()) {
+            if (builder.isEmpty()) {
+                builder.append("&6FarmWorlds &7(").append(api.getFarmWorlds().size()).append(")&f:");
+            } else {
+                builder.append("&e,");
+            }
+            builder.append("&7 ").append(farmWorld.getName());
         }
 
-        return result;
+        return builder.toString();
     }
 }

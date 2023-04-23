@@ -66,6 +66,11 @@ public interface FarmWorld extends WorldOwner, Playable, LocationCacher, SignOwn
     void setActive(boolean active);
 
     /**
+     * Delete a farm world.
+     */
+    void delete();
+
+    /**
      * Get the command alias of the farm world.
      * @return a list of aliases
      */

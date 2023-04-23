@@ -62,6 +62,11 @@ public class Displayer {
         bossBar.removePlayer(player);
     }
 
+    public void removePlayers() {
+        if (bossBar == null) return;
+        bossBar.removeAll();
+    }
+
     private void displayBossBar() {
         bossBar.setTitle(replaceMessage());
         if (registry.getConfig().isChangeBossBarProgress()) {

@@ -36,12 +36,13 @@ public class MessageConfig {
     private final CountdownMessages countdown;
     private final CooldownMessages cooldown;
     private final CommandMessages command;
+    private final AdminCommandMessages adminCommand;
     private final TimeMessages time;
 
     @AllArgsConstructor
     @Getter
     public static class CountdownMessages {
-        private final String alreadyStarted, moved;
+        private final String alreadyStarted, moved, unknown;
         private final String message;
     }
 
@@ -61,6 +62,17 @@ public class MessageConfig {
         private final String teleported, teleportedOther;
     }
 
+    @AllArgsConstructor
+    @Getter
+    public static class AdminCommandMessages {
+        private final String isNotPlayer, noPermission, usage;
+        private final String setspawn, setspawnError;
+        private final String noFarmWorlds, farmWorldReset;
+        private final String confirm, nothingToConfirm;
+        private final String reload, reloadError, countdownCanceled;
+        private final String delete, deleteError;
+        private final String disable, enable;
+    }
 
     @AllArgsConstructor
     @Getter

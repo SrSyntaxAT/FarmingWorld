@@ -1,6 +1,7 @@
 package at.srsyntax.farmingworld.api.farmworld.sign;
 
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
+import at.srsyntax.farmingworld.api.farmworld.LocationCache;
 import org.bukkit.block.Sign;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,6 +39,12 @@ public interface SignCache {
      * @return the physical sign.
      */
     @NotNull Sign getSign();
+
+    /**
+     * Get the location on which the sign is.
+     * @return the location on which the sign is.
+     */
+    @NotNull LocationCache getLocation();
 
     /**
      * Get the farm world to which the players are teleported.

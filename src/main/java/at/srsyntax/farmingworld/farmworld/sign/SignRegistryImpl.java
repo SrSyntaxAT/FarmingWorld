@@ -43,13 +43,13 @@ public class SignRegistryImpl implements SignRegistry {
     public static final String SIGN_TITLE = "[fw]";
 
     private final SignRepository repository;
-    private final List<SignCache> caches;
+    private List<SignCache> caches;
     private final Logger logger;
 
     public SignRegistryImpl(Logger logger, SignRepository repository) {
         this.repository = repository;
-        this.caches = repository.getCache();
         this.logger = logger;
+        load();
     }
 
     @Override
@@ -68,7 +68,7 @@ public class SignRegistryImpl implements SignRegistry {
 
     @Override
     public SignCache register(@NotNull Sign sign, @NotNull FarmWorld farmWorld) {
-        final var cache = new SignCacheImpl(sign, farmWorld);
+        final var cache = new SignCacheImpl(sign, new LocationCache(sign.getLocation()),farmWorld);
         repository.save(cache);
         caches.add(cache);
         Bukkit.getScheduler().runTask(((APIImpl) FarmingWorldPlugin.getApi()).getPlugin(), cache::update);
@@ -78,11 +78,33 @@ public class SignRegistryImpl implements SignRegistry {
 
     @Override
     public void unregister(@NotNull Location location) {
-        final var cache = getCache(location);
+        unregister(getCache(location));
+    }
+
+    private void unregister(SignCache cache) {
         if (cache == null) return;
+
         caches.remove(cache);
-        repository.delete(new LocationCache(location));
-        logger.info(String.format("Sign (%s) was deleted.", location));
+        repository.delete(cache.getLocation());
+        logger.info(String.format("Sign (%s) was deleted.", cache.getLocation()));
+    }
+
+    @Override
+    public void unregister(@NotNull FarmWorld farmWorld) {
+        for (SignCache cache : caches) {
+            if (cache.getFarmWorld().equals(farmWorld))
+                unregister(cache);
+        }
+    }
+
+    @Override
+    public void unload() {
+        caches.clear();
+    }
+
+    @Override
+    public void load() {
+        this.caches = repository.getCache();
     }
 
     @Override

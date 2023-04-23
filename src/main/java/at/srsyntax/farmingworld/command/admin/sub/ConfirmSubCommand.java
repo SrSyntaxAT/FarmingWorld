@@ -1,12 +1,11 @@
-package at.srsyntax.farmingworld.command;
+package at.srsyntax.farmingworld.command.admin.sub;
 
-import at.srsyntax.farmingworld.FarmingWorldPlugin;
-import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.List;
+import at.srsyntax.farmingworld.APIImpl;
+import at.srsyntax.farmingworld.command.admin.AdminCommand;
+import at.srsyntax.farmingworld.command.admin.SubCommand;
+import at.srsyntax.farmingworld.command.admin.cache.CacheData;
+import at.srsyntax.farmingworld.config.MessageConfig;
+import org.bukkit.command.CommandSender;
 
 /*
  * MIT License
@@ -31,27 +30,21 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface TabCompleterFilter {
+public class ConfirmSubCommand extends SubCommand {
 
-    default List<String> filterOnlinePlayers(String arg) {
-        final List<String> names = new ArrayList<>();
+    private final AdminCommand adminCommand;
 
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.getName().toLowerCase().startsWith(arg.toLowerCase()))
-                names.add(player.getName());
-        }
-
-        return names;
+    public ConfirmSubCommand(String usage, MessageConfig.AdminCommandMessages messages, APIImpl api, AdminCommand adminCommand) {
+        super(usage, messages, api);
+        this.adminCommand = adminCommand;
     }
 
-    default List<String> filterFarmWorlds(String arg) {
-        final List<String> result = new ArrayList<>();
-
-        for (FarmWorld farmWorld : FarmingWorldPlugin.getApi().getFarmWorlds()) {
-            if (farmWorld.getName().toLowerCase().startsWith(arg.toLowerCase()))
-                result.add(farmWorld.getName());
-        }
-
-        return result;
+    @Override
+    public void execute(CommandSender sender, String[] args) throws Exception {
+        final CacheData data = adminCommand.getConfirmCache().getIfPresent(sender);
+        if (data == null)
+            throw new Exception(messages.getNothingToConfirm());
+        adminCommand.getConfirmCache().invalidate(sender);
+        data.callback().call(data);
     }
 }

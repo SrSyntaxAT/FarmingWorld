@@ -162,6 +162,12 @@ public class FarmWorldImpl implements FarmWorld {
         else new FarmWorldLoader(plugin, this).enable();
     }
 
+    @SneakyThrows
+    @Override
+    public void delete() {
+        new FarmWorldDeleter(plugin, this).delete();
+    }
+
     @Override
     public World.Environment getEnvironment() {
         return environment;

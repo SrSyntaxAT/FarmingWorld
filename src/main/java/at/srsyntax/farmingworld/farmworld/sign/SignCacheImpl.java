@@ -3,6 +3,7 @@ package at.srsyntax.farmingworld.farmworld.sign;
 import at.srsyntax.farmingworld.APIImpl;
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
+import at.srsyntax.farmingworld.api.farmworld.LocationCache;
 import at.srsyntax.farmingworld.api.farmworld.sign.SignCache;
 import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.config.PluginConfig;
@@ -44,6 +45,7 @@ import java.util.concurrent.TimeUnit;
 public class SignCacheImpl implements SignCache {
 
     private final Sign sign;
+    private final LocationCache location;
     private final FarmWorld farmWorld;
 
     @Override

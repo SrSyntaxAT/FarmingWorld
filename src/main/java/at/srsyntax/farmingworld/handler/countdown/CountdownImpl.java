@@ -98,8 +98,14 @@ public class CountdownImpl implements Countdown {
         task.cancel();
         plugin.getCountdownRegistry().unregister(player);
 
-        if (result != CanceledException.Result.SUCCESSFUL)
-            callback.error(this, new CanceledException(messages.getMoved(), this, result));
+        if (result != CanceledException.Result.SUCCESSFUL) {
+            final String message = switch (result) {
+                case MOVED -> messages.getMoved();
+                case RELOAD -> plugin.getPluginConfig().getMessages().getAdminCommand().getCountdownCanceled();
+                default -> messages.getUnknown();
+            };
+            callback.error(this, new CanceledException(message, this, result));
+        }
 
         if (event)
             Bukkit.getPluginManager().callEvent(new CountdownCanceledEvent(this, result));

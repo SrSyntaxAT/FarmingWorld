@@ -59,6 +59,22 @@ public interface SignRegistry {
     void unregister(@NotNull Location location);
 
     /**
+     * Unregister all signs of a farm world.
+     * @param farmWorld from which all signs are to be deleted.
+     */
+    void unregister(@NotNull FarmWorld farmWorld);
+
+    /**
+     * Clear the sign cache
+     */
+    void unload();
+
+    /**
+     * Load all signs from the database.
+     */
+    void load();
+
+    /**
      * Get a list of all signs cache.
      * @return list of all signs cache
      */

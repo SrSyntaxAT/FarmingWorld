@@ -1,14 +1,15 @@
 package at.srsyntax.farmingworld.command;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
-import at.srsyntax.farmingworld.api.farmworld.LocationCache;
 import at.srsyntax.farmingworld.api.handler.HandleException;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
 import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import at.srsyntax.farmingworld.config.PluginConfig;
+import lombok.Setter;
 import net.md_5.bungee.api.ChatMessageType;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -41,13 +42,13 @@ import java.util.ArrayList;
  */
 public class SpawnCommand extends Command {
 
-    private final LocationCache fallback;
+    @Setter private Location location;
     private final MessageConfig.SpawnMessages spawnMessages;
     private final MessageConfig.CountdownMessages countdownMessages;
 
     public SpawnCommand(PluginConfig config) {
         super("spawn", "Teleport yourself to the spawn.", "/spawn", new ArrayList<>());
-        this.fallback = config.getFallback();
+        this.location = config.getFallback().toBukkit();
         this.spawnMessages = config.getMessages().getSpawn();
         this.countdownMessages = config.getMessages().getCountdown();
     }
@@ -56,7 +57,7 @@ public class SpawnCommand extends Command {
     public boolean execute(@NotNull CommandSender commandSender, @NotNull String s, @NotNull String[] strings) {
         try {
             if (commandSender instanceof Player player) {
-                if (fallback == null) {
+                if (location == null) {
                     new Message(spawnMessages.getNotFound(), ChatMessageType.SYSTEM).send(player);
                     return false;
                 }
@@ -69,7 +70,7 @@ public class SpawnCommand extends Command {
             }
         } catch (HandleException exception) {
             new Message(exception.getMessage(), ChatMessageType.SYSTEM)
-                    .send((Player) commandSender);
+                    .send(commandSender);
         }
         return false;
     }
@@ -78,7 +79,7 @@ public class SpawnCommand extends Command {
         return new CountdownCallback() {
             @Override
             public void finished(Countdown countdown) {
-                player.teleport(fallback.toBukkit());
+                player.teleport(location);
                 new Message(spawnMessages.getTeleported(), spawnMessages.getChatType()).send(player);
             }
 

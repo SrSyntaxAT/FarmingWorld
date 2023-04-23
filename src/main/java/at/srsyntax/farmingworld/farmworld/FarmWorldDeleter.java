@@ -54,6 +54,7 @@ public class FarmWorldDeleter {
         farmWorld.setActive(false);
         plugin.getCommandRegistry().unregister(farmWorld);
         plugin.getDisplayRegistry().unregister(farmWorld);
+        plugin.getSignRegistry().unregister(farmWorld);
 
         if (farmWorld.isEnabled())
             deleteWhenEnabled();
@@ -101,6 +102,7 @@ public class FarmWorldDeleter {
     }
 
     public void deleteWorld(String worldName) {
+        if (worldName == null) return;
         plugin.getLogger().info("Delete " + worldName + " (F)");
         FileUtil.deleteFolder(new File(worldName));
     }
