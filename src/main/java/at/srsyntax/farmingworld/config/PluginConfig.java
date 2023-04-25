@@ -94,6 +94,11 @@ public class PluginConfig {
                                 "&6%{farm_world}",
                                 "&cReset at:",
                                 "&e%{date}"
+                        },
+                        new String[]{
+                                "&7[&bFarm World&7]",
+                                "&6%{farm_world}",
+                                "&4&lDISABLED"
                         }
                 ),
                 3,
@@ -196,7 +201,7 @@ public class PluginConfig {
     @Getter
     public static class SignConfig {
         private final String daysFormat, hoursFormat;
-        private final String[] lines;
+        private final String[] linesWhenActive, linesWhenInactive;
     }
 
     @AllArgsConstructor

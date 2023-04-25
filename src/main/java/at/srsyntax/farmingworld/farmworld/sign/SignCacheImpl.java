@@ -52,7 +52,7 @@ public class SignCacheImpl implements SignCache {
     public void update() {
         final var plugin = ((APIImpl) FarmingWorldPlugin.getApi()).getPlugin();
         final var config = plugin.getPluginConfig();
-        final var lines = config.getSign().getLines();
+        final var lines = getLines(config.getSign());
 
         if (lines == null || lines.length == 0) return;
         final Map<String, String> replaces = createReplaces(plugin, config.getSign());
@@ -64,6 +64,10 @@ public class SignCacheImpl implements SignCache {
             sign.setLine(i, line);
         }
         sign.update();
+    }
+
+    private String[] getLines(PluginConfig.SignConfig config) {
+        return farmWorld.isActive() ? config.getLinesWhenActive() : config.getLinesWhenInactive();
     }
 
     private Map<String, String> createReplaces(FarmingWorldPlugin plugin, PluginConfig.SignConfig config) {

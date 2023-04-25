@@ -160,6 +160,7 @@ public class FarmWorldImpl implements FarmWorld {
         this.active = active;
         if (!active) new FarmWorldDeleter(plugin, this).disable();
         else new FarmWorldLoader(plugin, this).enable();
+        plugin.getSignRegistry().getCaches(this).forEach(SignCache::update);
     }
 
     @SneakyThrows
