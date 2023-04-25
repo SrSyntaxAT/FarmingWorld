@@ -4,13 +4,17 @@ import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.event.farmworld.FarmWorldChangeWorldEvent;
 import at.srsyntax.farmingworld.api.event.farmworld.player.FarmWorldPlayerEnteredEvent;
 import at.srsyntax.farmingworld.api.event.farmworld.player.FarmWorldPlayerLeavingEvent;
+import at.srsyntax.farmingworld.api.farmworld.sign.SignCache;
 import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import lombok.AllArgsConstructor;
+import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -79,19 +83,26 @@ public class SignListeners implements Listener {
     public void onPlayerInteractEvent(PlayerInteractEvent event) {
         if (!event.getAction().name().endsWith("_BLOCK")) return;
         final var block = event.getClickedBlock();
-        if (block == null || !block.getType().name().endsWith("_SIGN")) return;
+        if (isSign(block)) return;
         final var cache = registry.getCache(block.getLocation());
         if (cache == null) return;
+        if (event.getAction() == Action.LEFT_CLICK_BLOCK && event.getPlayer().getGameMode() == GameMode.CREATIVE)
+            registry.unregister(event.getClickedBlock().getLocation());
+        else
+            teleportPlayer(cache, event.getPlayer());
+    }
+
+    private void teleportPlayer(SignCache cache, Player player) {
         if (!cache.getFarmWorld().isActive()) {
-            new Message(messages.getDisabled(), messages.getChatType()).send(event.getPlayer());
-        } else if (cache.getFarmWorld().hasPermission(event.getPlayer())) {
-            cache.getFarmWorld().teleport(event.getPlayer());
+            new Message(messages.getDisabled(), messages.getChatType()).send(player);
+        } else if (cache.getFarmWorld().hasPermission(player)) {
+            cache.getFarmWorld().teleport(player);
         } else {
-            new Message(messages.getNoPermission(), messages.getChatType()).send(event.getPlayer());
+            new Message(messages.getNoPermission(), messages.getChatType()).send(player);
         }
     }
 
     private boolean isSign(Block block) {
-        return block.getType().name().endsWith("_SIGN");
+        return block != null && block.getType().name().endsWith("_SIGN");
     }
 }

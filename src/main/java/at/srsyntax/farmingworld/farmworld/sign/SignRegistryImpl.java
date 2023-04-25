@@ -83,7 +83,7 @@ public class SignRegistryImpl implements SignRegistry {
 
     private void unregister(SignCache cache) {
         if (cache == null) return;
-
+        clearLines(cache.getSign());
         caches.remove(cache);
         repository.delete(cache.getLocation());
         logger.info(String.format("Sign (%s) was deleted.", cache.getLocation()));
@@ -95,6 +95,12 @@ public class SignRegistryImpl implements SignRegistry {
             if (cache.getFarmWorld().equals(farmWorld))
                 unregister(cache);
         }
+    }
+
+    private void clearLines(Sign sign) {
+        if (sign == null) return;
+        for (byte i = 0; i < sign.getLines().length; i++)
+            sign.setLine(i, "");
     }
 
     @Override
