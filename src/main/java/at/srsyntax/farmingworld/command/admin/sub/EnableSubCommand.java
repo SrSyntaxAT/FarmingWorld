@@ -63,6 +63,7 @@ public class EnableSubCommand extends FarmWorldSubCommand implements TabComplete
     private CacheData createData(CommandSender sender, FarmWorld farmWorld) {
         return new CacheData(sender, System.currentTimeMillis(), data -> {
             new FarmWorldLoader(api.getPlugin(), (FarmWorldImpl) farmWorld).enable();
+            farmWorld.setActive(true);
             new Message(messages.getEnable()).send(sender);
         });
     }

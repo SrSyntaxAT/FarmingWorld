@@ -52,10 +52,14 @@ public class SignListeners implements Listener {
     public void onSignChangeEvent(SignChangeEvent event) {
         if (!isSign(event.getBlock())) return;
         if (!event.getLine(0).equalsIgnoreCase(SignRegistryImpl.SIGN_TITLE)) return;
-        if (!event.getPlayer().hasPermission("farmingworld.sign")) return;
+        if (!hasPlacePermission(event.getPlayer())) return;
         final var farmWorld = FarmingWorldPlugin.getApi().getFarmWorld(event.getLine(1));
         if (farmWorld == null) return;
         registry.register((Sign) event.getBlock().getState(), farmWorld);
+    }
+
+    private boolean hasPlacePermission(Player player) {
+        return player.hasPermission("farmingworld.sign") || player.hasPermission("farmingworld.admin");
     }
 
     @EventHandler
@@ -83,7 +87,7 @@ public class SignListeners implements Listener {
     public void onPlayerInteractEvent(PlayerInteractEvent event) {
         if (!event.getAction().name().endsWith("_BLOCK")) return;
         final var block = event.getClickedBlock();
-        if (isSign(block)) return;
+        if (!isSign(block)) return;
         final var cache = registry.getCache(block.getLocation());
         if (cache == null) return;
         if (event.getAction() == Action.LEFT_CLICK_BLOCK && event.getPlayer().getGameMode() == GameMode.CREATIVE)
