@@ -48,7 +48,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class FarmWorldImpl implements FarmWorld {
 
-    @Setter
+    @Setter @Getter
     private transient FarmingWorldPlugin plugin;
 
     private final String name;

@@ -7,7 +7,7 @@ import net.md_5.bungee.api.ChatMessageType;
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcel Haberl
+ * Copyright (c) 2022-2023 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -72,6 +72,8 @@ public class MessageConfig {
         private final String reload, reloadError, countdownCanceled;
         private final String delete, deleteError;
         private final String disable, enable;
+        private final String[] info;
+        private final String infoPlayers, infoSigns;
     }
 
     @AllArgsConstructor

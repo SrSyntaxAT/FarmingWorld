@@ -27,7 +27,7 @@ import java.util.List;
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcel Haberl
+ * Copyright (c) 2022-2023 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -159,7 +159,21 @@ public class PluginConfig {
                                 "&cFarm world was deleted.",
                                 "&cAn error occurred while deleting the farm world.",
                                 "&eFarm world &chas been disabled.",
-                                "&eFarm world &ahas been enabled."
+                                "&eFarm world &ahas been enabled.",
+                                new String[]{
+                                        "&6&l%{name} &r&einformations&8:",
+                                        "&eActive&8:&7%{active}",
+                                        "&ePermission&8:&7%{permission}",
+                                        "&eAliases&8:&7%{aliases}",
+                                        "&eWorld&8:&7%{world}",
+                                        "&eReset&8:&7%{reset-date}",
+                                        "&eEnvironment&8:&7%{environment}",
+                                        "&eGenerator&8:&7%{generator}",
+                                        "&ePlayers&8:&7%{players}",
+                                        "&eSigns&8:&7%{signs}"
+                                },
+                                "&ePlayers on &e&l%{name} &7(%{size})&8: %{list}",
+                                "&eSigns for &e&l%{name} &7(%{size})&8: %{list}"
                         ),
                         new MessageConfig.TimeMessages(
                                 "HH:mm:ss dd.MM.yyyy",

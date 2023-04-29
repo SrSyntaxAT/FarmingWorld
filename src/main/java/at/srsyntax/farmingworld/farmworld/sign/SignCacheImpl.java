@@ -88,4 +88,8 @@ public class SignCacheImpl implements SignCache {
             return config.getHoursFormat();
         return config.getDaysFormat();
     }
+
+    public String toInfoCommandString() {
+        return String.format("%s,x=%,.2f,y=%,.2f,z=%,.2f", location.getWorld(), location.getX(), location.getY(), location.getZ());
+    }
 }
