@@ -19,6 +19,7 @@ import at.srsyntax.farmingworld.handler.countdown.CountdownListener;
 import at.srsyntax.farmingworld.handler.countdown.CountdownRegistry;
 import at.srsyntax.farmingworld.util.CommandRegistry;
 import at.srsyntax.farmingworld.util.FileUtil;
+import at.srsyntax.farmingworld.util.JoinListener;
 import at.srsyntax.farmingworld.util.SpigotVersionCheck;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
@@ -98,7 +99,8 @@ public class FarmingWorldPlugin extends JavaPlugin {
             registerListeners(
                     new CountdownListener(countdownRegistry),
                     new PlayerEventListeners(),
-                    new SignListeners(signRegistry, pluginConfig.getMessages().getCommand())
+                    new SignListeners(signRegistry, pluginConfig.getMessages().getCommand()),
+                    new JoinListener(this)
             );
 
             loadFarmWorlds();

@@ -60,6 +60,7 @@ public class PluginConfig {
     private final SignConfig sign;
     private final int locationCache;
     private final boolean spawnCommandEnabled;
+    private final SpawnType spawnType;
     private final ResetDisplayConfig resetDisplay;
     private LocationCache fallback;
     private final MessageConfig messages;
@@ -103,6 +104,7 @@ public class PluginConfig {
                 ),
                 3,
                 true,
+                SpawnType.FIRST,
                 new ResetDisplayConfig(
                         true,
                         ResetDisplayType.BOSS_BAR,
@@ -218,5 +220,9 @@ public class PluginConfig {
         public boolean isBossBar() {
             return type != null && type == ResetDisplayType.BOSS_BAR;
         }
+    }
+
+    public enum SpawnType {
+        FORCE, FIRST, NONE
     }
 }
