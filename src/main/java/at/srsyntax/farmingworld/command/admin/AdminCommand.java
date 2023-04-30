@@ -55,6 +55,7 @@ public class AdminCommand implements CommandExecutor, TabCompleter {
         this.commandMap = createCommandMap(
                 new ListSubCommand("list", messages, api),
                 new SetSpawnSubCommand("setspawn", messages, api),
+                new InfoSubCommand("info <farmworld> [signs/players]", messages, api),
                 new ResetSubCommand("reset <farmworld>", messages, api, this),
                 new DeleteSubCommand("delete <farmworld>", messages, api, this),
                 new EnableSubCommand("enable <farmworld>", messages, api, this),

@@ -69,19 +69,20 @@ public class InfoSubCommand extends FarmWorldSubCommand implements TabCompleterF
     private void sendInfo(CommandSender sender, FarmWorldImpl farmWorld) {
         final long reset = farmWorld.getResetDate();
         final String dateFormat = farmWorld.getPlugin().getPluginConfig().getResetDisplay().getDateFormat();
+        final String aliases = arrayToString(farmWorld.getAliases().toArray(new String[0]), true);
 
         new Message(arrayToString(messages.getInfo(), false))
                 .replace("%{name}", farmWorld.getName())
                 .replace("%{active}", farmWorld.isActive())
                 .replace("%{permission}", farmWorld.getPermission() == null ? "no permission" : farmWorld.getPermission())
-                .replace("%{aliases}", arrayToString(farmWorld.getAliases().toArray(new String[0]), true))
+                .replace("%{aliases}", farmWorld.getAliases().isEmpty() ? "no aliases" : aliases)
                 .replace("%{world}", farmWorld.getWorld() == null ? "&cno world" : farmWorld.getWorld().getName())
                 .replace("%{reset-date}", TimeUtil.getDate(dateFormat, reset))
                 .replace("%{reset-remaining}", TimeUtil.getRemainingTime(farmWorld.getPlugin(), reset, true))
                 .replace("%{environment}", farmWorld.getEnvironment())
                 .replace("%{generator}", farmWorld.getGenerator() == null ? "default" : farmWorld.getGenerator())
                 .replace("%{players}", farmWorld.getPlayers().size())
-                .replace("%{signs}", farmWorld.getSigns())
+                .replace("%{signs}", farmWorld.getSigns().size())
                 .send(sender);
     }
 
@@ -98,11 +99,11 @@ public class InfoSubCommand extends FarmWorldSubCommand implements TabCompleterF
 
             message = arrayToString(array, true);
         } else {
-            message = "&cno players";
+            message = "§cno signs";
         }
 
 
-        sendList(sender, messages.getInfoSigns(), list.size(), message);
+        sendList(sender, messages.getInfoSigns(), farmWorld, list.size(), message);
     }
 
     private void sendPlayers(CommandSender sender, FarmWorld farmWorld) {
@@ -118,10 +119,10 @@ public class InfoSubCommand extends FarmWorldSubCommand implements TabCompleterF
 
             message = arrayToString(array, true);
         } else {
-            message = "&cno signs";
+            message = "§cno players";
         }
 
-        sendList(sender, messages.getInfoPlayers(), list.size(), message);
+        sendList(sender, messages.getInfoPlayers(), farmWorld, list.size(), message);
     }
 
     private String arrayToString(String[] array, boolean separation) {
@@ -129,8 +130,8 @@ public class InfoSubCommand extends FarmWorldSubCommand implements TabCompleterF
 
         for (String line : array) {
             if (separation) {
-                builder.append("&7");
                 if (!builder.isEmpty()) builder.append("&e, ");
+                builder.append("&7");
             } else {
                 if (!builder.isEmpty()) builder.append("\n");
             }
@@ -138,12 +139,13 @@ public class InfoSubCommand extends FarmWorldSubCommand implements TabCompleterF
             builder.append(line);
         }
 
-        return builder.toString();
+        return new Message(builder.toString()).toString();
     }
 
-    private void sendList(CommandSender sender, String message, int size, String list) {
+    private void sendList(CommandSender sender, String message, FarmWorld farmWorld, int size, String list) {
         new Message(message)
-                .replace("%{size]", size)
+                .replace("%{name}", farmWorld.getName())
+                .replace("%{size}", size)
                 .replace("%{list}", list)
                 .send(sender);
     }
