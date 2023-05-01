@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcel Haberl
+ * Copyright (c) 2022-2023 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -61,7 +61,7 @@ public class EconomyImpl implements Economy {
                     EconomyResponse.ResponseType.FAILURE,
                     "Not enough money"
             );
-            throw new EconomyException(config.getMessages().getNotEnoughMoney(), this, response);
+            throw new EconomyException(plugin.getMessageConfig().getNotEnoughMoney(), this, response);
         }
         final EconomyResponse response = plugin.getEconomy().withdrawPlayer(player, price);
         if (response.type != EconomyResponse.ResponseType.SUCCESS)

@@ -8,7 +8,6 @@ import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
 import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.command.TabCompleterFilter;
 import at.srsyntax.farmingworld.config.MessageConfig;
-import at.srsyntax.farmingworld.config.PluginConfig;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -50,10 +49,10 @@ public class FarmingCommand implements CommandExecutor, TabCompleter, TabComplet
     private final MessageConfig messages;
     private final MessageConfig.CommandMessages commandMessages;
 
-    public FarmingCommand(APIImpl api, PluginConfig config) {
+    public FarmingCommand(APIImpl api, MessageConfig config) {
         this.api = api;
-        this.messages = config.getMessages();
-        this.commandMessages = config.getMessages().getCommand();
+        this.messages = config;
+        this.commandMessages = config.getCommand();
     }
 
     //               0           1

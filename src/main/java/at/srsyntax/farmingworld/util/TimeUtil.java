@@ -105,7 +105,7 @@ public class TimeUtil {
     }
 
     private static String replaceRemaining(FarmingWorldPlugin plugin, String remaining) {
-        final MessageConfig.TimeMessages time = plugin.getPluginConfig().getMessages().getTime();
+        final MessageConfig.TimeMessages time = plugin.getMessageConfig().getTime();
         final Message message = new Message(remaining, ChatMessageType.SYSTEM)
                 .replace("<second>", time.getSecond())
                 .replace("<seconds>", time.getSeconds())

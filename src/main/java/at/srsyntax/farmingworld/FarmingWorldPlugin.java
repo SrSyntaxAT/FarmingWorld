@@ -5,7 +5,8 @@ import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
 import at.srsyntax.farmingworld.command.SpawnCommand;
 import at.srsyntax.farmingworld.command.admin.AdminCommand;
 import at.srsyntax.farmingworld.command.farming.FarmingCommand;
-import at.srsyntax.farmingworld.config.ConfigLoader;
+import at.srsyntax.farmingworld.config.Config;
+import at.srsyntax.farmingworld.config.MessageConfig;
 import at.srsyntax.farmingworld.config.PluginConfig;
 import at.srsyntax.farmingworld.database.Database;
 import at.srsyntax.farmingworld.database.DatabaseException;
@@ -65,6 +66,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
 
     @Getter private Database database;
     @Getter private PluginConfig pluginConfig;
+    @Getter private MessageConfig messageConfig;
 
     @Getter private CountdownRegistry countdownRegistry;
     @Getter private Economy economy;
@@ -93,20 +95,20 @@ public class FarmingWorldPlugin extends JavaPlugin {
             this.countdownRegistry = new CountdownRegistry();
             this.commandRegistry = new CommandRegistry(getName());
             if (pluginConfig.isSpawnCommandEnabled())
-                commandRegistry.register(new SpawnCommand(pluginConfig));
+                commandRegistry.register(new SpawnCommand(pluginConfig, messageConfig));
             this.signRegistry = new SignRegistryImpl(getLogger(), database.getSignRepository());
             this.displayRegistry = new DisplayRegistry(this, pluginConfig.getResetDisplay());
             registerListeners(
                     new CountdownListener(countdownRegistry),
                     new PlayerEventListeners(),
-                    new SignListeners(signRegistry, pluginConfig.getMessages().getCommand()),
+                    new SignListeners(signRegistry, messageConfig.getCommand()),
                     new JoinListener(this)
             );
 
             loadFarmWorlds();
 
-            getCommand("farming").setExecutor(new FarmingCommand((APIImpl) api, pluginConfig));
-            getCommand("fwa").setExecutor(new AdminCommand((APIImpl) api, pluginConfig.getMessages().getAdminCommand()));
+            getCommand("farming").setExecutor(new FarmingCommand((APIImpl) api, messageConfig));
+            getCommand("fwa").setExecutor(new AdminCommand((APIImpl) api, messageConfig.getAdminCommand()));
 
         } catch (Exception exception) {
             getLogger().severe("Plugin could not be loaded successfully!");
@@ -115,7 +117,8 @@ public class FarmingWorldPlugin extends JavaPlugin {
     }
 
     public void loadConfig() throws IOException {
-        pluginConfig = ConfigLoader.load(this, new PluginConfig(this, getDefaultFallbackLocation()));
+        messageConfig = Config.load(this, new MessageConfig(), MessageConfig.class);
+        pluginConfig = Config.load(this, new PluginConfig(this, getDefaultFallbackLocation()), PluginConfig.class);
     }
 
     public void loadFarmWorlds() {

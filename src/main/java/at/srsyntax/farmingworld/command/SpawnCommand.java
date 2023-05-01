@@ -46,11 +46,11 @@ public class SpawnCommand extends Command {
     private final MessageConfig.SpawnMessages spawnMessages;
     private final MessageConfig.CountdownMessages countdownMessages;
 
-    public SpawnCommand(PluginConfig config) {
+    public SpawnCommand(PluginConfig config, MessageConfig messageConfig) {
         super("spawn", "Teleport yourself to the spawn.", "/spawn", new ArrayList<>());
         this.location = config.getFallback().toBukkit();
-        this.spawnMessages = config.getMessages().getSpawn();
-        this.countdownMessages = config.getMessages().getCountdown();
+        this.spawnMessages = messageConfig.getSpawn();
+        this.countdownMessages = messageConfig.getCountdown();
     }
 
     @Override

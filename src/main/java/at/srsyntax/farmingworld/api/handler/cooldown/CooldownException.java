@@ -47,7 +47,7 @@ public class CooldownException extends HandleException {
     @Override
     public String getMessage() {
         final FarmingWorldPlugin plugin = ((APIImpl) FarmingWorldPlugin.getApi()).getPlugin();
-        final String format = plugin.getPluginConfig().getMessages().getTime().getFormat();
+        final String format = plugin.getMessageConfig().getTime().getFormat();
         return new Message(super.getMessage(), ChatMessageType.SYSTEM)
                 .replace("%{remaining}", TimeUtil.getRemainingTime(plugin, cooldown.getEnd()))
                 .replace("%{date}", TimeUtil.getDate(format, cooldown.getEnd()))

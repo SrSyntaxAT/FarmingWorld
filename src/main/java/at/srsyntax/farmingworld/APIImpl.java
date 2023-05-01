@@ -67,7 +67,7 @@ public class APIImpl implements API {
 
     @Override
     public Cooldown getCooldown(Player player, FarmWorld farmWorld) {
-        return new CooldownImpl(plugin, plugin.getPluginConfig().getMessages().getCooldown(), player, farmWorld);
+        return new CooldownImpl(plugin, plugin.getMessageConfig().getCooldown(), player, farmWorld);
     }
 
     @Override

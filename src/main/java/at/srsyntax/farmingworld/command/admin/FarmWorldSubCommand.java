@@ -39,7 +39,7 @@ public abstract class FarmWorldSubCommand extends SubCommand {
         final var farmWorld = api.getFarmWorld(args[index]);
 
         if (farmWorld == null)
-            throw new Exception(api.getPlugin().getPluginConfig().getMessages().getCommand().getFarmWorldNotFound());
+            throw new Exception(api.getPlugin().getMessageConfig().getCommand().getFarmWorldNotFound());
         return farmWorld;
     }
 }

@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcel Haberl
+ * Copyright (c) 2022-2023 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -52,7 +52,7 @@ public class CountdownImpl implements Countdown {
 
     public CountdownImpl(FarmingWorldPlugin plugin, Player player, CountdownCallback callback) {
         this.plugin = plugin;
-        this.messages = plugin.getPluginConfig().getMessages().getCountdown();
+        this.messages = plugin.getMessageConfig().getCountdown();
         this.config = plugin.getPluginConfig().getCountdown();
         this.player = player;
         this.callback = callback;
@@ -101,7 +101,7 @@ public class CountdownImpl implements Countdown {
         if (result != CanceledException.Result.SUCCESSFUL) {
             final String message = switch (result) {
                 case MOVED -> messages.getMoved();
-                case RELOAD -> plugin.getPluginConfig().getMessages().getAdminCommand().getCountdownCanceled();
+                case RELOAD -> plugin.getMessageConfig().getAdminCommand().getCountdownCanceled();
                 default -> messages.getUnknown();
             };
             callback.error(this, new CanceledException(message, this, result));
