@@ -92,12 +92,6 @@ public interface Playable {
     Cooldown getCooldown(@NotNull Player player);
 
     /**
-     * Get the countdown which expires until the player can teleport.
-     * @return the time in seconds.
-     */
-    int getCountdown();
-
-    /**
      * Get a countdown handler for the player.
      * @param player on which the countdown is related.
      * @param callback which is to be called when the countdown has expired.

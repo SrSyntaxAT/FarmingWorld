@@ -45,7 +45,6 @@ The position at which the message is to be sent.
   {                          
     "name": "FarmWorld",                # Farm world name
     "cooldown": 1800,                   # How long the player has to wait in seconds before being allowed to teleport again. 
-    "countdown": 5,                     # How long the player has to wait before being teleported.
     "timer": 43200,                     # The time in minutes until the farm world is reset.
     "environment": "NORMAL",            # World type with which the farm world should be created.
     "border": {                         

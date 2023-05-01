@@ -54,7 +54,7 @@ public class FarmWorldImpl implements FarmWorld {
     private final String name;
     private final String permission;
 
-    private final int cooldown, countdown, timer;
+    private final int cooldown, timer;
 
     private final World.Environment environment;
     private final String generator;
@@ -71,11 +71,10 @@ public class FarmWorldImpl implements FarmWorld {
     @Getter @Setter private transient LinkedHashMap<String, Location> locations = new LinkedHashMap<>();
     @Getter private transient String oldWorldName;
 
-    public FarmWorldImpl(String name, String permission, int cooldown, int countdown, int timer, World.Environment environment, String generator, Border border, List<String> aliases) {
+    public FarmWorldImpl(String name, String permission, int cooldown, int timer, World.Environment environment, String generator, Border border, List<String> aliases) {
         this.name = name;
         this.permission = permission;
         this.cooldown = cooldown;
-        this.countdown = countdown;
         this.timer = timer;
         this.environment = environment;
         this.generator = generator;
@@ -137,11 +136,6 @@ public class FarmWorldImpl implements FarmWorld {
     @Override
     public Cooldown getCooldown(@NotNull Player player) {
         return FarmingWorldPlugin.getApi().getCooldown(player, this);
-    }
-
-    @Override
-    public int getCountdown() {
-        return countdown;
     }
 
     @Override
@@ -312,7 +306,7 @@ public class FarmWorldImpl implements FarmWorld {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FarmWorldImpl farmWorld = (FarmWorldImpl) o;
-        return cooldown == farmWorld.cooldown && countdown == farmWorld.countdown && timer == farmWorld.timer
+        return cooldown == farmWorld.cooldown && timer == farmWorld.timer
                 && active == farmWorld.active && loaded == farmWorld.loaded && enabled == farmWorld.enabled
                 && Objects.equals(name, farmWorld.name) && Objects.equals(permission, farmWorld.permission)
                 && environment == farmWorld.environment && Objects.equals(generator, farmWorld.generator)
@@ -323,7 +317,7 @@ public class FarmWorldImpl implements FarmWorld {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, permission, cooldown, countdown, timer, environment, generator, border, active, aliases, data, loaded, enabled, locations, oldWorldName);
+        return Objects.hash(name, permission, cooldown, timer, environment, generator, border, active, aliases, data, loaded, enabled, locations, oldWorldName);
     }
 
     @Override
