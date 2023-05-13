@@ -90,7 +90,7 @@ public class FarmingCommand implements CommandExecutor, TabCompleter, TabComplet
         if (data.getPlayer().equals(sender) && !data.getFarmWorld().hasPermission(sender)) {
             throw new CommandException(new Message(commandMessages.getNoPermission(), chatType));
         } else if (!data.getPlayer().equals(sender)) {
-            if (!sender.hasPermission("farmworld.teleport.other")) {
+            if (!sender.hasPermission("farmingworld.teleport.other")) {
                 throw new CommandException(new Message(commandMessages.getNoPermission(), chatType));
             } else if (!data.getFarmWorld().hasPermission(sender)) {
                 throw new CommandException(new Message(commandMessages.getNoPermissionTeleportOther(), chatType));

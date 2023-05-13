@@ -90,7 +90,7 @@ The position at which the message is to be sent.
                                         # Placeholder: %{date} & %{remaining}
   "dateFormat": "HH:mm:ss dd.MM.yyyy"   # Which pattern should be used for the date.
 },                                      # https://www.digitalocean.com/community/tutorials/java-simpledateformat-java-date-format#patterns
-"fallback": {                           # The fallback or spawn location.
+"spawn": {                              # The fallback or spawn location.
   "world": "world",
   "x": 0.0,
   "y": 78.0,
