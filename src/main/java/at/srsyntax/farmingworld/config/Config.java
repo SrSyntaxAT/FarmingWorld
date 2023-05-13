@@ -38,13 +38,13 @@ import java.util.Arrays;
 @AllArgsConstructor
 public abstract class Config {
 
-    protected transient String fileName;
+    protected abstract String getFileName();
 
     public static <T extends Config> T load(Plugin plugin, T defaultConfig, Class<T> tClass) throws IOException {
         if (!plugin.getDataFolder().exists())
             plugin.getDataFolder().mkdirs();
 
-        final File file = new File(plugin.getDataFolder(), defaultConfig.fileName);
+        final File file = new File(plugin.getDataFolder(), defaultConfig.getFileName());
         if (file.exists()) {
             return new Gson().fromJson(new FileReader(file), tClass);
         }
@@ -54,7 +54,7 @@ public abstract class Config {
     }
 
     public void save(Plugin plugin) throws IOException {
-        final File file = new File(plugin.getDataFolder(), fileName);
+        final File file = new File(plugin.getDataFolder(), getFileName());
 
         if (!plugin.getDataFolder().exists()) plugin.getDataFolder().mkdirs();
         if (!file.exists()) file.createNewFile();

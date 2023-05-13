@@ -41,7 +41,10 @@ public class JoinListener implements Listener {
     public void onPlayerJoinEvent(PlayerJoinEvent event) {
         final var config = plugin.getPluginConfig();
 
-        final var location = config.getFallback();
+        if (config.getSpawn() == null) return;
+        final var location = config.getSpawn();
+        if (location == null) return;
+
         final var player = event.getPlayer();
 
         if (config.getSpawnType() == PluginConfig.SpawnType.FORCE) {

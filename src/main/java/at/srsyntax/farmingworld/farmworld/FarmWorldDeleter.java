@@ -80,7 +80,7 @@ public class FarmWorldDeleter {
 
     private void unloadWorld(World world) {
         if (world == null) return;
-        final Location location = plugin.getPluginConfig().getFallback().toBukkit();
+        final Location location = plugin.getPluginConfig().getSpawn().toBukkit();
         world.getPlayers().forEach(player -> player.teleport(location));
         Bukkit.unloadWorld(world, true);
     }
@@ -111,7 +111,7 @@ public class FarmWorldDeleter {
         if (world == null) return;
         plugin.getLogger().info("Delete " + world.getName());
 
-        final Location fallback = plugin.getPluginConfig().getFallback().toBukkit();
+        final Location fallback = plugin.getPluginConfig().getSpawn().toBukkit();
         world.getPlayers().forEach(player -> player.teleport(fallback));
 
         Bukkit.unloadWorld(world, false);

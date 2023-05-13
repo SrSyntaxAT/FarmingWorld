@@ -45,6 +45,8 @@ import java.util.List;
 @Getter @Setter
 public class PluginConfig extends Config {
 
+    private transient final String fileName = "config.json";
+
     private String version;
     private final double refund;
     private final CountdownConfig countdown;
@@ -56,9 +58,9 @@ public class PluginConfig extends Config {
     private final boolean spawnCommandEnabled;
     private final SpawnType spawnType;
     private final ResetDisplayConfig resetDisplay;
-    private LocationCache fallback;
-    public PluginConfig( String version, double refund, CountdownConfig countdown, String defaultFarmWorld, List<FarmWorldImpl> farmWorlds, List<Material> blacklist, SignConfig sign, int locationCache, boolean spawnCommandEnabled, SpawnType spawnType, ResetDisplayConfig resetDisplay, LocationCache fallback) {
-        super("config.json");
+    private LocationCache spawn;
+
+    public PluginConfig( String version, double refund, CountdownConfig countdown, String defaultFarmWorld, List<FarmWorldImpl> farmWorlds, List<Material> blacklist, SignConfig sign, int locationCache, boolean spawnCommandEnabled, SpawnType spawnType, ResetDisplayConfig resetDisplay, LocationCache spawn) {
         this.version = version;
         this.refund = refund;
         this.countdown = countdown;
@@ -70,7 +72,7 @@ public class PluginConfig extends Config {
         this.spawnCommandEnabled = spawnCommandEnabled;
         this.spawnType = spawnType;
         this.resetDisplay = resetDisplay;
-        this.fallback = fallback;
+        this.spawn = spawn;
     }
 
     public PluginConfig(Plugin plugin, Location fallbackLocation) {

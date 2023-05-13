@@ -65,6 +65,8 @@ public class FarmingCommand implements CommandExecutor, TabCompleter, TabComplet
                 final TeleportData data = TeleportData.create(commandMessages, commandSender, strings);
                 checkPermission(sender, data);
 
+                if (!data.getFarmWorld().isActive()) throw new HandleException(messages.getCommand().getDisabled());
+
                 final var cooldown = api.getCooldown(data.getPlayer(), data.getFarmWorld());
                 final var countdown = api.getCountdown(data.getPlayer(), teleportPlayer(sender, data, cooldown));
 

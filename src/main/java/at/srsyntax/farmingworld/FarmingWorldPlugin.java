@@ -95,7 +95,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
             this.countdownRegistry = new CountdownRegistry();
             this.commandRegistry = new CommandRegistry(getName());
             if (pluginConfig.isSpawnCommandEnabled())
-                commandRegistry.register(new SpawnCommand(pluginConfig, messageConfig));
+                commandRegistry.register(new SpawnCommand(this));
             this.signRegistry = new SignRegistryImpl(getLogger(), database.getSignRepository());
             this.displayRegistry = new DisplayRegistry(this, pluginConfig.getResetDisplay());
             registerListeners(

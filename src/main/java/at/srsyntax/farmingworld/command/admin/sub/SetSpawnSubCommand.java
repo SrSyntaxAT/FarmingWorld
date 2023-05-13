@@ -3,7 +3,6 @@ package at.srsyntax.farmingworld.command.admin.sub;
 import at.srsyntax.farmingworld.APIImpl;
 import at.srsyntax.farmingworld.api.farmworld.LocationCache;
 import at.srsyntax.farmingworld.api.message.Message;
-import at.srsyntax.farmingworld.command.SpawnCommand;
 import at.srsyntax.farmingworld.command.admin.SubCommand;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import org.bukkit.command.CommandSender;
@@ -48,8 +47,7 @@ public class SetSpawnSubCommand extends SubCommand {
         try {
             final var config = api.getPlugin().getPluginConfig();
             final var location = player.getLocation();
-            config.setFallback(new LocationCache(location));
-            ((SpawnCommand) api.getPlugin().getCommandRegistry().getCommand("spawn")).setLocation(location);
+            config.setSpawn(new LocationCache(location));
             config.save(api.getPlugin());
             message = messages.getSetspawn();
         } catch (Exception exception) {

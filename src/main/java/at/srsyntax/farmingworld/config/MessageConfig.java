@@ -30,6 +30,8 @@ import net.md_5.bungee.api.ChatMessageType;
 @Getter
 public class MessageConfig extends Config {
 
+    private transient final String fileName = "messages.json";
+
     private final String notEnoughMoney;
     private final SpawnMessages spawn;
     private final CountdownMessages countdown;
@@ -39,7 +41,6 @@ public class MessageConfig extends Config {
     private final TimeMessages time;
 
     public MessageConfig(String notEnoughMoney, SpawnMessages spawn, CountdownMessages countdown, CooldownMessages cooldown, CommandMessages command, AdminCommandMessages adminCommand, TimeMessages time) {
-        super("messages.json");
         this.notEnoughMoney = notEnoughMoney;
         this.spawn = spawn;
         this.countdown = countdown;

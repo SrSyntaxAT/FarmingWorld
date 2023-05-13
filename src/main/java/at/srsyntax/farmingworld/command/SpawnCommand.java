@@ -6,8 +6,6 @@ import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
 import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.config.MessageConfig;
-import at.srsyntax.farmingworld.config.PluginConfig;
-import lombok.Setter;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -42,27 +40,24 @@ import java.util.ArrayList;
  */
 public class SpawnCommand extends Command {
 
-    @Setter private Location location;
+    private final FarmingWorldPlugin plugin;
     private final MessageConfig.SpawnMessages spawnMessages;
     private final MessageConfig.CountdownMessages countdownMessages;
 
-    public SpawnCommand(PluginConfig config, MessageConfig messageConfig) {
+    public SpawnCommand(FarmingWorldPlugin plugin) {
         super("spawn", "Teleport yourself to the spawn.", "/spawn", new ArrayList<>());
-        this.location = config.getFallback().toBukkit();
-        this.spawnMessages = messageConfig.getSpawn();
-        this.countdownMessages = messageConfig.getCountdown();
+        this.plugin = plugin;
+        this.spawnMessages = plugin.getMessageConfig().getSpawn();
+        this.countdownMessages = plugin.getMessageConfig().getCountdown();
     }
 
     @Override
     public boolean execute(@NotNull CommandSender commandSender, @NotNull String s, @NotNull String[] strings) {
         try {
             if (commandSender instanceof Player player) {
-                if (location == null) {
-                    new Message(spawnMessages.getNotFound(), ChatMessageType.SYSTEM).send(player);
-                    return false;
-                }
+                final var location = getLocation();
 
-                final var countdown = FarmingWorldPlugin.getApi().getCountdown(player, teleportPlayer(player));
+                final var countdown = FarmingWorldPlugin.getApi().getCountdown(player, teleportPlayer(player, location));
                 if (countdown.isRunning()) throw new HandleException(countdownMessages.getAlreadyStarted());
                 countdown.handle();
 
@@ -75,7 +70,19 @@ public class SpawnCommand extends Command {
         return false;
     }
 
-    private CountdownCallback teleportPlayer(Player player) {
+    private Location getLocation() throws HandleException {
+        try {
+            final var cache = plugin.getPluginConfig().getSpawn();
+            if (cache == null) throw new Exception();
+            final var location = cache.toBukkit();
+            if (location == null) throw new Exception();
+            return location;
+        } catch (Exception exception) {
+            throw new HandleException(spawnMessages.getNotFound());
+        }
+    }
+
+    private CountdownCallback teleportPlayer(Player player, Location location) {
         return new CountdownCallback() {
             @Override
             public void finished(Countdown countdown) {
