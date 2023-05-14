@@ -73,6 +73,7 @@ public class ReloadSubCommand extends SubCommand {
                 plugin.loadConfig();
                 plugin.loadFarmWorlds();
                 signRegistry.load();
+                new Message(messages.getReloadFinish()).send(sender);
             } catch (Exception exception) {
                 new Message(messages.getReloadError()).send(sender);
                 exception.printStackTrace();

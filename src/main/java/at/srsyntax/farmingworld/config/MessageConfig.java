@@ -90,6 +90,7 @@ public class MessageConfig extends Config {
                         "&fConfirm the action within &a10 seconds &fwith &e/fwa confirm&f.",
                         "&cThe confirmation request has expired or none was found for you.",
                         "&cConfigurations will be reloaded.",
+                        "&aThe configuratuion has been reloaded.",
                         "&cAn error occurred while reloading the configuration.",
                         "&cThe countdown has been stopped as the farm worlds are reloaded.",
                         "&cFarm world was deleted.",
@@ -152,7 +153,7 @@ public class MessageConfig extends Config {
         private final String setspawn, setspawnError;
         private final String noFarmWorlds, farmWorldReset;
         private final String confirm, nothingToConfirm;
-        private final String reload, reloadError, countdownCanceled;
+        private final String reload, reloadFinish, reloadError, countdownCanceled;
         private final String delete, deleteError;
         private final String disable, enable;
         private final String[] info;
