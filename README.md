@@ -15,6 +15,7 @@ You can find the v1 [here](https://github.com/SrSyntaxAT/FarmingWorld/tree/main)
 
 - [Configuration](#configuration)
 - [Permissions](#permissions)
+- [Sign](#sign)
 - [Useful links](#useful-links)
 - [License](#license)
 
@@ -108,7 +109,20 @@ The position at which the message is to be sent.
 | farmingworld.admin             | Gives the player permission for the /fwa command.                                                  |
 | farmingworld.world.*           | Allow the player to teleport in all farm worlds.                                                   |
 | farmingworld.world.{farmworld} | Allows a player to teleport to the farm world if the farm world has a restriction.                 |
-| farmworld.teleport.other       | Allow a player to teleport another player with /farming <player> or /farming <farmworld> <player>. |
+| farmingworld.teleport.other    | Allow a player to teleport another player with /farming <player> or /farming <farmworld> <player>. |
+| farmingworld.sign              | Is needed to be able to create a sign.                                                             |
+
+---
+
+## Sign
+
+You can create signs so that players are teleported to the farm world when they click on the sign.
+To be allowed to create a sign you need the permission farmingworld.sign or farmingworld.admin.
+
+<img src="img/sign_create.png" width="350" title="example to create a sign">
+<img src="img/sign_created.png" width="350" title="example of a ready created sign">
+
+If you don't want to have the sign anymore, you can simply destroy it in Creative Mode.
 
 ---
 
