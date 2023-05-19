@@ -1,20 +1,12 @@
 package at.srsyntax.farmingworld.handler.countdown;
 
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
-import at.srsyntax.farmingworld.api.event.countdown.CountdownCanceledEvent;
-import at.srsyntax.farmingworld.api.event.countdown.CountdownFinishedEvent;
-import at.srsyntax.farmingworld.api.event.countdown.CountdownStartedEvent;
 import at.srsyntax.farmingworld.api.handler.HandleException;
-import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
+import at.srsyntax.farmingworld.api.handler.countdown.AbstractCountdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
+import at.srsyntax.farmingworld.api.handler.countdown.CountdownRunnable;
 import at.srsyntax.farmingworld.api.handler.countdown.exception.AlreadyStartedException;
-import at.srsyntax.farmingworld.api.handler.countdown.exception.CanceledException;
-import at.srsyntax.farmingworld.config.MessageConfig;
-import at.srsyntax.farmingworld.config.PluginConfig;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
-import org.jetbrains.annotations.NotNull;
 
 /*
  * MIT License
@@ -39,80 +31,29 @@ import org.jetbrains.annotations.NotNull;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class CountdownImpl implements Countdown {
-
-    private final FarmingWorldPlugin plugin;
-    private final MessageConfig.CountdownMessages messages;
-    private final PluginConfig.CountdownConfig config;
-
-    private final Player player;
-    private final CountdownCallback callback;
-
-    private BukkitTask task;
+public class CountdownImpl extends AbstractCountdown {
 
     public CountdownImpl(FarmingWorldPlugin plugin, Player player, CountdownCallback callback) {
-        this.plugin = plugin;
-        this.messages = plugin.getMessageConfig().getCountdown();
-        this.config = plugin.getPluginConfig().getCountdown();
-        this.player = player;
-        this.callback = callback;
+        super(plugin, player, callback);
     }
 
     @Override
-    public boolean canBypass() {
+    public boolean canBypass() { // TODO: 19.05.2023
         return player.hasPermission("farmingworld.bypass.countdown") || player.hasPermission("farmingworld.bypass.*");
     }
 
     @Override
     public void handle() throws HandleException {
-        final CountdownRegistry registry = plugin.getCountdownRegistry();
         if (isRunning())
-            throw new AlreadyStartedException(messages.getAlreadyStarted(), this);
+            throw new AlreadyStartedException(plugin.getMessageConfig().getCountdown().getAlreadyStarted(), this);
 
-        if (canBypass()) {
-            callback.finished(this);
-        } else {
-            registry.register(this);
-            final Runnable runnable = new CountdownRunnable(messages, this, config);
-            task = Bukkit.getScheduler().runTaskTimer(plugin, runnable, 0L, 20L);
-            Bukkit.getPluginManager().callEvent(new CountdownStartedEvent(this));
-        }
+        super.handle();
     }
 
     @Override
-    public Player getPlayer() {
-        return player;
-    }
-
-    @Override
-    public void finish() {
-        if (!isRunning()) return;
-        cancel(false, CanceledException.Result.SUCCESSFUL);
-        callback.finished(this);
-        Bukkit.getPluginManager().callEvent(new CountdownFinishedEvent(this));
-    }
-
-    @Override
-    public void cancel(boolean event, CanceledException.@NotNull Result result) {
-        if (!isRunning()) return;
-        task.cancel();
-        plugin.getCountdownRegistry().unregister(player);
-
-        if (result != CanceledException.Result.SUCCESSFUL) {
-            final String message = switch (result) {
-                case MOVED -> messages.getMoved();
-                case RELOAD -> plugin.getMessageConfig().getAdminCommand().getCountdownCanceled();
-                default -> messages.getUnknown();
-            };
-            callback.error(this, new CanceledException(message, this, result));
-        }
-
-        if (event)
-            Bukkit.getPluginManager().callEvent(new CountdownCanceledEvent(this, result));
-    }
-
-    @Override
-    public boolean isRunning() {
-        return task != null && !task.isCancelled();
+    protected CountdownRunnable createRunnable() {
+        final var messages = plugin.getMessageConfig().getCountdown().toCountdownMessage();
+        final var config = plugin.getPluginConfig().getCountdown();
+        return new CountdownRunnableImpl(plugin, messages, this, config);
     }
 }

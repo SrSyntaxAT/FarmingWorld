@@ -1,5 +1,6 @@
 package at.srsyntax.farmingworld.config;
 
+import at.srsyntax.farmingworld.api.handler.countdown.CountdownMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatMessageType;
@@ -59,10 +60,11 @@ public class MessageConfig extends Config {
                         "&aYou have been teleported to the spawn."
                 ),
                 new MessageConfig.CountdownMessages(
+                        ChatMessageType.ACTION_BAR,
                         "&cA countdown is already running.",
                         "&cThe countdown was interrupted because you moved.",
                         "&cThe countdown was canceled for an unknown reason.",
-                        "&7You will be teleported in &e%s &7seconds."
+                        "&7You will be teleported in &e%v &7seconds."
                 ),
                 new MessageConfig.CooldownMessages(
                         "&cYou may use the command in &e%{remaining}&7."
@@ -126,8 +128,13 @@ public class MessageConfig extends Config {
     @AllArgsConstructor
     @Getter
     public static class CountdownMessages {
+        private final ChatMessageType messageType;
         private final String alreadyStarted, moved, unknown;
         private final String message;
+
+        public CountdownMessage toCountdownMessage() {
+            return new CountdownMessage(messageType, message);
+        }
     }
 
     @AllArgsConstructor

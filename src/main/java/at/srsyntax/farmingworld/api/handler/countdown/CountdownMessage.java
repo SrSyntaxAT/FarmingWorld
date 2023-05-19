@@ -1,10 +1,6 @@
-package at.srsyntax.farmingworld.handler.countdown;
+package at.srsyntax.farmingworld.api.handler.countdown;
 
-import at.srsyntax.farmingworld.api.handler.countdown.exception.CanceledException;
-import lombok.AllArgsConstructor;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
+import net.md_5.bungee.api.ChatMessageType;
 
 /*
  * MIT License
@@ -29,14 +25,5 @@ import org.bukkit.event.player.PlayerQuitEvent;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-public class CountdownListener implements Listener {
-
-    private final CountdownRegistry registry;
-
-    @EventHandler
-    public void onPlayerQuitEvent(PlayerQuitEvent event) {
-        if (!registry.hasCountdown(event.getPlayer())) return;
-        registry.getCountdown(event.getPlayer()).cancel(true, null, CanceledException.Result.QUIT);
-    }
+public record CountdownMessage(ChatMessageType messageType, String message) {
 }

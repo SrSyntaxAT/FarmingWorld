@@ -1,10 +1,7 @@
-package at.srsyntax.farmingworld.handler.countdown;
+package at.srsyntax.farmingworld.api.handler.countdown;
 
 import at.srsyntax.farmingworld.api.handler.countdown.exception.CanceledException;
-import lombok.AllArgsConstructor;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
+import at.srsyntax.farmingworld.api.message.Message;
 
 /*
  * MIT License
@@ -29,14 +26,36 @@ import org.bukkit.event.player.PlayerQuitEvent;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-public class CountdownListener implements Listener {
+public class CountdownRunnable implements Runnable {
 
-    private final CountdownRegistry registry;
+    private final CountdownMessage messages;
+    protected final Countdown countdown;
 
-    @EventHandler
-    public void onPlayerQuitEvent(PlayerQuitEvent event) {
-        if (!registry.hasCountdown(event.getPlayer())) return;
-        registry.getCountdown(event.getPlayer()).cancel(true, null, CanceledException.Result.QUIT);
+    protected int time;
+
+    public CountdownRunnable(CountdownMessage messages, Countdown countdown, int time) {
+        this.messages = messages;
+        this.countdown = countdown;
+        this.time = time;
     }
+
+    @Override
+    public void run() {
+        try {
+            check();
+
+            if (time != 0) {
+                new Message(messages.message(), messages.messageType())
+                        .replace("%v", time)
+                        .send(countdown.getPlayer());
+                time--;
+            } else {
+                countdown.finish();
+            }
+        } catch (CanceledException exception) {
+            countdown.cancel(true, exception.getMessage(), exception.getResult());
+        }
+    }
+
+    public void check() throws CanceledException {}
 }

@@ -1,12 +1,13 @@
 package at.srsyntax.farmingworld.api.handler.countdown.exception;
 
+import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import org.jetbrains.annotations.NotNull;
 
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcel Haberl
+ * Copyright (c) 2022-2023 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,6 +38,20 @@ public class CanceledException extends CountdownException {
     public CanceledException(@NotNull String message, @NotNull Countdown countdown, @NotNull Result result) {
         super(message, countdown);
         this.result = result;
+    }
+
+    public CanceledException(@NotNull String message, @NotNull Countdown countdown) {
+        super(message, countdown);
+        this.result = Result.UNKNOWN;
+    }
+
+    public static String getMessageByResult(Result result, FarmingWorldPlugin plugin) {
+        final var countdownMessages = plugin.getMessageConfig().getCountdown();
+        return switch (result) {
+            case MOVED -> countdownMessages.getMoved();
+            case RELOAD -> plugin.getMessageConfig().getAdminCommand().getCountdownCanceled();
+            default -> countdownMessages.getUnknown();
+        };
     }
 
     /**

@@ -3,11 +3,12 @@ package at.srsyntax.farmingworld.api.handler.countdown;
 import at.srsyntax.farmingworld.api.handler.Handler;
 import at.srsyntax.farmingworld.api.handler.countdown.exception.CanceledException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcel Haberl
+ * Copyright (c) 2022-2023 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,11 +43,12 @@ public interface Countdown extends Handler {
     /**
      * Interrupt the countdown.
      * @param event - Should the CountdownCanceledEvent be fired?
+     * @param message Which one should be sent.
      * @param result - The reason why the interrupted.
      * @see at.srsyntax.farmingworld.api.event.countdown.CountdownCanceledEvent
      * @see CanceledException
      */
-    void cancel(boolean event, @NotNull CanceledException.Result result);
+    void cancel(boolean event, @Nullable String message, @NotNull CanceledException.Result result);
 
     /**
      * Returns whether the countdown is currently running.

@@ -85,7 +85,8 @@ public class ReloadSubCommand extends SubCommand {
         Bukkit.getOnlinePlayers().forEach(player -> {
             if (countdownRegistry.hasCountdown(player)) {
                 final var handler = countdownRegistry.getCountdown(player);
-                handler.cancel(true, CanceledException.Result.RELOAD);
+                final var message = CanceledException.getMessageByResult(CanceledException.Result.RELOAD, api.getPlugin());
+                handler.cancel(true, message, CanceledException.Result.RELOAD);
             }
         });
 
