@@ -48,7 +48,7 @@ public class EconomyImpl implements Economy {
 
     @Override
     public boolean canBypass() {
-        return player.hasPermission("farmingworld.bypass.countdown") || player.hasPermission("farmingworld.bypass.*");
+        return player.hasPermission("farmingworld.bypass.economy") || player.hasPermission("farmingworld.bypass.*");
     }
 
     @Override
