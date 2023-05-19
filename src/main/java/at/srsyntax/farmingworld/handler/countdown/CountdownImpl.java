@@ -38,7 +38,7 @@ public class CountdownImpl extends AbstractCountdown {
     }
 
     @Override
-    public boolean canBypass() { // TODO: 19.05.2023
+    public boolean canBypass() {
         return player.hasPermission("farmingworld.bypass.countdown") || player.hasPermission("farmingworld.bypass.*");
     }
 

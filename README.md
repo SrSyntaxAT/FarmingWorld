@@ -111,7 +111,10 @@ The position at which the message is to be sent.
 | farmingworld.world.{farmworld} | Allows a player to teleport to the farm world if the farm world has a restriction.                 |
 | farmingworld.teleport.other    | Allow a player to teleport another player with /farming <player> or /farming <farmworld> <player>. |
 | farmingworld.sign              | Is needed to be able to create a sign.                                                             |
-
+| farmingworld.bypass.*          | Allows the player to teleport without cooldown or countdown.                                       |
+| farmingworld.bypass.countdown  | Allows the player to teleport without countdown.                                                   |
+| farmingworld.bypass.cooldown   | Allows the player to teleport without cooldown.                                                    |
+Erlaubt es den Spieler ohne Cooldown oder Countdown sich zu teleportieren.
 ---
 
 ## Sign
