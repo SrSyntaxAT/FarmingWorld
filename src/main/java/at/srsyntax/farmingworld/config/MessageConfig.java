@@ -40,8 +40,9 @@ public class MessageConfig extends Config {
     private final CommandMessages command;
     private final AdminCommandMessages adminCommand;
     private final TimeMessages time;
+    private final SafeTeleportMessages safeTeleport;
 
-    public MessageConfig(String notEnoughMoney, SpawnMessages spawn, CountdownMessages countdown, CooldownMessages cooldown, CommandMessages command, AdminCommandMessages adminCommand, TimeMessages time) {
+    public MessageConfig(String notEnoughMoney, SpawnMessages spawn, CountdownMessages countdown, CooldownMessages cooldown, CommandMessages command, AdminCommandMessages adminCommand, TimeMessages time, SafeTeleportMessages safeTeleport) {
         this.notEnoughMoney = notEnoughMoney;
         this.spawn = spawn;
         this.countdown = countdown;
@@ -49,6 +50,7 @@ public class MessageConfig extends Config {
         this.command = command;
         this.adminCommand = adminCommand;
         this.time = time;
+        this.safeTeleport = safeTeleport;
     }
 
     public MessageConfig() {
@@ -120,6 +122,11 @@ public class MessageConfig extends Config {
                         "minute", "minutes",
                         "hour", "hours",
                         "day", "days"
+                ),
+                new SafeTeleportMessages(
+                        ChatMessageType.ACTION_BAR,
+                        "&aYou are invulnerable for &e%v &aseconds.",
+                        "&4You are vulnerable from now on!"
                 )
         );
     }
@@ -181,7 +188,14 @@ public class MessageConfig extends Config {
     @AllArgsConstructor
     @Getter
     public static class SpawnMessages {
-        private final ChatMessageType chatType;
+        private final ChatMessageType messageType;
         private final String notFound, teleported;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class SafeTeleportMessages {
+        private final ChatMessageType messageType;
+        private final String countdown, finish;
     }
 }

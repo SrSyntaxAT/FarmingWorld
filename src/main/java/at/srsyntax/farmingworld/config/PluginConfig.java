@@ -59,8 +59,9 @@ public class PluginConfig extends Config {
     private final SpawnType spawnType;
     private final ResetDisplayConfig resetDisplay;
     private LocationCache spawn;
+    private final SafeTeleportConfig safeTeleport;
 
-    public PluginConfig( String version, double refund, CountdownConfig countdown, String defaultFarmWorld, List<FarmWorldImpl> farmWorlds, List<Material> blacklist, SignConfig sign, int locationCache, boolean spawnCommandEnabled, SpawnType spawnType, ResetDisplayConfig resetDisplay, LocationCache spawn) {
+    public PluginConfig(String version, double refund, CountdownConfig countdown, String defaultFarmWorld, List<FarmWorldImpl> farmWorlds, List<Material> blacklist, SignConfig sign, int locationCache, boolean spawnCommandEnabled, SpawnType spawnType, ResetDisplayConfig resetDisplay, LocationCache spawn, SafeTeleportConfig safeTeleport) {
         this.version = version;
         this.refund = refund;
         this.countdown = countdown;
@@ -73,6 +74,7 @@ public class PluginConfig extends Config {
         this.spawnType = spawnType;
         this.resetDisplay = resetDisplay;
         this.spawn = spawn;
+        this.safeTeleport = safeTeleport;
     }
 
     public PluginConfig(Plugin plugin, Location fallbackLocation) {
@@ -124,7 +126,8 @@ public class PluginConfig extends Config {
                         "&cReset:&e %{date}",
                         "HH:mm:ss dd.MM.yyyy"
                 ),
-                new LocationCache(fallbackLocation)
+                new LocationCache(fallbackLocation),
+                new SafeTeleportConfig(true, false, 15)
         );
     }
 
@@ -162,5 +165,12 @@ public class PluginConfig extends Config {
 
     public enum SpawnType {
         FORCE, FIRST, NONE
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class SafeTeleportConfig {
+        private final boolean enabled, canDamagePlayers;
+        private final int time;
     }
 }

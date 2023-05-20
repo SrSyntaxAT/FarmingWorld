@@ -87,12 +87,12 @@ public class SpawnCommand extends Command {
             @Override
             public void finished(Countdown countdown) {
                 player.teleport(location);
-                new Message(spawnMessages.getTeleported(), spawnMessages.getChatType()).send(player);
+                new Message(spawnMessages.getTeleported(), spawnMessages.getMessageType()).send(player);
             }
 
             @Override
             public void error(Countdown countdown, Throwable throwable) {
-                new Message(throwable.getMessage(), spawnMessages.getChatType()).send(player);
+                new Message(throwable.getMessage(), spawnMessages.getMessageType()).send(player);
             }
         };
     }

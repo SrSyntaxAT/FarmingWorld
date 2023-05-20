@@ -18,6 +18,7 @@ import at.srsyntax.farmingworld.farmworld.sign.SignListeners;
 import at.srsyntax.farmingworld.farmworld.sign.SignRegistryImpl;
 import at.srsyntax.farmingworld.handler.countdown.CountdownListener;
 import at.srsyntax.farmingworld.handler.countdown.CountdownRegistry;
+import at.srsyntax.farmingworld.safeteleport.SafeTeleportRegistry;
 import at.srsyntax.farmingworld.util.CommandRegistry;
 import at.srsyntax.farmingworld.util.FileUtil;
 import at.srsyntax.farmingworld.util.JoinListener;
@@ -73,6 +74,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
     @Getter private CommandRegistry commandRegistry;
     @Getter private SignRegistryImpl signRegistry;
     @Getter private DisplayRegistry displayRegistry;
+    @Getter private SafeTeleportRegistry safeTeleportRegistry;
 
     @Override
     public void onLoad() {
@@ -98,6 +100,8 @@ public class FarmingWorldPlugin extends JavaPlugin {
                 commandRegistry.register(new SpawnCommand(this));
             this.signRegistry = new SignRegistryImpl(getLogger(), database.getSignRepository());
             this.displayRegistry = new DisplayRegistry(this, pluginConfig.getResetDisplay());
+            if (pluginConfig.getSafeTeleport().isEnabled())
+                this.safeTeleportRegistry = new SafeTeleportRegistry(this);
             registerListeners(
                     new CountdownListener(countdownRegistry),
                     new PlayerEventListeners(),

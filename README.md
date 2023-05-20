@@ -30,6 +30,7 @@ The position at which the message is to be sent.
 <br> ACTION_BAR - The message is displayed above the health and armor bar.
 
 ```
+{
 "version": "2.0",                       # This value should not be changed.
 "refund": 1.0,                          # What percentage the user will be refunded 
                                         # if they purchase a teleport to a farm world, 
@@ -98,6 +99,12 @@ The position at which the message is to be sent.
   "z": 0.0,
   "pitch": 0.0,
   "yaw": 0.0
+},
+"safeTeleport": {
+  "enabled": true,                      # Whether safe teleport should be enabled.
+  "canDamagePlayers": false,            # Whether a protected player can harm another player.
+  "time": 30                            # The time in seconds that a player is protected.
+}
 }
 ```
 ---
@@ -115,6 +122,7 @@ The position at which the message is to be sent.
 | farmingworld.bypass.countdown  | Allows the player to teleport without countdown.                                                   |
 | farmingworld.bypass.cooldown   | Allows the player to teleport without cooldown.                                                    |
 | farmingworld.bypass.economy    | Allows the player to teleport without cost.                                                        |
+| farmingworld.safeteleport      | The player is invulnerable for a certain time after teleporting to a farm world.                   |
 
 ---
 

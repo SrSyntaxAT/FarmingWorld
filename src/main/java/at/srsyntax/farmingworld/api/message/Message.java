@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /*
  * MIT License
  *
- * Copyright (c) 2022 Marcel Haberl
+ * Copyright (c) 2022-2023 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -89,10 +89,12 @@ public class Message {
     public void send(CommandSender... senders) {
         final TextComponent component = new TextComponent(toString());
         for (CommandSender sender : senders) {
-            if (sender instanceof Player player)
+            if (sender instanceof Player player) {
+                if (!player.isOnline()) continue;
                 player.spigot().sendMessage(type, component);
-            else
+            } else {
                 sender.spigot().sendMessage(component);
+            }
         }
     }
 

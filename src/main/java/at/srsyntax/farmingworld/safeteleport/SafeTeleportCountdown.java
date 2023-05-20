@@ -1,11 +1,12 @@
-package at.srsyntax.farmingworld.handler.countdown;
+package at.srsyntax.farmingworld.safeteleport;
 
-import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
-import at.srsyntax.farmingworld.safeteleport.SafeTeleportCountdown;
+import at.srsyntax.farmingworld.FarmingWorldPlugin;
+import at.srsyntax.farmingworld.api.handler.countdown.AbstractCountdown;
+import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
+import at.srsyntax.farmingworld.api.handler.countdown.CountdownMessage;
+import at.srsyntax.farmingworld.api.handler.countdown.CountdownRunnable;
+import at.srsyntax.farmingworld.config.MessageConfig;
 import org.bukkit.entity.Player;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /*
  * MIT License
@@ -30,24 +31,23 @@ import java.util.concurrent.ConcurrentHashMap;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class CountdownRegistry {
+public class SafeTeleportCountdown extends AbstractCountdown {
 
-    private final Map<Player, Countdown> countdowns = new ConcurrentHashMap<>();
+    private final MessageConfig.SafeTeleportMessages messages;
 
-    public void register(Countdown countdown) {
-        if (countdown instanceof SafeTeleportCountdown) return;
-        countdowns.put(countdown.getPlayer(), countdown);
+    public SafeTeleportCountdown(FarmingWorldPlugin plugin, Player player, CountdownCallback callback) {
+        super(plugin, player, callback);
+        this.messages = plugin.getMessageConfig().getSafeTeleport();
     }
 
-    public void unregister(Player player) {
-        countdowns.remove(player);
+    @Override
+    public boolean canBypass() {
+        return false;
     }
 
-    public Countdown getCountdown(Player player) {
-        return countdowns.get(player);
-    }
-
-    public boolean hasCountdown(Player player) {
-        return countdowns.containsKey(player);
+    @Override
+    protected CountdownRunnable createRunnable() {
+        final var countdownMessage = new CountdownMessage(messages.getMessageType(), messages.getCountdown());
+        return new CountdownRunnable(countdownMessage, this, plugin.getPluginConfig().getSafeTeleport().getTime());
     }
 }
