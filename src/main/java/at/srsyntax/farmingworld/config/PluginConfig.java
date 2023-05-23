@@ -60,8 +60,9 @@ public class PluginConfig extends Config {
     private final ResetDisplayConfig resetDisplay;
     private LocationCache spawn;
     private final SafeTeleportConfig safeTeleport;
+    private final int chunkDeletePeriod;
 
-    public PluginConfig(String version, double refund, CountdownConfig countdown, String defaultFarmWorld, List<FarmWorldImpl> farmWorlds, List<Material> blacklist, SignConfig sign, int locationCache, boolean spawnCommandEnabled, SpawnType spawnType, ResetDisplayConfig resetDisplay, LocationCache spawn, SafeTeleportConfig safeTeleport) {
+    public PluginConfig(String version, double refund, CountdownConfig countdown, String defaultFarmWorld, List<FarmWorldImpl> farmWorlds, List<Material> blacklist, SignConfig sign, int locationCache, boolean spawnCommandEnabled, SpawnType spawnType, ResetDisplayConfig resetDisplay, LocationCache spawn, SafeTeleportConfig safeTeleport, int chunkDeletePeriod) {
         this.version = version;
         this.refund = refund;
         this.countdown = countdown;
@@ -75,6 +76,7 @@ public class PluginConfig extends Config {
         this.resetDisplay = resetDisplay;
         this.spawn = spawn;
         this.safeTeleport = safeTeleport;
+        this.chunkDeletePeriod = chunkDeletePeriod;
     }
 
     public PluginConfig(Plugin plugin, Location fallbackLocation) {
@@ -127,7 +129,8 @@ public class PluginConfig extends Config {
                         "HH:mm:ss dd.MM.yyyy"
                 ),
                 new LocationCache(fallbackLocation),
-                new SafeTeleportConfig(true, false, 15)
+                new SafeTeleportConfig(true, false, 15),
+                336
         );
     }
 

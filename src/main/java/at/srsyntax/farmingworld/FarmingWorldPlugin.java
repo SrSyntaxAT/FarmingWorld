@@ -19,10 +19,7 @@ import at.srsyntax.farmingworld.farmworld.sign.SignRegistryImpl;
 import at.srsyntax.farmingworld.handler.countdown.CountdownListener;
 import at.srsyntax.farmingworld.handler.countdown.CountdownRegistry;
 import at.srsyntax.farmingworld.safeteleport.SafeTeleportRegistry;
-import at.srsyntax.farmingworld.util.CommandRegistry;
-import at.srsyntax.farmingworld.util.FileUtil;
-import at.srsyntax.farmingworld.util.JoinListener;
-import at.srsyntax.farmingworld.util.SpigotVersionCheck;
+import at.srsyntax.farmingworld.util.*;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -36,6 +33,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 /*
  * MIT License
@@ -129,6 +127,11 @@ public class FarmingWorldPlugin extends JavaPlugin {
         pluginConfig.getFarmWorlds().forEach(farmWorld -> new FarmWorldLoader(this, farmWorld).load());
         checkFarmWorlds();
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new FarmWorldScheduler(api, this), 120L, 1200L);
+
+        if (pluginConfig.getChunkDeletePeriod() <= 0) return;
+        final long period = TimeUnit.HOURS.toSeconds(pluginConfig.getChunkDeletePeriod()) * 20;
+        final var chunkDeleterRunnable = new ChunkDeleterRunnable(api, pluginConfig.getChunkDeletePeriod());
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, chunkDeleterRunnable, 30L, period);
     }
 
     private void checkFarmWorlds() {
