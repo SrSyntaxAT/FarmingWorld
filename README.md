@@ -104,7 +104,8 @@ The position at which the message is to be sent.
   "enabled": true,                      # Whether safe teleport should be enabled.
   "canDamagePlayers": false,            # Whether a protected player can harm another player.
   "time": 30                            # The time in seconds that a player is protected.
-}
+},
+"chunkDeletePeriod": 336                # Time in hours when an unused chunk should be deleted. 0 = deletion disabled
 }
 ```
 ---
