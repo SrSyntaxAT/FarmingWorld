@@ -12,7 +12,6 @@ The folders of the farm worlds should be deleted before starting.
 
 ## Contents
 
-- [To-Dos](#to-dos)
 - [Configuration](#configuration)
 - [Permissions](#permissions)
 - [Sign](#sign)
