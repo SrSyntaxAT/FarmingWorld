@@ -4,10 +4,9 @@ You can create and manage multiple farm worlds that will be automatically delete
 
 ---
 
-The v2 is currently under development. <br>
-The new version will include more features, performance improvements and more. <br>
-Wishes or other suggestions for improvement can be submitted at any time. <br> <br>
-You can find the v1 [here](https://github.com/SrSyntaxAT/FarmingWorld/tree/main).
+## Notice
+The v2 is not compatible with the v1 and therefore the configuration must be recreated.
+The folders of the farm worlds should be deleted before starting.
 
 ---
 
