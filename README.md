@@ -21,14 +21,6 @@ The folders of the farm worlds should be deleted before starting.
 
 ---
 
-## To-Dos
-
-If you have any suggestions, feel free to contact me via Discord or issue.
-
-* Portals
-
----
-
 ## Configuration
 
 #### messageType
