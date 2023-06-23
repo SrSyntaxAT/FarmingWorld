@@ -12,11 +12,20 @@ The folders of the farm worlds should be deleted before starting.
 
 ## Contents
 
+- [To-Dos](#to-dos)
 - [Configuration](#configuration)
 - [Permissions](#permissions)
 - [Sign](#sign)
 - [Useful links](#useful-links)
 - [License](#license)
+
+---
+
+## To-Dos
+
+If you have any suggestions, feel free to contact me via Discord or issue.
+
+* Portals
 
 ---
 
@@ -45,9 +54,11 @@ The position at which the message is to be sent.
 "farmWorlds": [                         # A list of all farm worlds.
   {                          
     "name": "FarmWorld",                # Farm world name
+    "permission": null,                 # Permission needed to teleport to the farm world.
     "cooldown": 1800,                   # How long the player has to wait in seconds before being allowed to teleport again. 
     "timer": 43200,                     # The time in minutes until the farm world is reset.
     "environment": "NORMAL",            # World type with which the farm world should be created.
+    "generator": null,                  # Which generator to use to generate the world.
     "border": {                         
       "size": 10000,                    
       "centerX": 0,                     
