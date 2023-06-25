@@ -76,4 +76,8 @@ public interface FarmWorld extends WorldOwner, Playable, LocationCacher, SignOwn
      */
     List<String> getAliases();
 
+
+    // TODO: 25.06.2023 Add JDocs
+    double getPrice();
+
 }

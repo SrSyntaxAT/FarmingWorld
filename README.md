@@ -5,8 +5,9 @@ You can create and manage multiple farm worlds that will be automatically delete
 ---
 
 ## Notice
-The v2 is not compatible with the v1 and therefore the configuration must be recreated.
-The folders of the farm worlds should be deleted before starting.
+The v2 is not compatible with the v1.
+When upgrading, the plugin must be completely deleted beforehand.
+Plugins that use the API must be rewritten to the new API version beforehand.
 
 ---
 
@@ -48,6 +49,7 @@ The position at which the message is to be sent.
     "permission": null,                 # Permission needed to teleport to the farm world.
     "cooldown": 1800,                   # How long the player has to wait in seconds before being allowed to teleport again. 
     "timer": 43200,                     # The time in minutes until the farm world is reset.
+    "price": 0,                         # Money needed to teleport to the farm world.
     "environment": "NORMAL",            # World type with which the farm world should be created.
     "generator": null,                  # Which generator to use to generate the world.
     "border": {                         

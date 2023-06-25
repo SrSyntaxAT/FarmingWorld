@@ -5,6 +5,7 @@ import at.srsyntax.farmingworld.api.handler.HandleException;
 import at.srsyntax.farmingworld.api.handler.cooldown.Cooldown;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
+import at.srsyntax.farmingworld.api.handler.economy.Economy;
 import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.command.TabCompleterFilter;
 import at.srsyntax.farmingworld.config.MessageConfig;
@@ -60,6 +61,7 @@ public class FarmingCommand implements CommandExecutor, TabCompleter, TabComplet
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (commandSender instanceof Player sender) {
+            Economy economy = null;
 
             try {
                 final TeleportData data = TeleportData.create(commandMessages, commandSender, strings);
@@ -67,22 +69,31 @@ public class FarmingCommand implements CommandExecutor, TabCompleter, TabComplet
 
                 if (!data.getFarmWorld().isActive()) throw new HandleException(messages.getCommand().getDisabled());
 
+                economy = api.createEconomy(data.getFarmWorld(), data.getPlayer());
                 final var cooldown = api.getCooldown(data.getPlayer(), data.getFarmWorld());
                 final var countdown = api.getCountdown(data.getPlayer(), teleportPlayer(sender, data, cooldown));
 
                 if (countdown.isRunning()) throw new HandleException(messages.getCountdown().getAlreadyStarted());
+                economy.handle();
                 cooldown.handle();
                 countdown.handle();
 
                 return true;
             } catch (CommandException exception) {
                 exception.getMessages().send(sender);
+                refund(economy);
             } catch (HandleException exception) {
                 new Message(exception.getMessage(), ChatMessageType.SYSTEM)
                         .send(commandSender);
+                refund(economy);
             }
         }
         return false;
+    }
+
+    private void refund(Economy economy) {
+        if (economy == null) return;
+        economy.refund();
     }
 
     private void checkPermission(Player sender, TeleportData data) throws CommandException {
