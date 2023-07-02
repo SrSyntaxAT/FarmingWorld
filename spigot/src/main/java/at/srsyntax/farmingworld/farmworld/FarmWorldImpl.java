@@ -55,7 +55,7 @@ public class FarmWorldImpl implements FarmWorld {
     private final String permission;
 
     private final int cooldown, timer;
-    private final double price; // TODO: 25.06.2023 Add README
+    private final double price;
 
     private final World.Environment environment;
     private final String generator;

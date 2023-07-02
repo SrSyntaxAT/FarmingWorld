@@ -61,8 +61,9 @@ public class PluginConfig extends Config {
     private LocationCache spawn;
     private final SafeTeleportConfig safeTeleport;
     private final int chunkDeletePeriod;
+    private final TicketConfig ticket;
 
-    public PluginConfig(String version, double refund, CountdownConfig countdown, String defaultFarmWorld, List<FarmWorldImpl> farmWorlds, List<Material> blacklist, SignConfig sign, int locationCache, boolean spawnCommandEnabled, SpawnType spawnType, ResetDisplayConfig resetDisplay, LocationCache spawn, SafeTeleportConfig safeTeleport, int chunkDeletePeriod) {
+    public PluginConfig(String version, double refund, CountdownConfig countdown, String defaultFarmWorld, List<FarmWorldImpl> farmWorlds, List<Material> blacklist, SignConfig sign, int locationCache, boolean spawnCommandEnabled, SpawnType spawnType, ResetDisplayConfig resetDisplay, LocationCache spawn, SafeTeleportConfig safeTeleport, int chunkDeletePeriod, TicketConfig ticket) {
         this.version = version;
         this.refund = refund;
         this.countdown = countdown;
@@ -77,6 +78,7 @@ public class PluginConfig extends Config {
         this.spawn = spawn;
         this.safeTeleport = safeTeleport;
         this.chunkDeletePeriod = chunkDeletePeriod;
+        this.ticket = ticket;
     }
 
     public PluginConfig(Plugin plugin, Location fallbackLocation) {
@@ -94,7 +96,7 @@ public class PluginConfig extends Config {
                         new FarmWorldImpl(
                                 "FarmWorld", 
                                 null,
-                                1800, 43_200,
+                                1800, 43_200, 0,
                                 World.Environment.NORMAL, null,
                                 new Border(10000, 0, 0),
                                 Collections.singletonList("FarmWorld")
@@ -130,7 +132,8 @@ public class PluginConfig extends Config {
                 ),
                 new LocationCache(fallbackLocation),
                 new SafeTeleportConfig(true, false, 15),
-                336
+                336,
+                new TicketConfig("HH:mm:ss dd.MM.yyyy", "&6&lTeleport Ticket", Material.PAPER, true)
         );
     }
 
@@ -175,5 +178,13 @@ public class PluginConfig extends Config {
     public static class SafeTeleportConfig {
         private final boolean enabled, canDamagePlayers;
         private final int time;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class TicketConfig {
+        private final String dateFormat, name;
+        private final Material material;
+        private final boolean teleportInstantly;
     }
 }

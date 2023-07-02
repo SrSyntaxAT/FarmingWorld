@@ -8,6 +8,7 @@ import at.srsyntax.farmingworld.api.handler.cooldown.Cooldown;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
 import at.srsyntax.farmingworld.api.handler.economy.Economy;
+import at.srsyntax.farmingworld.api.ticket.Ticket;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -165,9 +166,9 @@ public interface API {
      */
     @NotNull LocationRandomizer createLocationRandomizer(FarmWorld farmWorld);
 
-    // TODO: 25.06.2023 Add JDoc
     @NotNull SignRegistry getSignRegistry();
 
-    // TODO: 25.06.2023 Add JDocs
     @NotNull Economy createEconomy(FarmWorld farmWorld, Player player);
+
+    @NotNull Ticket createTicket(FarmWorld farmWorld);
 }
