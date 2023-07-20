@@ -19,6 +19,7 @@ import at.srsyntax.farmingworld.farmworld.sign.SignRegistryImpl;
 import at.srsyntax.farmingworld.handler.countdown.CountdownListener;
 import at.srsyntax.farmingworld.handler.countdown.FarmWorldCountdownRegistry;
 import at.srsyntax.farmingworld.safeteleport.SafeTeleportRegistryImpl;
+import at.srsyntax.farmingworld.ticket.TicketListener;
 import at.srsyntax.farmingworld.util.*;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
@@ -106,6 +107,8 @@ public class FarmingWorldPlugin extends JavaPlugin {
                     new SignListeners(signRegistry, messageConfig.getCommand()),
                     new JoinListener(this)
             );
+            if (pluginConfig.getTicket().isEnabled())
+                registerListeners(new TicketListener(pluginConfig.getTicket()));
 
             loadFarmWorlds();
 

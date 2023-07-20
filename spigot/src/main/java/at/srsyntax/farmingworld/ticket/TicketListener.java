@@ -1,11 +1,11 @@
 package at.srsyntax.farmingworld.ticket;
 
+import at.srsyntax.farmingworld.config.PluginConfig;
 import lombok.AllArgsConstructor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-
 /*
  * MIT License
  *
@@ -32,17 +32,18 @@ import org.bukkit.event.player.PlayerInteractEvent;
 @AllArgsConstructor
 public class TicketListener implements Listener {
 
+    private final PluginConfig.TicketConfig config;
+
     @EventHandler
     public void onPlayerInteractEvent(PlayerInteractEvent event) {
         try {
-            if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) return;
             final var item = event.getItem();
             final var action = event.getAction();
             if (item == null || action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) return;
             final var player = event.getPlayer();
-            final var ticket = new TeleportTicket(item);
-            ticket.teleport(player);
+            final var ticket = new TeleportTicket(item, config);
             player.getInventory().remove(item);
+            ticket.teleport(player);
         } catch (Exception ignored) {}
     }
 }

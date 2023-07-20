@@ -166,6 +166,6 @@ public class APIImpl implements API {
 
     @Override
     public @NotNull Ticket createTicket(FarmWorld farmWorld) {
-        return new TeleportTicket((FarmWorldImpl) farmWorld);
+        return new TeleportTicket((FarmWorldImpl) farmWorld, plugin.getPluginConfig().getTicket());
     }
 }

@@ -133,7 +133,7 @@ public class PluginConfig extends Config {
                 new LocationCache(fallbackLocation),
                 new SafeTeleportConfig(true, false, 15),
                 336,
-                new TicketConfig("HH:mm:ss dd.MM.yyyy", "&6&lTeleport Ticket", Material.PAPER, true)
+                new TicketConfig(true, "HH:mm:ss dd.MM.yyyy", "&6&lTeleport Ticket", Material.PAPER, true)
         );
     }
 
@@ -183,6 +183,7 @@ public class PluginConfig extends Config {
     @AllArgsConstructor
     @Getter
     public static class TicketConfig {
+        private final boolean enabled;
         private final String dateFormat, name;
         private final Material material;
         private final boolean teleportInstantly;

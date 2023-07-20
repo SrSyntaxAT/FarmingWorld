@@ -42,8 +42,10 @@ import java.util.Collections;
 public class TeleportTicket implements Ticket {
 
     private final FarmWorldImpl farmWorld;
+    private final PluginConfig.TicketConfig config;
 
-    public TeleportTicket(ItemStack itemStack) {
+    public TeleportTicket(ItemStack itemStack, PluginConfig.TicketConfig config) {
+        this.config = config;
         if (!isTicketMaterial(itemStack)) throw new IllegalArgumentException();
         this.farmWorld = (FarmWorldImpl) findFarmWorldByItem(itemStack);
     }
@@ -62,7 +64,7 @@ public class TeleportTicket implements Ticket {
     }
 
     private boolean isTicketMaterial(ItemStack itemStack) {
-        return itemStack != null && itemStack.getType() == getConfig().getMaterial();
+        return itemStack != null && itemStack.getType() == config.getMaterial();
     }
 
     @Override
@@ -72,7 +74,6 @@ public class TeleportTicket implements Ticket {
 
     @Override
     public ItemStack createItem() {
-        final var config = getConfig();
         final var name = new Message(config.getName())
                 .replace("%{farmworld}", farmWorld.getName())
                 .replace("%{price}", farmWorld.getPrice())
@@ -87,6 +88,7 @@ public class TeleportTicket implements Ticket {
         final var meta = stack.getItemMeta();
         meta.setDisplayName(name);
         meta.setLore(Collections.singletonList(lore));
+        stack.setItemMeta(meta);
         return stack;
     }
 
@@ -115,7 +117,8 @@ public class TeleportTicket implements Ticket {
 
     @Override
     public void teleport(Player player) {
-        teleport(player, getConfig().isTeleportInstantly());
+        System.out.println(config.isTeleportInstantly());
+        teleport(player, config.isTeleportInstantly());
     }
 
     @Override
@@ -125,7 +128,7 @@ public class TeleportTicket implements Ticket {
 
             final var countdown = FarmingWorldPlugin.getApi().getCountdown(player, callback);
             if (instantly) {
-                countdown.finish();
+                callback.finished(countdown);
             } else {
                 countdown.handle();
             }
@@ -146,9 +149,5 @@ public class TeleportTicket implements Ticket {
                 new Message(throwable.getMessage()).send(player);
             }
         };
-    }
-
-    private PluginConfig.TicketConfig getConfig() {
-        return farmWorld.getPlugin().getPluginConfig().getTicket();
     }
 }
