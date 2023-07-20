@@ -9,12 +9,14 @@ import at.srsyntax.farmingworld.api.handler.cooldown.Cooldown;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
 import at.srsyntax.farmingworld.api.handler.economy.Economy;
+import at.srsyntax.farmingworld.api.ticket.Ticket;
 import at.srsyntax.farmingworld.farmworld.FarmWorldImpl;
 import at.srsyntax.farmingworld.farmworld.FarmWorldLoader;
 import at.srsyntax.farmingworld.farmworld.LocationRandomizerImpl;
 import at.srsyntax.farmingworld.handler.cooldown.CooldownImpl;
 import at.srsyntax.farmingworld.handler.countdown.CountdownImpl;
 import at.srsyntax.farmingworld.handler.economy.EconomyImpl;
+import at.srsyntax.farmingworld.ticket.TeleportTicket;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -160,5 +162,10 @@ public class APIImpl implements API {
     @Override
     public @NotNull Economy createEconomy(FarmWorld farmWorld, Player player) {
         return new EconomyImpl(plugin, player, farmWorld.getPrice());
+    }
+
+    @Override
+    public @NotNull Ticket createTicket(FarmWorld farmWorld) {
+        return new TeleportTicket((FarmWorldImpl) farmWorld);
     }
 }
