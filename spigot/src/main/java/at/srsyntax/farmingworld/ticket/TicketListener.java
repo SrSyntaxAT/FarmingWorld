@@ -42,7 +42,7 @@ public class TicketListener implements Listener {
             if (item == null || action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) return;
             final var player = event.getPlayer();
             final var ticket = new TeleportTicket(item, config);
-            player.getInventory().remove(item);
+            ticket.removeItem(player);
             ticket.teleport(player);
         } catch (Exception ignored) {}
     }

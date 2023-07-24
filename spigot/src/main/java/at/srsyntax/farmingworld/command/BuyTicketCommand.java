@@ -1,14 +1,18 @@
 package at.srsyntax.farmingworld.command;
 
+import at.srsyntax.farmingworld.APIImpl;
 import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.handler.HandleException;
 import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.command.farming.CommandException;
 import at.srsyntax.farmingworld.config.MessageConfig;
+import at.srsyntax.farmingworld.ticket.TicketEconomyHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /*
  * CONFIDENTIAL
@@ -30,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
  * INFORMATION DOES NOT CONVEY OR IMPLY ANY RIGHTS TO REPRODUCE, DISCLOSE OR DISTRIBUTE ITS CONTENTS, OR TO
  * MANUFACTURE, USE, OR SELL ANYTHING THAT IT  MAY DESCRIBE, IN WHOLE OR IN PART.
  */
-public class BuyTicketCommand extends Command {
+public class BuyTicketCommand extends Command implements TabCompleterFilter {
 
     private final MessageConfig messages;
 
@@ -57,7 +61,8 @@ public class BuyTicketCommand extends Command {
             if (!(player.hasPermission(permission + "*") || player.hasPermission(permission + farmWorld.getName())))
                 throw new BuyTicketException(messages.getBuyTicketCommand().getNoPermission());
 
-            final var handler = api.createEconomy(farmWorld, player);
+            final var plugin = ((APIImpl) FarmingWorldPlugin.getApi()).getPlugin();
+            final var handler = new TicketEconomyHandler(plugin, player, farmWorld.getPrice());
             handler.handle();
 
             new Message(messages.getBuyTicketCommand().getMessage()).replace("%s", farmWorld.getName()).send(player);
@@ -69,6 +74,13 @@ public class BuyTicketCommand extends Command {
             new Message(messages.getNotEnoughMoney()).send(commandSender);
         }
         return false;
+    }
+
+    @NotNull
+    @Override
+    public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws IllegalArgumentException {
+        if (args.length != 1) return List.of();
+        return filterFarmWorlds(args[0]);
     }
 
     private final class BuyTicketException extends CommandException {

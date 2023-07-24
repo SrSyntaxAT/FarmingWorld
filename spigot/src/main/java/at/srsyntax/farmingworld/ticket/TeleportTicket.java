@@ -109,7 +109,9 @@ public class TeleportTicket implements Ticket {
                 final var item = iterator.next();
                 if (!isTicketMaterial(item)) continue;
                 findFarmWorldByItem(item);
-                player.getInventory().remove(item);
+                if (item.getAmount() == 1)
+                    player.getInventory().remove(item);
+                else item.setAmount(item.getAmount()-1);
                 break;
             } catch (Exception ignore) {}
         }
@@ -117,7 +119,6 @@ public class TeleportTicket implements Ticket {
 
     @Override
     public void teleport(Player player) {
-        System.out.println(config.isTeleportInstantly());
         teleport(player, config.isTeleportInstantly());
     }
 
