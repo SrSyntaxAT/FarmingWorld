@@ -98,8 +98,12 @@ public class FarmingWorldPlugin extends JavaPlugin {
             this.commandRegistry = new CommandRegistry(getName());
             if (pluginConfig.isSpawnCommandEnabled())
                 commandRegistry.register(new SpawnCommand(this));
-            if (pluginConfig.isBuyTicketCommandEnabled())
-                commandRegistry.register(new BuyTicketCommand("buyticket", messageConfig));
+            if (pluginConfig.isBuyTicketCommandEnabled()) {
+                if (api.vaultSupported())
+                    commandRegistry.register(new BuyTicketCommand("buyticket", messageConfig));
+                else
+                    getLogger().severe("To activate the buyticket command you need Vault and an Economy plugin.");
+            }
             this.signRegistry = new SignRegistryImpl(getLogger(), database.getSignRepository());
             this.displayRegistry = new DisplayRegistry(this, pluginConfig.getResetDisplay());
             if (pluginConfig.getSafeTeleport().isEnabled())
