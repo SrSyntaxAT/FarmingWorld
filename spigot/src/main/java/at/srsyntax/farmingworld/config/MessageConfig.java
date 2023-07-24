@@ -42,8 +42,9 @@ public class MessageConfig extends Config {
     private final AdminCommandMessages adminCommand;
     private final TimeMessages time;
     private final SafeTeleportMessages safeTeleport;
+    private final BuyTicketCommandMessages buyTicketCommand;
 
-    public MessageConfig(String notEnoughMoney, SpawnMessages spawn, CountdownMessages countdown, CooldownMessages cooldown, CommandMessages command, AdminCommandMessages adminCommand, TimeMessages time, SafeTeleportMessages safeTeleport) {
+    public MessageConfig(String notEnoughMoney, SpawnMessages spawn, CountdownMessages countdown, CooldownMessages cooldown, CommandMessages command, AdminCommandMessages adminCommand, TimeMessages time, SafeTeleportMessages safeTeleport, BuyTicketCommandMessages buyTicketCommand) {
         this.notEnoughMoney = notEnoughMoney;
         this.spawn = spawn;
         this.countdown = countdown;
@@ -52,6 +53,7 @@ public class MessageConfig extends Config {
         this.adminCommand = adminCommand;
         this.time = time;
         this.safeTeleport = safeTeleport;
+        this.buyTicketCommand = buyTicketCommand;
     }
 
     public MessageConfig() {
@@ -75,6 +77,7 @@ public class MessageConfig extends Config {
                 new MessageConfig.CommandMessages(
                         ChatMessageType.ACTION_BAR,
                         "&cThe farm world is disabled.",
+                        "&cYou must be a player.",
                         "&cPlayer not found!",
                         "&cFarm world not found!",
                         "&cFarm world was not found.",
@@ -128,10 +131,25 @@ public class MessageConfig extends Config {
                         ChatMessageType.ACTION_BAR,
                         "&aYou are invulnerable for &e%v &aseconds.",
                         "&4You are vulnerable from now on!"
-                )
+                ),
+                new BuyTicketCommandMessages()
         );
     }
 
+    @Override
+    public Config update() {
+        return new MessageConfig(
+                notEnoughMoney,
+                spawn,
+                countdown,
+                cooldown,
+                command,
+                adminCommand,
+                time,
+                safeTeleport,
+                new BuyTicketCommandMessages()
+        );
+    }
 
     @AllArgsConstructor
     @Getter
@@ -156,6 +174,7 @@ public class MessageConfig extends Config {
     public static class CommandMessages {
         private final ChatMessageType chatType;
         private final String disabled;
+        private final String mustBeAPlayer;
         private final String playerNotFound, farmWorldNotFound, defaultFarmWorldNotFound, playerOrfarmWorldNotFound;
         private final String noPermission, noPermissionTeleportOther;
         private final String teleported, teleportedOther;
@@ -187,5 +206,20 @@ public class MessageConfig extends Config {
     public static class SafeTeleportMessages {
         private final ChatMessageType messageType;
         private final String countdown, finish;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class BuyTicketCommandMessages {
+        private final String message, usage;
+        private final String noPermission;
+
+        public BuyTicketCommandMessages() {
+            this(
+                    "&aYou have bought a ticket for&e %s&a.",
+                    "&cUsage&8:&f /buyticket <farm world>",
+                    "&cYou are not allowed to buy a ticket for this farm world.")
+            ;
+        }
     }
 }

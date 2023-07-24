@@ -55,6 +55,7 @@ public class FarmWorldImpl implements FarmWorld {
     private final String permission;
 
     private final int cooldown, timer;
+    private final double price;
 
     private final World.Environment environment;
     private final String generator;
@@ -71,11 +72,12 @@ public class FarmWorldImpl implements FarmWorld {
     @Getter @Setter private transient LinkedHashMap<String, Location> locations = new LinkedHashMap<>();
     @Getter private transient String oldWorldName;
 
-    public FarmWorldImpl(String name, String permission, int cooldown, int timer, World.Environment environment, String generator, Border border, List<String> aliases) {
+    public FarmWorldImpl(String name, String permission, int cooldown, int timer, double price, World.Environment environment, String generator, Border border, List<String> aliases) {
         this.name = name;
         this.permission = permission;
         this.cooldown = cooldown;
         this.timer = timer;
+        this.price = price;
         this.environment = environment;
         this.generator = generator;
         this.border = border;
@@ -146,6 +148,11 @@ public class FarmWorldImpl implements FarmWorld {
     @Override
     public int getTimer() {
         return timer;
+    }
+
+    @Override
+    public double getPrice() {
+        return price;
     }
 
     @Override

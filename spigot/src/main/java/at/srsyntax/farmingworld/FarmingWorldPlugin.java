@@ -2,6 +2,7 @@ package at.srsyntax.farmingworld;
 
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
+import at.srsyntax.farmingworld.command.BuyTicketCommand;
 import at.srsyntax.farmingworld.command.SpawnCommand;
 import at.srsyntax.farmingworld.command.admin.AdminCommand;
 import at.srsyntax.farmingworld.command.farming.FarmingCommand;
@@ -19,6 +20,7 @@ import at.srsyntax.farmingworld.farmworld.sign.SignRegistryImpl;
 import at.srsyntax.farmingworld.handler.countdown.CountdownListener;
 import at.srsyntax.farmingworld.handler.countdown.FarmWorldCountdownRegistry;
 import at.srsyntax.farmingworld.safeteleport.SafeTeleportRegistryImpl;
+import at.srsyntax.farmingworld.ticket.TicketListener;
 import at.srsyntax.farmingworld.util.*;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
@@ -96,6 +98,12 @@ public class FarmingWorldPlugin extends JavaPlugin {
             this.commandRegistry = new CommandRegistry(getName());
             if (pluginConfig.isSpawnCommandEnabled())
                 commandRegistry.register(new SpawnCommand(this));
+            if (pluginConfig.isBuyTicketCommandEnabled()) {
+                if (api.vaultSupported())
+                    commandRegistry.register(new BuyTicketCommand("buyticket", messageConfig));
+                else
+                    getLogger().severe("To activate the buyticket command you need Vault and an Economy plugin.");
+            }
             this.signRegistry = new SignRegistryImpl(getLogger(), database.getSignRepository());
             this.displayRegistry = new DisplayRegistry(this, pluginConfig.getResetDisplay());
             if (pluginConfig.getSafeTeleport().isEnabled())
@@ -106,12 +114,13 @@ public class FarmingWorldPlugin extends JavaPlugin {
                     new SignListeners(signRegistry, messageConfig.getCommand()),
                     new JoinListener(this)
             );
+            if (pluginConfig.getTicket().isEnabled())
+                registerListeners(new TicketListener(pluginConfig.getTicket()));
 
             loadFarmWorlds();
 
             getCommand("farming").setExecutor(new FarmingCommand((APIImpl) api, messageConfig));
             getCommand("fwa").setExecutor(new AdminCommand((APIImpl) api, messageConfig.getAdminCommand()));
-
         } catch (Exception exception) {
             getLogger().severe("Plugin could not be loaded successfully!");
             exception.printStackTrace();
@@ -121,6 +130,12 @@ public class FarmingWorldPlugin extends JavaPlugin {
     public void loadConfig() throws IOException {
         messageConfig = Config.load(this, new MessageConfig(), MessageConfig.class);
         pluginConfig = Config.load(this, new PluginConfig(this, getDefaultFallbackLocation()), PluginConfig.class);
+        if (!pluginConfig.getVersion().equalsIgnoreCase(getDescription().getVersion())) {
+            this.pluginConfig = (PluginConfig) pluginConfig.update(getDescription().getVersion());
+            this.messageConfig = (MessageConfig) messageConfig.update();
+            pluginConfig.save(this);
+            messageConfig.save(this);
+        }
     }
 
     public void loadFarmWorlds() {

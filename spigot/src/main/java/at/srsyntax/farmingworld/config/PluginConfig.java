@@ -55,14 +55,15 @@ public class PluginConfig extends Config {
     private final List<Material> blacklist;
     private final SignConfig sign;
     private final int locationCache;
-    private final boolean spawnCommandEnabled;
+    private final boolean spawnCommandEnabled, buyTicketCommandEnabled;
     private final SpawnType spawnType;
     private final ResetDisplayConfig resetDisplay;
     private LocationCache spawn;
     private final SafeTeleportConfig safeTeleport;
     private final int chunkDeletePeriod;
+    private final TicketConfig ticket;
 
-    public PluginConfig(String version, double refund, CountdownConfig countdown, String defaultFarmWorld, List<FarmWorldImpl> farmWorlds, List<Material> blacklist, SignConfig sign, int locationCache, boolean spawnCommandEnabled, SpawnType spawnType, ResetDisplayConfig resetDisplay, LocationCache spawn, SafeTeleportConfig safeTeleport, int chunkDeletePeriod) {
+    public PluginConfig(String version, double refund, CountdownConfig countdown, String defaultFarmWorld, List<FarmWorldImpl> farmWorlds, List<Material> blacklist, SignConfig sign, int locationCache, boolean spawnCommandEnabled, boolean buyTicketCommandEnabled, SpawnType spawnType, ResetDisplayConfig resetDisplay, LocationCache spawn, SafeTeleportConfig safeTeleport, int chunkDeletePeriod, TicketConfig ticket) {
         this.version = version;
         this.refund = refund;
         this.countdown = countdown;
@@ -72,11 +73,13 @@ public class PluginConfig extends Config {
         this.sign = sign;
         this.locationCache = locationCache;
         this.spawnCommandEnabled = spawnCommandEnabled;
+        this.buyTicketCommandEnabled = buyTicketCommandEnabled;
         this.spawnType = spawnType;
         this.resetDisplay = resetDisplay;
         this.spawn = spawn;
         this.safeTeleport = safeTeleport;
         this.chunkDeletePeriod = chunkDeletePeriod;
+        this.ticket = ticket;
     }
 
     public PluginConfig(Plugin plugin, Location fallbackLocation) {
@@ -94,7 +97,7 @@ public class PluginConfig extends Config {
                         new FarmWorldImpl(
                                 "FarmWorld", 
                                 null,
-                                1800, 43_200,
+                                1800, 43_200, 0,
                                 World.Environment.NORMAL, null,
                                 new Border(10000, 0, 0),
                                 Collections.singletonList("FarmWorld")
@@ -117,7 +120,7 @@ public class PluginConfig extends Config {
                         }
                 ),
                 3,
-                true,
+                true, true,
                 SpawnType.FIRST,
                 new ResetDisplayConfig(
                         true,
@@ -130,7 +133,30 @@ public class PluginConfig extends Config {
                 ),
                 new LocationCache(fallbackLocation),
                 new SafeTeleportConfig(true, false, 15),
-                336
+                336,
+                new TicketConfig(true, "HH:mm:ss dd.MM.yyyy", "&6&lTeleport Ticket", Material.PAPER, true)
+        );
+    }
+
+    @Override
+    public Config update(String version) {
+        return new PluginConfig(
+                version,
+                refund,
+                countdown,
+                defaultFarmWorld,
+                farmWorlds,
+                blacklist,
+                sign,
+                locationCache,
+                spawnCommandEnabled,
+                true,
+                spawnType,
+                resetDisplay,
+                spawn,
+                safeTeleport,
+                chunkDeletePeriod,
+                ticket
         );
     }
 
@@ -175,5 +201,14 @@ public class PluginConfig extends Config {
     public static class SafeTeleportConfig {
         private final boolean enabled, canDamagePlayers;
         private final int time;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class TicketConfig {
+        private final boolean enabled;
+        private final String dateFormat, name;
+        private final Material material;
+        private final boolean teleportInstantly;
     }
 }

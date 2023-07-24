@@ -1,9 +1,11 @@
-package at.srsyntax.farmingworld.command.farming;
+package at.srsyntax.farmingworld.ticket;
 
-import at.srsyntax.farmingworld.api.message.Message;
+import at.srsyntax.farmingworld.config.PluginConfig;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 /*
  * MIT License
  *
@@ -27,12 +29,21 @@ import lombok.Getter;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor @Getter
-public class CommandException extends Exception {
-    private final Message messages;
+@AllArgsConstructor
+public class TicketListener implements Listener {
 
-    @Override
-    public String getMessage() {
-        return messages.toString();
+    private final PluginConfig.TicketConfig config;
+
+    @EventHandler
+    public void onPlayerInteractEvent(PlayerInteractEvent event) {
+        try {
+            final var item = event.getItem();
+            final var action = event.getAction();
+            if (item == null || action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) return;
+            final var player = event.getPlayer();
+            final var ticket = new TeleportTicket(item, config);
+            ticket.removeItem(player);
+            ticket.teleport(player);
+        } catch (Exception ignored) {}
     }
 }

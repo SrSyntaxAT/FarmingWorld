@@ -34,13 +34,11 @@ import org.bukkit.Location;
  */
 public class CountdownRunnableImpl extends CountdownRunnable {
 
-    private final FarmingWorldPlugin plugin;
     private final Location location;
     private final double permittedDistance;
 
     public CountdownRunnableImpl(FarmingWorldPlugin plugin, CountdownMessage messages, Countdown countdown, PluginConfig.CountdownConfig config) {
         super(messages, countdown, config.getTime());
-        this.plugin = plugin;
         this.location = config.isMovementAllowed() ? null : countdown.getPlayer().getLocation().clone();
         this.permittedDistance = config.getPermittedDistance();
     }
