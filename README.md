@@ -31,7 +31,7 @@ The position at which the message is to be sent.
 
 ```
 {
-"version": "2.1",                       # This value should not be changed.
+"version": "2.1.1",                       # This value should not be changed.
 "refund": 1.0,                          # What percentage the user will be refunded 
                                         # if they purchase a teleport to a farm world, 
                                         # but it is cancelled due to movement or other 
@@ -81,7 +81,6 @@ The position at which the message is to be sent.
 },
 "locationCache": 3,                     # How many teleport locations to pre-generate.
 "spawnCommandEnabled": true,            # Whether the /spawn command should be enabled.
-"buyTicketCommandEnabled": true,        # Whether the /buyticket command should be enabled.
 "spawnType": "FIRST",                   # Types whether the player should be teleported to the spawn when joining.
                                         # FORCE = at every join | FIRTST = at the first join | NONE = will never be teleported
 "resetDisplay": {                       # Displayed in the farm world when it is reset.
@@ -110,6 +109,13 @@ The position at which the message is to be sent.
   "time": 30                            # The time in seconds that a player is protected.
 },
 "chunkDeletePeriod": 336                # Time in hours when an unused chunk should be deleted. 0 = deletion disabled
+"ticket": {
+    "enabled": true,                    # Whether the ticket is activated.
+    "dateFormat": "HH:mm dd.MM.yyyy",   # Which time format should be displayed on the ticket.
+    "name": "&6&lTeleport Ticket",      # What name the ticket item should have.
+    "material": "PAPER",                # List of available materials  https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+    "teleportInstantly": false          # When using the ticket, should the player be teleported to the farm world immediately? 
+  }
 }
 ```
 ---
