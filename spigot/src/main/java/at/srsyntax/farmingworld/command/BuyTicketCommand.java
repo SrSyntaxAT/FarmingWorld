@@ -63,8 +63,10 @@ public class BuyTicketCommand extends Command {
             new Message(messages.getBuyTicketCommand().getMessage()).replace("%s", farmWorld.getName()).send(player);
             final var ticket = api.createTicket(farmWorld);
             ticket.giveItem(player);
-        } catch (CommandException | HandleException exception) {
-            new Message(exception.getMessage()).send(commandSender);
+        } catch (CommandException exception) {
+            exception.getMessages().send(commandSender);
+        } catch (HandleException exception) {
+            new Message(messages.getNotEnoughMoney()).send(commandSender);
         }
         return false;
     }

@@ -60,33 +60,34 @@ public class FarmingCommand implements CommandExecutor, TabCompleter, TabComplet
     // farming [world/player] [player]
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        if (commandSender instanceof Player sender) {
-            Economy economy = null;
+        Economy economy = null;
 
-            try {
-                final TeleportData data = TeleportData.create(commandMessages, commandSender, strings);
-                checkPermission(sender, data);
+        try {
+            if (!(commandSender instanceof Player sender))
+                throw new CommandException(new Message(messages.getCommand().getMustBeAPlayer()));
 
-                if (!data.getFarmWorld().isActive()) throw new HandleException(messages.getCommand().getDisabled());
+            final TeleportData data = TeleportData.create(commandMessages, commandSender, strings);
+            checkPermission(sender, data);
 
-                economy = api.createEconomy(data.getFarmWorld(), data.getPlayer());
-                final var cooldown = api.getCooldown(data.getPlayer(), data.getFarmWorld());
-                final var countdown = api.getCountdown(data.getPlayer(), teleportPlayer(sender, data, cooldown));
+            if (!data.getFarmWorld().isActive()) throw new HandleException(messages.getCommand().getDisabled());
 
-                if (countdown.isRunning()) throw new HandleException(messages.getCountdown().getAlreadyStarted());
-                economy.handle();
-                cooldown.handle();
-                countdown.handle();
+            economy = api.createEconomy(data.getFarmWorld(), data.getPlayer());
+            final var cooldown = api.getCooldown(data.getPlayer(), data.getFarmWorld());
+            final var countdown = api.getCountdown(data.getPlayer(), teleportPlayer(sender, data, cooldown));
 
-                return true;
-            } catch (CommandException exception) {
-                exception.getMessages().send(sender);
-                refund(economy);
-            } catch (HandleException exception) {
-                new Message(exception.getMessage(), ChatMessageType.SYSTEM)
-                        .send(commandSender);
-                refund(economy);
-            }
+            if (countdown.isRunning()) throw new HandleException(messages.getCountdown().getAlreadyStarted());
+            economy.handle();
+            cooldown.handle();
+            countdown.handle();
+
+            return true;
+        } catch (CommandException exception) {
+            exception.getMessages().send(commandSender);
+            refund(economy);
+        } catch (HandleException exception) {
+            new Message(exception.getMessage(), ChatMessageType.SYSTEM)
+                    .send(commandSender);
+            refund(economy);
         }
         return false;
     }
