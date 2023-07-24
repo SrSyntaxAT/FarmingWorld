@@ -55,7 +55,7 @@ public class PluginConfig extends Config {
     private final List<Material> blacklist;
     private final SignConfig sign;
     private final int locationCache;
-    private final boolean spawnCommandEnabled, buyTicketCommandEnabled;
+    private final boolean spawnCommandEnabled;
     private final SpawnType spawnType;
     private final ResetDisplayConfig resetDisplay;
     private LocationCache spawn;
@@ -63,7 +63,7 @@ public class PluginConfig extends Config {
     private final int chunkDeletePeriod;
     private final TicketConfig ticket;
 
-    public PluginConfig(String version, double refund, CountdownConfig countdown, String defaultFarmWorld, List<FarmWorldImpl> farmWorlds, List<Material> blacklist, SignConfig sign, int locationCache, boolean spawnCommandEnabled, boolean buyTicketCommandEnabled, SpawnType spawnType, ResetDisplayConfig resetDisplay, LocationCache spawn, SafeTeleportConfig safeTeleport, int chunkDeletePeriod, TicketConfig ticket) {
+    public PluginConfig(String version, double refund, CountdownConfig countdown, String defaultFarmWorld, List<FarmWorldImpl> farmWorlds, List<Material> blacklist, SignConfig sign, int locationCache, boolean spawnCommandEnabled, SpawnType spawnType, ResetDisplayConfig resetDisplay, LocationCache spawn, SafeTeleportConfig safeTeleport, int chunkDeletePeriod, TicketConfig ticket) {
         this.version = version;
         this.refund = refund;
         this.countdown = countdown;
@@ -73,7 +73,6 @@ public class PluginConfig extends Config {
         this.sign = sign;
         this.locationCache = locationCache;
         this.spawnCommandEnabled = spawnCommandEnabled;
-        this.buyTicketCommandEnabled = buyTicketCommandEnabled;
         this.spawnType = spawnType;
         this.resetDisplay = resetDisplay;
         this.spawn = spawn;
@@ -120,7 +119,7 @@ public class PluginConfig extends Config {
                         }
                 ),
                 3,
-                true, true,
+                true,
                 SpawnType.FIRST,
                 new ResetDisplayConfig(
                         true,
@@ -134,7 +133,7 @@ public class PluginConfig extends Config {
                 new LocationCache(fallbackLocation),
                 new SafeTeleportConfig(true, false, 15),
                 336,
-                new TicketConfig(true, "HH:mm:ss dd.MM.yyyy", "&6&lTeleport Ticket", Material.PAPER, true)
+                new TicketConfig()
         );
     }
 
@@ -150,13 +149,12 @@ public class PluginConfig extends Config {
                 sign,
                 locationCache,
                 spawnCommandEnabled,
-                true,
                 spawnType,
                 resetDisplay,
                 spawn,
                 safeTeleport,
                 chunkDeletePeriod,
-                ticket
+                new TicketConfig()
         );
     }
 
@@ -210,5 +208,9 @@ public class PluginConfig extends Config {
         private final String dateFormat, name;
         private final Material material;
         private final boolean teleportInstantly;
+
+        public TicketConfig() {
+            this(true, "HH:mm:ss dd.MM.yyyy", "&6&lTeleport Ticket", Material.PAPER, true);
+        }
     }
 }
