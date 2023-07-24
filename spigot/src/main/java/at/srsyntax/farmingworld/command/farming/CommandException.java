@@ -30,4 +30,9 @@ import lombok.Getter;
 @AllArgsConstructor @Getter
 public class CommandException extends Exception {
     private final Message messages;
+
+    @Override
+    public String getMessage() {
+        return messages.toString();
+    }
 }

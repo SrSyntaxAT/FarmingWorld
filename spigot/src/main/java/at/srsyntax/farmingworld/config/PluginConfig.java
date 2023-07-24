@@ -55,7 +55,7 @@ public class PluginConfig extends Config {
     private final List<Material> blacklist;
     private final SignConfig sign;
     private final int locationCache;
-    private final boolean spawnCommandEnabled;
+    private final boolean spawnCommandEnabled, buyTicketCommandEnabled;
     private final SpawnType spawnType;
     private final ResetDisplayConfig resetDisplay;
     private LocationCache spawn;
@@ -63,7 +63,7 @@ public class PluginConfig extends Config {
     private final int chunkDeletePeriod;
     private final TicketConfig ticket;
 
-    public PluginConfig(String version, double refund, CountdownConfig countdown, String defaultFarmWorld, List<FarmWorldImpl> farmWorlds, List<Material> blacklist, SignConfig sign, int locationCache, boolean spawnCommandEnabled, SpawnType spawnType, ResetDisplayConfig resetDisplay, LocationCache spawn, SafeTeleportConfig safeTeleport, int chunkDeletePeriod, TicketConfig ticket) {
+    public PluginConfig(String version, double refund, CountdownConfig countdown, String defaultFarmWorld, List<FarmWorldImpl> farmWorlds, List<Material> blacklist, SignConfig sign, int locationCache, boolean spawnCommandEnabled, boolean buyTicketCommandEnabled, SpawnType spawnType, ResetDisplayConfig resetDisplay, LocationCache spawn, SafeTeleportConfig safeTeleport, int chunkDeletePeriod, TicketConfig ticket) {
         this.version = version;
         this.refund = refund;
         this.countdown = countdown;
@@ -73,6 +73,7 @@ public class PluginConfig extends Config {
         this.sign = sign;
         this.locationCache = locationCache;
         this.spawnCommandEnabled = spawnCommandEnabled;
+        this.buyTicketCommandEnabled = buyTicketCommandEnabled;
         this.spawnType = spawnType;
         this.resetDisplay = resetDisplay;
         this.spawn = spawn;
@@ -119,7 +120,7 @@ public class PluginConfig extends Config {
                         }
                 ),
                 3,
-                true,
+                true, true,
                 SpawnType.FIRST,
                 new ResetDisplayConfig(
                         true,

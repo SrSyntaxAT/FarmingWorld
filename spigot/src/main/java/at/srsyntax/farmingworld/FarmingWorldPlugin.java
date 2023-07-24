@@ -2,6 +2,7 @@ package at.srsyntax.farmingworld;
 
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
+import at.srsyntax.farmingworld.command.BuyTicketCommand;
 import at.srsyntax.farmingworld.command.SpawnCommand;
 import at.srsyntax.farmingworld.command.admin.AdminCommand;
 import at.srsyntax.farmingworld.command.farming.FarmingCommand;
@@ -97,6 +98,8 @@ public class FarmingWorldPlugin extends JavaPlugin {
             this.commandRegistry = new CommandRegistry(getName());
             if (pluginConfig.isSpawnCommandEnabled())
                 commandRegistry.register(new SpawnCommand(this));
+            if (pluginConfig.isBuyTicketCommandEnabled())
+                commandRegistry.register(new BuyTicketCommand("buyticket", messageConfig));
             this.signRegistry = new SignRegistryImpl(getLogger(), database.getSignRepository());
             this.displayRegistry = new DisplayRegistry(this, pluginConfig.getResetDisplay());
             if (pluginConfig.getSafeTeleport().isEnabled())
@@ -114,7 +117,6 @@ public class FarmingWorldPlugin extends JavaPlugin {
 
             getCommand("farming").setExecutor(new FarmingCommand((APIImpl) api, messageConfig));
             getCommand("fwa").setExecutor(new AdminCommand((APIImpl) api, messageConfig.getAdminCommand()));
-
         } catch (Exception exception) {
             getLogger().severe("Plugin could not be loaded successfully!");
             exception.printStackTrace();
