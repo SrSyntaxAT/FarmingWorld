@@ -218,7 +218,7 @@ public class MessageConfig extends Config {
             this(
                     "&aYou have bought a ticket for&e %s&a.",
                     "&cUsage&8:&f /buyticket <farm world>",
-                    "&/cYou are not allowed to buy a ticket for this farm world.")
+                    "&cYou are not allowed to buy a ticket for this farm world.")
             ;
         }
     }
