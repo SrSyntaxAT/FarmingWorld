@@ -53,6 +53,13 @@ public abstract class Config {
         return defaultConfig;
     }
 
+    public Config update() {
+        return null;
+    }
+    public Config update(String version) {
+        return null;
+    }
+
     public void save(Plugin plugin) throws IOException {
         final File file = new File(plugin.getDataFolder(), getFileName());
 

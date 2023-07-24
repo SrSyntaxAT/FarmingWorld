@@ -126,6 +126,12 @@ public class FarmingWorldPlugin extends JavaPlugin {
     public void loadConfig() throws IOException {
         messageConfig = Config.load(this, new MessageConfig(), MessageConfig.class);
         pluginConfig = Config.load(this, new PluginConfig(this, getDefaultFallbackLocation()), PluginConfig.class);
+        if (!pluginConfig.getVersion().equalsIgnoreCase(getDescription().getVersion())) {
+            this.pluginConfig = (PluginConfig) pluginConfig.update(getDescription().getVersion());
+            this.messageConfig = (MessageConfig) messageConfig.update();
+            pluginConfig.save(this);
+            messageConfig.save(this);
+        }
     }
 
     public void loadFarmWorlds() {

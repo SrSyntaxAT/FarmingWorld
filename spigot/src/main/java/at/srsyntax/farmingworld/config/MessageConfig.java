@@ -132,14 +132,24 @@ public class MessageConfig extends Config {
                         "&aYou are invulnerable for &e%v &aseconds.",
                         "&4You are vulnerable from now on!"
                 ),
-                new BuyTicketCommandMessages(
-                        "&aYou have bought a ticket for&e %s&a.",
-                        "&cUsage&8:&f /buyticket <farm world>",
-                        "&/cYou are not allowed to buy a ticket for this farm world."
-                )
+                new BuyTicketCommandMessages()
         );
     }
 
+    @Override
+    public Config update() {
+        return new MessageConfig(
+                notEnoughMoney,
+                spawn,
+                countdown,
+                cooldown,
+                command,
+                adminCommand,
+                time,
+                safeTeleport,
+                new BuyTicketCommandMessages()
+        );
+    }
 
     @AllArgsConstructor
     @Getter
@@ -203,5 +213,13 @@ public class MessageConfig extends Config {
     public static class BuyTicketCommandMessages {
         private final String message, usage;
         private final String noPermission;
+
+        public BuyTicketCommandMessages() {
+            this(
+                    "&aYou have bought a ticket for&e %s&a.",
+                    "&cUsage&8:&f /buyticket <farm world>",
+                    "&/cYou are not allowed to buy a ticket for this farm world.")
+            ;
+        }
     }
 }
