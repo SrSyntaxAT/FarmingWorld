@@ -31,7 +31,7 @@ The position at which the message is to be sent.
 
 ```
 {
-"version": "2.0",                       # This value should not be changed.
+"version": "2.1",                       # This value should not be changed.
 "refund": 1.0,                          # What percentage the user will be refunded 
                                         # if they purchase a teleport to a farm world, 
                                         # but it is cancelled due to movement or other 
@@ -80,7 +80,8 @@ The position at which the message is to be sent.
   ]
 },
 "locationCache": 3,                     # How many teleport locations to pre-generate.
-"spawnCommandEnabled": true,            # Whether you can use the /spawn command.
+"spawnCommandEnabled": true,            # Whether the /spawn command should be enabled.
+"buyTicketCommandEnabled": true,        # Whether the /buyticket command should be enabled.
 "spawnType": "FIRST",                   # Types whether the player should be teleported to the spawn when joining.
                                         # FORCE = at every join | FIRTST = at the first join | NONE = will never be teleported
 "resetDisplay": {                       # Displayed in the farm world when it is reset.
@@ -115,18 +116,20 @@ The position at which the message is to be sent.
 
 ## Permissions
 
-| Permission                     | Description                                                                                        |
-|--------------------------------|----------------------------------------------------------------------------------------------------|
-| farmingworld.admin             | Gives the player permission for the /fwa command.                                                  |
-| farmingworld.world.*           | Allow the player to teleport in all farm worlds.                                                   |
-| farmingworld.world.{farmworld} | Allows a player to teleport to the farm world if the farm world has a restriction.                 |
-| farmingworld.teleport.other    | Allow a player to teleport another player with /farming <player> or /farming <farmworld> <player>. |
-| farmingworld.sign              | Is needed to be able to create a sign.                                                             |
-| farmingworld.bypass.*          | Allows the player to teleport without cooldown, countdown, or cost.                                |
-| farmingworld.bypass.countdown  | Allows the player to teleport without countdown.                                                   |
-| farmingworld.bypass.cooldown   | Allows the player to teleport without cooldown.                                                    |
-| farmingworld.bypass.economy    | Allows the player to teleport without cost.                                                        |
-| farmingworld.safeteleport      | The player is invulnerable for a certain time after teleporting to a farm world.                   |
+| Permission                       | Description                                                                                        |
+|----------------------------------|----------------------------------------------------------------------------------------------------|
+| farmingworld.admin               | Gives the player permission for the /fwa command.                                                  |
+| farmingworld.world.*             | Allow the player to teleport in all farm worlds.                                                   |
+| farmingworld.world.{farmworld}   | Allows a player to teleport to the farm world if the farm world has a restriction.                 |
+| farmingworld.teleport.other      | Allow a player to teleport another player with /farming <player> or /farming <farmworld> <player>. |
+| farmingworld.sign                | Is needed to be able to create a sign.                                                             |
+| farmingworld.bypass.*            | Allows the player to teleport without cooldown, countdown, or cost.                                |
+| farmingworld.bypass.countdown    | Allows the player to teleport without countdown.                                                   |
+| farmingworld.bypass.cooldown     | Allows the player to teleport without cooldown.                                                    |
+| farmingworld.bypass.economy      | Allows the player to teleport without cost.                                                        |
+| farmingworld.safeteleport        | The player is invulnerable for a certain time after teleporting to a farm world.                   |
+| farmworld.buyticket.*            | Allow the player to buy a ticket for all farm worlds.                                              |
+| farmworld.buyticket.{farmworld}  | Allow the player to buy a ticket to the farm world.                                                |
 
 ---
 
