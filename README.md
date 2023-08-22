@@ -144,8 +144,8 @@ The position at which the message is to be sent.
 You can create signs so that players are teleported to the farm world when they click on the sign.
 To be allowed to create a sign you need the permission farmingworld.sign or farmingworld.admin.
 
-<img src="img/sign_create.png" width="350" title="example to create a sign">
-<img src="img/sign_created.png" width="350" title="example of a ready created sign">
+<img src="img/sign_create.png" width="350" alt="example to create a sign">
+<img src="img/sign_created.png" width="350" alt="example of a ready created sign">
 
 If you don't want to have the sign anymore, you can simply destroy it in Creative Mode.
 
@@ -156,6 +156,7 @@ If you don't want to have the sign anymore, you can simply destroy it in Creativ
 * [Download](https://www.spigotmc.org/resources/farmingworld.100640/)
 * [Discord](http://discord.gg/tvEFd4j)
 * [Issues](https://github.com/SrSyntaxAT/FarmingWorld/issues)
+* [Multiple worlds example](https://gist.github.com/SrSyntaxAT/591d75bc8c80317053cd7b24eb283f52)
 
 ---
 
