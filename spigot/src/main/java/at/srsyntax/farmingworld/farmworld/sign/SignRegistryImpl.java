@@ -89,6 +89,10 @@ public class SignRegistryImpl implements SignRegistry {
         logger.info(String.format("Sign (%s) was deleted.", cache.getLocation()));
     }
 
+    public boolean isTeleportSign(Location location) {
+        return caches.contains(getCache(location));
+    }
+
     @Override
     public void unregister(@NotNull FarmWorld farmWorld) {
         for (SignCache cache : caches) {
