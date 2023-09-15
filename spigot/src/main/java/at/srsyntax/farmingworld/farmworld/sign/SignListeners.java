@@ -13,6 +13,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -52,20 +53,28 @@ public class SignListeners implements Listener {
     public void onSignChangeEvent(SignChangeEvent event) {
         if (!isSign(event.getBlock())) return;
         if (!event.getLine(0).equalsIgnoreCase(SignRegistryImpl.SIGN_TITLE)) return;
-        if (!hasPlacePermission(event.getPlayer())) return;
+        if (!hasSignPermission(event.getPlayer())) return;
         final var farmWorld = FarmingWorldPlugin.getApi().getFarmWorld(event.getLine(1));
         if (farmWorld == null) return;
         registry.register((Sign) event.getBlock().getState(), farmWorld);
     }
 
-    private boolean hasPlacePermission(Player player) {
+    private boolean hasSignPermission(Player player) {
         return player.hasPermission("farmingworld.sign") || player.hasPermission("farmingworld.admin");
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreakEvent(BlockBreakEvent event) {
-        if (!isSign(event.getBlock())) return;
-        registry.unregister(event.getBlock().getLocation());
+        final var block = event.getBlock();
+        if (!isSign(block)) return;
+        if (!registry.isTeleportSign(block.getLocation())) return;
+
+        if (hasSignPermission(event.getPlayer())) {
+            registry.unregister(block.getLocation());
+            return;
+        }
+
+        event.setCancelled(true);
     }
 
     @EventHandler
@@ -90,10 +99,13 @@ public class SignListeners implements Listener {
         if (!isSign(block)) return;
         final var cache = registry.getCache(block.getLocation());
         if (cache == null) return;
-        if (event.getAction() == Action.LEFT_CLICK_BLOCK && event.getPlayer().getGameMode() == GameMode.CREATIVE)
+
+        final var player = event.getPlayer();
+        if (hasSignPermission(player) && event.getAction() == Action.LEFT_CLICK_BLOCK && player.getGameMode() == GameMode.CREATIVE) {
             registry.unregister(event.getClickedBlock().getLocation());
-        else
+        } else {
             teleportPlayer(cache, event.getPlayer());
+        }
     }
 
     private void teleportPlayer(SignCache cache, Player player) {
