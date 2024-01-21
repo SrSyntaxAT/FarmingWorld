@@ -51,6 +51,7 @@ The position at which the message is to be sent.
     "timer": 43200,                     # The time in minutes until the farm world is reset.
     "price": 0,                         # Money needed to teleport to the farm world.
     "environment": "NORMAL",            # World type with which the farm world should be created.
+                                        # Types: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/World.Environment.html
     "generator": null,                  # Which generator to use to generate the world.
     "border": {                         
       "size": 10000,                    
