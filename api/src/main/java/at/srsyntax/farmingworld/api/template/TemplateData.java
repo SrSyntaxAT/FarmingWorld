@@ -1,6 +1,6 @@
 package at.srsyntax.farmingworld.api.template;
 
-import at.srsyntax.farmingworld.api.util.FileUtil;
+import at.srsyntax.farmingworld.api.util.file.FileUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -1,4 +1,4 @@
-package at.srsyntax.farmingworld.api.util;
+package at.srsyntax.farmingworld.api.util.file;
 
 import at.srsyntax.farmingworld.api.util.file.CopyDirVisitor;
 

@@ -3,8 +3,7 @@ package at.srsyntax.farmingworld;
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
 import at.srsyntax.farmingworld.api.template.TemplateRegistry;
-import at.srsyntax.farmingworld.api.util.FileUtil;
-import at.srsyntax.farmingworld.api.util.file.CopyDirVisitor;
+import at.srsyntax.farmingworld.api.util.file.FileUtil;
 import at.srsyntax.farmingworld.command.BuyTicketCommand;
 import at.srsyntax.farmingworld.command.SpawnCommand;
 import at.srsyntax.farmingworld.command.admin.AdminCommand;
@@ -37,8 +36,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
