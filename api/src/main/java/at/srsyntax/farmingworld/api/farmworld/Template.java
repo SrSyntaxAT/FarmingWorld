@@ -27,10 +27,26 @@ import org.jetbrains.annotations.Nullable;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-// TODO: Docs
 public interface Template {
+    /**
+     * @return a random template for the farm world or zero if no template has been registered
+     */
     @Nullable TemplateData randomTemplate();
+
+    /**
+     * Replace the current world with a template.
+     * @param data - The template that will replace the world
+     */
     void newWorld(@NotNull TemplateData data);
+
+    /**
+     * Replace the next world with a template.
+     * @param data - The template that will replace the world
+     */
     void newNextWorld(@Nullable TemplateData data);
+
+    /**
+     * @return whether the farm world has a template
+     */
     boolean hasTemplate();
 }

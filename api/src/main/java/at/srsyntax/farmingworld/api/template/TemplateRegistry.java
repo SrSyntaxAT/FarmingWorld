@@ -30,9 +30,31 @@ import java.util.List;
  * SOFTWARE.
  */
 public interface TemplateRegistry {
+
+    /**
+     * Register a template.
+     * @param file - Location where the template is saved
+     * @return an object that represents the template
+     */
     @NotNull TemplateData register(@NotNull File file);
+
+    /**
+     * Unregister a template.
+     * @param data which is to be unregistered
+     * @return whether the template was successfully deleted
+     */
     boolean unregister(@NotNull TemplateData data);
+
+    /**
+     * Receive the template or null if the template is not registered.
+     * @param name of the template
+     * @return the template or null if the template is not registered
+     */
     @Nullable TemplateData getTemplate(@NotNull String name);
+
+    /**
+     * @return a modifiable list of all registered templates
+     */
     @NotNull List<TemplateData> getTemplates();
 
 }

@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 /*
  * MIT License
  *
- * Copyright (c) 2022-2023 Marcel Haberl
+ * Copyright (c) 2022-2024 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -125,11 +125,6 @@ public class FarmingWorldPlugin extends JavaPlugin {
 
             getCommand("farming").setExecutor(new FarmingCommand((APIImpl) api, messageConfig));
             getCommand("fwa").setExecutor(new AdminCommand((APIImpl) api, messageConfig.getAdminCommand()));
-
-            Bukkit.getScheduler().runTaskLater(this, () -> {
-                var world = api.getFarmWorld("FarmWorld");
-                world.newWorld(world.randomTemplate());
-            }, 3 * 60 * 20);
         } catch (Exception exception) {
             getLogger().severe("Plugin could not be loaded successfully!");
             exception.printStackTrace();
