@@ -2,6 +2,9 @@ package at.srsyntax.farmingworld;
 
 import at.srsyntax.farmingworld.api.API;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
+import at.srsyntax.farmingworld.api.template.TemplateRegistry;
+import at.srsyntax.farmingworld.api.util.FileUtil;
+import at.srsyntax.farmingworld.api.util.file.CopyDirVisitor;
 import at.srsyntax.farmingworld.command.BuyTicketCommand;
 import at.srsyntax.farmingworld.command.SpawnCommand;
 import at.srsyntax.farmingworld.command.admin.AdminCommand;
@@ -34,6 +37,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -75,6 +80,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
     @Getter private SignRegistryImpl signRegistry;
     @Getter private DisplayRegistry displayRegistry;
     @Getter private SafeTeleportRegistryImpl safeTeleportRegistry;
+    @Getter private TemplateRegistry templateRegistry;
 
     @Override
     public void onLoad() {
@@ -117,10 +123,16 @@ public class FarmingWorldPlugin extends JavaPlugin {
                     getLogger().severe("To activate the buyticket command you need Vault and an Economy plugin.");
 
             }
+            this.templateRegistry = new TemplateRegistryImpl(this);
             loadFarmWorlds();
 
             getCommand("farming").setExecutor(new FarmingCommand((APIImpl) api, messageConfig));
             getCommand("fwa").setExecutor(new AdminCommand((APIImpl) api, messageConfig.getAdminCommand()));
+
+            Bukkit.getScheduler().runTaskLater(this, () -> {
+                var world = api.getFarmWorld("FarmWorld");
+                world.newWorld(world.randomTemplate());
+            }, 3 * 60 * 20);
         } catch (Exception exception) {
             getLogger().severe("Plugin could not be loaded successfully!");
             exception.printStackTrace();
@@ -141,7 +153,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
     public void loadFarmWorlds() {
         pluginConfig.getFarmWorlds().forEach(farmWorld -> new FarmWorldLoader(this, farmWorld).load());
         checkFarmWorlds();
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, new FarmWorldScheduler(api, this), 120L, 1200L);
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, new FarmWorldScheduler(api, this), 1200L, 1200L);
 
         if (pluginConfig.getChunkDeletePeriod() <= 0) return;
         final long period = TimeUnit.HOURS.toSeconds(pluginConfig.getChunkDeletePeriod()) * 20;

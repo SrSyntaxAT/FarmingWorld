@@ -5,7 +5,7 @@ import at.srsyntax.farmingworld.api.event.farmworld.FarmWorldDeletedEvent;
 import at.srsyntax.farmingworld.api.event.farmworld.FarmWorldDisabledEvent;
 import at.srsyntax.farmingworld.api.event.farmworld.FarmWorldEvent;
 import at.srsyntax.farmingworld.database.Database;
-import at.srsyntax.farmingworld.util.FileUtil;
+import at.srsyntax.farmingworld.api.util.FileUtil;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Represents the farm world.
  */
-public interface FarmWorld extends WorldOwner, Playable, LocationCacher, SignOwner {
+public interface FarmWorld extends WorldOwner, Playable, LocationCacher, SignOwner, Template {
 
     /**
      * Get the name of the farm world

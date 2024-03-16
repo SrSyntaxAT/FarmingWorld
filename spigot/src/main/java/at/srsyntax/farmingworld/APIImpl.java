@@ -9,6 +9,7 @@ import at.srsyntax.farmingworld.api.handler.cooldown.Cooldown;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
 import at.srsyntax.farmingworld.api.handler.economy.Economy;
+import at.srsyntax.farmingworld.api.template.TemplateRegistry;
 import at.srsyntax.farmingworld.api.ticket.Ticket;
 import at.srsyntax.farmingworld.farmworld.FarmWorldImpl;
 import at.srsyntax.farmingworld.farmworld.FarmWorldLoader;
@@ -27,11 +28,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /*
  * MIT License
  *
- * Copyright (c) 2022-2023 Marcel Haberl
+ * Copyright (c) 2022-2024 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -167,5 +169,20 @@ public class APIImpl implements API {
     @Override
     public @NotNull Ticket createTicket(FarmWorld farmWorld) {
         return new TeleportTicket((FarmWorldImpl) farmWorld, plugin.getPluginConfig().getTicket());
+    }
+
+    @Override
+    public @NotNull TemplateRegistry getTemplateRegistry() {
+        return plugin.getTemplateRegistry();
+    }
+
+    @Override
+    public @NotNull String generateRandomName(String prefix) {
+        return String.format("%s-%s", prefix, UUID.randomUUID().toString().split("-")[0]);
+    }
+
+    @Override
+    public @NotNull String generateRandomName(FarmWorld farmWorld) {
+        return generateRandomName(farmWorld.getName());
     }
 }

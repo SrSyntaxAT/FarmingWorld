@@ -6,14 +6,17 @@ import at.srsyntax.farmingworld.api.event.farmworld.FarmWorldEvent;
 import at.srsyntax.farmingworld.api.event.farmworld.FarmWorldLoadedEvent;
 import at.srsyntax.farmingworld.api.farmworld.Border;
 import at.srsyntax.farmingworld.api.farmworld.LocationCache;
+import at.srsyntax.farmingworld.api.template.TemplateData;
 import at.srsyntax.farmingworld.database.repository.FarmWorldRepository;
 import at.srsyntax.farmingworld.database.repository.LocationRepository;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -87,7 +90,7 @@ public class FarmWorldLoader {
             data.setCurrentWorldName(null);
             farmWorld.next();
         } else {
-            farmWorld.getData().setCurrentWorldName(generateWorld(worldName).getName());
+            farmWorld.getData().setCurrentWorldName(generateWorld().getName());
         }
     }
 
@@ -101,16 +104,31 @@ public class FarmWorldLoader {
     }
 
     public World generateWorld() {
-        final String id = UUID.randomUUID().toString().split("-")[0];
-        final String worldName = String.format("%s-%s", farmWorld.getName(), id);
-        return generateWorld(worldName);
+        return generateWorld(generateRandomName(), null, true);
     }
 
-    public World generateWorld(String worldName) {
+    @SneakyThrows
+    public World generateWorld(String worldName, TemplateData data, boolean newWorld) {
         if (worldName == null) return generateWorld();
+        if (newWorld && farmWorld.hasTemplate()) {
+            final var template = data != null ? data : farmWorld.randomTemplate();
+            template.copy(new File(worldName));
+        }
         final World world = Bukkit.createWorld(farmWorld.createWorldCreator(worldName));
         setBorder(world);
         return world;
+    }
+
+    public World generateWorld(TemplateData data) {
+        return generateWorld(generateRandomName(), data, true);
+    }
+
+    public World generateWorld(String worldName) {
+        return generateWorld(worldName, null, false);
+    }
+
+    private String generateRandomName() {
+        return FarmingWorldPlugin.getApi().generateRandomName(farmWorld);
     }
 
     public void setBorder(World world) {
