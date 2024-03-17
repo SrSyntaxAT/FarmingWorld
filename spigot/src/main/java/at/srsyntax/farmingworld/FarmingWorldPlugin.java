@@ -5,6 +5,7 @@ import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
 import at.srsyntax.farmingworld.api.template.TemplateRegistry;
 import at.srsyntax.farmingworld.api.util.file.FileUtil;
 import at.srsyntax.farmingworld.command.BuyTicketCommand;
+import at.srsyntax.farmingworld.command.RTPCommand;
 import at.srsyntax.farmingworld.command.SpawnCommand;
 import at.srsyntax.farmingworld.command.admin.AdminCommand;
 import at.srsyntax.farmingworld.command.farming.FarmingCommand;
@@ -125,6 +126,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
 
             getCommand("farming").setExecutor(new FarmingCommand((APIImpl) api, messageConfig));
             getCommand("fwa").setExecutor(new AdminCommand((APIImpl) api, messageConfig.getAdminCommand()));
+            getCommand("rtp").setExecutor(new RTPCommand((APIImpl) api, messageConfig, pluginConfig.isLocalRTPfee()));
         } catch (Exception exception) {
             getLogger().severe("Plugin could not be loaded successfully!");
             exception.printStackTrace();

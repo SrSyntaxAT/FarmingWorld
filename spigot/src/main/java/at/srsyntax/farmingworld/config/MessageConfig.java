@@ -9,7 +9,7 @@ import net.md_5.bungee.api.ChatMessageType;
 /*
  * MIT License
  *
- * Copyright (c) 2022-2023 Marcel Haberl
+ * Copyright (c) 2022-2024 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,8 +43,9 @@ public class MessageConfig extends Config {
     private final TimeMessages time;
     private final SafeTeleportMessages safeTeleport;
     private final BuyTicketCommandMessages buyTicketCommand;
+    private final String notOnAFarmWorld;
 
-    public MessageConfig(String notEnoughMoney, SpawnMessages spawn, CountdownMessages countdown, CooldownMessages cooldown, CommandMessages command, AdminCommandMessages adminCommand, TimeMessages time, SafeTeleportMessages safeTeleport, BuyTicketCommandMessages buyTicketCommand) {
+    public MessageConfig(String notEnoughMoney, SpawnMessages spawn, CountdownMessages countdown, CooldownMessages cooldown, CommandMessages command, AdminCommandMessages adminCommand, TimeMessages time, SafeTeleportMessages safeTeleport, BuyTicketCommandMessages buyTicketCommand, String notOnAFarmWorld) {
         this.notEnoughMoney = notEnoughMoney;
         this.spawn = spawn;
         this.countdown = countdown;
@@ -54,6 +55,7 @@ public class MessageConfig extends Config {
         this.time = time;
         this.safeTeleport = safeTeleport;
         this.buyTicketCommand = buyTicketCommand;
+        this.notOnAFarmWorld = notOnAFarmWorld;
     }
 
     public MessageConfig() {
@@ -132,7 +134,8 @@ public class MessageConfig extends Config {
                         "&aYou are invulnerable for &e%v &aseconds.",
                         "&4You are vulnerable from now on!"
                 ),
-                new BuyTicketCommandMessages()
+                new BuyTicketCommandMessages(),
+                "&cYou are not on a farm world!"
         );
     }
 
@@ -147,7 +150,8 @@ public class MessageConfig extends Config {
                 adminCommand,
                 time,
                 safeTeleport,
-                new BuyTicketCommandMessages()
+                new BuyTicketCommandMessages(),
+                notOnAFarmWorld
         );
     }
 

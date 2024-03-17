@@ -22,7 +22,7 @@ import java.util.List;
 /*
  * MIT License
  *
- * Copyright (c) 2022-2023 Marcel Haberl
+ * Copyright (c) 2022-2024 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -62,8 +62,9 @@ public class PluginConfig extends Config {
     private final SafeTeleportConfig safeTeleport;
     private final int chunkDeletePeriod;
     private final TicketConfig ticket;
+    private boolean localRTPfee = true;
 
-    public PluginConfig(String version, double refund, CountdownConfig countdown, String defaultFarmWorld, List<FarmWorldImpl> farmWorlds, List<Material> blacklist, SignConfig sign, int locationCache, boolean spawnCommandEnabled, SpawnType spawnType, ResetDisplayConfig resetDisplay, LocationCache spawn, SafeTeleportConfig safeTeleport, int chunkDeletePeriod, TicketConfig ticket) {
+    public PluginConfig(String version, double refund, CountdownConfig countdown, String defaultFarmWorld, List<FarmWorldImpl> farmWorlds, List<Material> blacklist, SignConfig sign, int locationCache, boolean spawnCommandEnabled, SpawnType spawnType, ResetDisplayConfig resetDisplay, LocationCache spawn, SafeTeleportConfig safeTeleport, int chunkDeletePeriod, TicketConfig ticket, boolean localRTPfee) {
         this.version = version;
         this.refund = refund;
         this.countdown = countdown;
@@ -79,6 +80,7 @@ public class PluginConfig extends Config {
         this.safeTeleport = safeTeleport;
         this.chunkDeletePeriod = chunkDeletePeriod;
         this.ticket = ticket;
+        this.localRTPfee = localRTPfee;
     }
 
     public PluginConfig(Plugin plugin, Location fallbackLocation) {
@@ -133,7 +135,8 @@ public class PluginConfig extends Config {
                 new LocationCache(fallbackLocation),
                 new SafeTeleportConfig(true, false, 15),
                 336,
-                new TicketConfig()
+                new TicketConfig(),
+                true
         );
     }
 
@@ -154,7 +157,8 @@ public class PluginConfig extends Config {
                 spawn,
                 safeTeleport,
                 chunkDeletePeriod,
-                new TicketConfig()
+                new TicketConfig(),
+                localRTPfee
         );
     }
 

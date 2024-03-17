@@ -10,11 +10,12 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 /*
  * MIT License
  *
- * Copyright (c) 2022-2023 Marcel Haberl
+ * Copyright (c) 2022-2024 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,6 +44,11 @@ public class TeleportData {
     public TeleportData(FarmWorld farmWorld, Player player, boolean hasArgs) throws TeleportDataException {
         if (farmWorld == null) throw new TeleportDataException(TeleportDataException.Type.FARM_WORLD, hasArgs);
         if (player == null) throw new TeleportDataException(TeleportDataException.Type.PLAYER, hasArgs);
+        this.farmWorld = farmWorld;
+        this.player = player;
+    }
+
+    public TeleportData(@NotNull FarmWorld farmWorld, @NotNull Player player) {
         this.farmWorld = farmWorld;
         this.player = player;
     }
@@ -95,7 +101,7 @@ public class TeleportData {
         }
 
         public enum Type {
-            FARM_WORLD, PLAYER
+            FARM_WORLD, PLAYER, CURRENT_WORLD
         }
     }
 }
