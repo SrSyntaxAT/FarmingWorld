@@ -92,4 +92,9 @@ public class FarmingCommand extends FarmWorldTeleportCommand implements TabCompl
 
         return result;
     }
+
+    @Override
+    public void teleport(TeleportData data) {
+        data.getFarmWorld().teleportSpawn(data.getPlayer());
+    }
 }

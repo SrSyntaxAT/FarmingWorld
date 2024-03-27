@@ -25,6 +25,10 @@ package at.srsyntax.farmingworld.api.farmworld;
  */
 
 import at.srsyntax.farmingworld.api.farmworld.sign.SignOwner;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -76,10 +80,13 @@ public interface FarmWorld extends WorldOwner, Playable, LocationCacher, SignOwn
      */
     List<String> getAliases();
 
-
     /**
      * @return the prize to perform an action such as teleporting to the farm world
      */
     double getPrice();
 
+    @Nullable Location getSpawn();
+    void setSpawn(@Nullable Location location);
+    boolean teleportSpawn(@NotNull Player player);
+    boolean hasSpawn();
 }

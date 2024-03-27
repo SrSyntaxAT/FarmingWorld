@@ -66,7 +66,7 @@ public abstract class FarmWorldTeleportCommand implements CommandExecutor {
         return new CountdownCallback() {
             @Override
             public void finished(Countdown countdown) {
-                data.getFarmWorld().teleport(data.getPlayer());
+                teleport(data);
 
                 new Message(commandMessages.getTeleported(), commandMessages.getChatType())
                         .replace("%{farmworld}", data.getFarmWorld().getName())
@@ -86,6 +86,8 @@ public abstract class FarmWorldTeleportCommand implements CommandExecutor {
             }
         };
     }
+
+    public abstract void teleport(TeleportData data);
 
     protected void callHandlers(TeleportData data, Economy economy) throws HandleException {
         final var cooldown = api.getCooldown(data.getPlayer(), data.getFarmWorld());

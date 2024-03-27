@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 /*
  * MIT License
  *
- * Copyright (c) 2022-2023 Marcel Haberl
+ * Copyright (c) 2022-2024 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,8 +50,8 @@ public class AdminCommand implements CommandExecutor, TabCompleter {
     private final Map<String, SubCommand> commandMap;
     @Getter private final Cache<CommandSender, CacheData> confirmCache;
 
-    public AdminCommand(APIImpl api, MessageConfig.AdminCommandMessages messages) {
-        this.messages = messages;
+    public AdminCommand(APIImpl api, MessageConfig pluginMessages) {
+        this.messages = pluginMessages.getAdminCommand();
         this.commandMap = createCommandMap(
                 new ListSubCommand("list", messages, api),
                 new SetSpawnSubCommand("setspawn", messages, api),
@@ -61,8 +61,9 @@ public class AdminCommand implements CommandExecutor, TabCompleter {
                 new EnableSubCommand("enable <farmworld>", messages, api, this),
                 new DisableSubCommand("disable <farmworld>", messages, api, this),
                 new ReloadSubCommand("reload", messages, api, this),
-                new ConfirmSubCommand("confirm", messages, api, this)
-
+                new ConfirmSubCommand("confirm", messages, api, this),
+                new SetWorldSpawnSubCommand("setworldspawn", messages, api, pluginMessages.getCommand()),
+                new DelWorldSpawnSubCommand("delworldspawn <farmworld>", messages, api)
         );
         this.confirmCache = CacheBuilder.newBuilder()
                 .expireAfterWrite(10L, TimeUnit.SECONDS)
@@ -77,16 +78,6 @@ public class AdminCommand implements CommandExecutor, TabCompleter {
         return map;
     }
 
-    /*
-    -   list
-    info world
-    -   enable/disable world
-    -   delete world
-    -   setspawn
-    -   reset <world>
-    -   reload
-    -   confirm
-     */
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         try {

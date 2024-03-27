@@ -75,4 +75,9 @@ public class RTPCommand extends FarmWorldTeleportCommand implements CommandExecu
         }
         return false;
     }
+
+    @Override
+    public void teleport(TeleportData data) {
+        data.getFarmWorld().teleport(data.getPlayer());
+    }
 }

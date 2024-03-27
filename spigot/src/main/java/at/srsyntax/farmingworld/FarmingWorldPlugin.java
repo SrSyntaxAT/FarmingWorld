@@ -125,7 +125,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
             loadFarmWorlds();
 
             getCommand("farming").setExecutor(new FarmingCommand((APIImpl) api, messageConfig));
-            getCommand("fwa").setExecutor(new AdminCommand((APIImpl) api, messageConfig.getAdminCommand()));
+            getCommand("fwa").setExecutor(new AdminCommand((APIImpl) api, messageConfig));
             getCommand("rtp").setExecutor(new RTPCommand((APIImpl) api, messageConfig, pluginConfig.isLocalRTPfee()));
         } catch (Exception exception) {
             getLogger().severe("Plugin could not be loaded successfully!");

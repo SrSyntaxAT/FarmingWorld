@@ -4,6 +4,7 @@ import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.event.farmworld.FarmWorldChangeWorldEvent;
 import at.srsyntax.farmingworld.api.farmworld.Border;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
+import at.srsyntax.farmingworld.api.farmworld.SpawnLocation;
 import at.srsyntax.farmingworld.api.farmworld.sign.SignCache;
 import at.srsyntax.farmingworld.api.handler.cooldown.Cooldown;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
@@ -74,6 +75,7 @@ public class FarmWorldImpl implements FarmWorld {
     @Getter @Setter private transient LinkedHashMap<String, Location> locations = new LinkedHashMap<>();
     @Getter private transient String oldWorldName;
     @Getter private List<String> templates;
+    private SpawnLocation spawn;
 
     public FarmWorldImpl(String name, String permission, int cooldown, int timer, double price, World.Environment environment, String generator, Border border, List<String> aliases) {
         this.name = name;
@@ -156,6 +158,32 @@ public class FarmWorldImpl implements FarmWorld {
     @Override
     public double getPrice() {
         return price;
+    }
+
+    @Override
+    public @Nullable Location getSpawn() {
+        return spawn == null ? null : spawn.toBukkit(this);
+    }
+
+    @Override
+    public void setSpawn(Location location) {
+        this.spawn = location == null ? null : new SpawnLocation(location);
+        save(plugin);
+    }
+
+    @Override
+    public boolean teleportSpawn(@NotNull Player player) {
+        if (!player.isOnline()) return false;
+        var location = getSpawn();
+        if (location == null)
+            location = randomLocation();
+        player.teleport(location);
+        return true;
+    }
+
+    @Override
+    public boolean hasSpawn() {
+        return spawn != null;
     }
 
     @Override

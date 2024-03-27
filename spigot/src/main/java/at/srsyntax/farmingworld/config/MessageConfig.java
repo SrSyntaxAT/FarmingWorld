@@ -120,7 +120,9 @@ public class MessageConfig extends Config {
                                 "&eSigns&8:&7%{signs}"
                         },
                         "&ePlayers on &e&l%{name} &7(%{size})&8: %{list}",
-                        "&eSigns for &e&l%{name} &7(%{size})&8: %{list}"
+                        "&eSigns for &e&l%{name} &7(%{size})&8: %{list}",
+                        "&aWorld spawn was set.",
+                        "&cWorld spawn has been deleted."
                 ),
                 new TimeMessages(
                         "HH:mm:ss dd.MM.yyyy",
@@ -196,6 +198,7 @@ public class MessageConfig extends Config {
         private final String disable, enable;
         private final String[] info;
         private final String infoPlayers, infoSigns;
+        private final String setWorldSpawn, delWorldSpawn;
     }
 
     @AllArgsConstructor
