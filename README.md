@@ -16,6 +16,7 @@ Plugins that use the API must be rewritten to the new API version beforehand.
 - [Configuration](#configuration)
 - [Permissions](#permissions)
 - [Sign](#sign)
+- [Template and Spawn](#template-and-spawn)
 - [Useful links](#useful-links)
 - [License](#license)
 
@@ -31,7 +32,7 @@ The position at which the message is to be sent.
 
 ```
 {
-"version": "2.1.1",                     # This value should not be changed.
+"version": "2.2",                     # This value should not be changed.
 "refund": 1.0,                          # What percentage the user will be refunded 
                                         # if they purchase a teleport to a farm world, 
                                         # but it is cancelled due to movement or other 
@@ -61,7 +62,18 @@ The position at which the message is to be sent.
     "active": false,                    # Whether the world is enabled and players can teleport to it.
     "aliases": [                        # Aliases are commands with which players can teleport to the farm world.
       "FarmWorld"                       
-    ]
+    ],
+    "templates": [                      # World templates that are loaded during reset.
+      "world",
+      "world_2"
+    ],
+    "spawn": {                          # Location at which a player is teleported into the farm world.
+      "x": 0.0,                         # If the spawn is zero, the player is teleported to a random location.  
+      "y": 0.0,                         # If there is a spawn.json in the farm world, 
+      "z": 0.0,                         # the player is teleported to this location.
+      "pitch": 0.0,
+      "yaw": 0.0
+    }
   }
 ],
 "blacklist": ["AIR", "LAVA", "WATER"],  # On which blocks can not be teleported.
@@ -116,7 +128,8 @@ The position at which the message is to be sent.
     "name": "&6&lTeleport Ticket",      # What name the ticket item should have.
     "material": "PAPER",                # List of available materials  https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
     "teleportInstantly": false          # When using the ticket, should the player be teleported to the farm world immediately? 
-  }
+  },
+  "localRTPfee": true                   # Whether the /rtp command is free.
 }
 ```
 ---
@@ -149,6 +162,27 @@ To be allowed to create a sign you need the permission farmingworld.sign or farm
 <img src="img/sign_created.png" width="350" alt="example of a ready created sign">
 
 If you don't want to have the sign anymore, you can simply destroy it in Creative Mode.
+
+---
+
+## Template and Spawn
+
+A template can be used to use existing worlds and associated spawns for a farm world.
+If several templates have been specified, one of them will be selected at random.
+
+A farm world or template can contain a spawn.json file that contains the spawn location.
+Players are teleported to the spawn and can then use /rtp to teleport to a random location.
+
+### spawn.json
+```json
+{
+  "x": 0,
+  "y": 0,
+  "z": 0,
+  "pitch": 0,
+  "yaw": 0
+}
+```
 
 ---
 

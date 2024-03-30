@@ -1,9 +1,8 @@
-package at.srsyntax.farmingworld.api.farmworld;
+package at.srsyntax.farmingworld.config;
 
-import com.google.gson.Gson;
-import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import at.srsyntax.farmingworld.FarmingWorldPlugin;
+
+import java.io.IOException;
 
 /*
  * MIT License
@@ -28,29 +27,27 @@ import org.bukkit.Location;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+public class ConfigUpdater {
 
-/**
- * A class to store a Bukkit location in JSON format and convert it back to a Bukkit location.
- */
-@Getter
-public class LocationCache extends SpawnLocation {
+    private final FarmingWorldPlugin plugin;
+    private final String version;
+    private final PluginConfig pluginConfig;
+    private final MessageConfig messageConfig;
 
-    protected final String world;
-
-    public LocationCache(Location location) {
-        super(location);
-        this.world = location.getWorld().getName();
+    public ConfigUpdater(FarmingWorldPlugin plugin) {
+        this.plugin = plugin;
+        this.version = plugin.getDescription().getVersion();
+        this.pluginConfig = plugin.getPluginConfig();
+        this.messageConfig = plugin.getMessageConfig();
     }
 
-    public static LocationCache fromJson(String json) {
-        return new Gson().fromJson(json, LocationCache.class);
-    }
+    public void update() throws IOException {
+        if (pluginConfig.getVersion().equalsIgnoreCase(version)) return;
+        pluginConfig.setVersion(version);
 
-    public Location toBukkit() {
-        return new Location(
-                Bukkit.getWorld(this.world),
-                this.x, this.y, this.z,
-                this.yaw, this.pitch
-        );
+        final var adminConfig = messageConfig.getAdminCommand();
+        adminConfig.setSetWorldSpawn("&aWorld spawn was set.");
+        adminConfig.setDelWorldSpawn("&cWorld spawn has been deleted.");
+        messageConfig.save(plugin);
     }
 }

@@ -8,6 +8,7 @@ import at.srsyntax.farmingworld.api.handler.cooldown.Cooldown;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
 import at.srsyntax.farmingworld.api.handler.economy.Economy;
+import at.srsyntax.farmingworld.api.template.TemplateRegistry;
 import at.srsyntax.farmingworld.api.ticket.Ticket;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -20,7 +21,7 @@ import java.util.List;
 /*
  * MIT License
  *
- * Copyright (c) 2022-2023 Marcel Haberl
+ * Copyright (c) 2022-2024 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -171,4 +172,10 @@ public interface API {
     @NotNull Economy createEconomy(FarmWorld farmWorld, Player player);
 
     @NotNull Ticket createTicket(FarmWorld farmWorld);
+
+    @NotNull TemplateRegistry getTemplateRegistry();
+
+    @NotNull String generateRandomName(String prefix);
+
+    @NotNull String generateRandomName(FarmWorld farmWorld);
 }

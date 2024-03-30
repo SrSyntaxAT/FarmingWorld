@@ -1,9 +1,10 @@
-package at.srsyntax.farmingworld.api.farmworld;
+package at.srsyntax.farmingworld.api.util.file;
 
-import com.google.gson.Gson;
-import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import lombok.AllArgsConstructor;
+
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 
 /*
  * MIT License
@@ -28,29 +29,25 @@ import org.bukkit.Location;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+@AllArgsConstructor
+public class CopyDirVisitor extends SimpleFileVisitor<Path> {
 
-/**
- * A class to store a Bukkit location in JSON format and convert it back to a Bukkit location.
- */
-@Getter
-public class LocationCache extends SpawnLocation {
+    private final Path src, target;
+    private final CopyOption copyOption;
 
-    protected final String world;
-
-    public LocationCache(Location location) {
-        super(location);
-        this.world = location.getWorld().getName();
+    @Override
+    public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attributes) throws IOException {
+        final Path path = target.resolve(src.relativize(directory));
+        if (!Files.exists(path))
+            Files.createDirectory(path);
+        return FileVisitResult.CONTINUE;
     }
 
-    public static LocationCache fromJson(String json) {
-        return new Gson().fromJson(json, LocationCache.class);
-    }
-
-    public Location toBukkit() {
-        return new Location(
-                Bukkit.getWorld(this.world),
-                this.x, this.y, this.z,
-                this.yaw, this.pitch
-        );
+    @Override
+    public FileVisitResult visitFile(Path path, BasicFileAttributes attributes) throws IOException {
+        if (!path.getFileName().toString().equalsIgnoreCase("uid.dat")) {
+            Files.copy(path, target.resolve(src.relativize(path)), copyOption);
+        }
+        return FileVisitResult.CONTINUE;
     }
 }

@@ -4,12 +4,13 @@ import at.srsyntax.farmingworld.api.handler.countdown.CountdownMessage;
 import at.srsyntax.farmingworld.api.util.TimeMessages;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import net.md_5.bungee.api.ChatMessageType;
 
 /*
  * MIT License
  *
- * Copyright (c) 2022-2023 Marcel Haberl
+ * Copyright (c) 2022-2024 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,8 +44,9 @@ public class MessageConfig extends Config {
     private final TimeMessages time;
     private final SafeTeleportMessages safeTeleport;
     private final BuyTicketCommandMessages buyTicketCommand;
+    private final String notOnAFarmWorld;
 
-    public MessageConfig(String notEnoughMoney, SpawnMessages spawn, CountdownMessages countdown, CooldownMessages cooldown, CommandMessages command, AdminCommandMessages adminCommand, TimeMessages time, SafeTeleportMessages safeTeleport, BuyTicketCommandMessages buyTicketCommand) {
+    public MessageConfig(String notEnoughMoney, SpawnMessages spawn, CountdownMessages countdown, CooldownMessages cooldown, CommandMessages command, AdminCommandMessages adminCommand, TimeMessages time, SafeTeleportMessages safeTeleport, BuyTicketCommandMessages buyTicketCommand, String notOnAFarmWorld) {
         this.notEnoughMoney = notEnoughMoney;
         this.spawn = spawn;
         this.countdown = countdown;
@@ -54,6 +56,7 @@ public class MessageConfig extends Config {
         this.time = time;
         this.safeTeleport = safeTeleport;
         this.buyTicketCommand = buyTicketCommand;
+        this.notOnAFarmWorld = notOnAFarmWorld;
     }
 
     public MessageConfig() {
@@ -118,7 +121,9 @@ public class MessageConfig extends Config {
                                 "&eSigns&8:&7%{signs}"
                         },
                         "&ePlayers on &e&l%{name} &7(%{size})&8: %{list}",
-                        "&eSigns for &e&l%{name} &7(%{size})&8: %{list}"
+                        "&eSigns for &e&l%{name} &7(%{size})&8: %{list}",
+                        "&aWorld spawn was set.",
+                        "&cWorld spawn has been deleted."
                 ),
                 new TimeMessages(
                         "HH:mm:ss dd.MM.yyyy",
@@ -132,22 +137,8 @@ public class MessageConfig extends Config {
                         "&aYou are invulnerable for &e%v &aseconds.",
                         "&4You are vulnerable from now on!"
                 ),
-                new BuyTicketCommandMessages()
-        );
-    }
-
-    @Override
-    public Config update() {
-        return new MessageConfig(
-                notEnoughMoney,
-                spawn,
-                countdown,
-                cooldown,
-                command,
-                adminCommand,
-                time,
-                safeTeleport,
-                new BuyTicketCommandMessages()
+                new BuyTicketCommandMessages(),
+                "&cYou are not on a farm world!"
         );
     }
 
@@ -181,7 +172,7 @@ public class MessageConfig extends Config {
     }
 
     @AllArgsConstructor
-    @Getter
+    @Getter @Setter
     public static class AdminCommandMessages {
         private final String isNotPlayer, noPermission, usage;
         private final String setspawn, setspawnError;
@@ -192,6 +183,8 @@ public class MessageConfig extends Config {
         private final String disable, enable;
         private final String[] info;
         private final String infoPlayers, infoSigns;
+        private String setWorldSpawn = "&aWorld spawn was set.";
+        private String delWorldSpawn = "&cWorld spawn has been deleted.";
     }
 
     @AllArgsConstructor

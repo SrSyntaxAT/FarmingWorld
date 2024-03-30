@@ -3,7 +3,7 @@ package at.srsyntax.farmingworld.api.farmworld;
 /*
  * MIT License
  *
- * Copyright (c) 2022-2023 Marcel Haberl
+ * Copyright (c) 2022-2024 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,13 +25,17 @@ package at.srsyntax.farmingworld.api.farmworld;
  */
 
 import at.srsyntax.farmingworld.api.farmworld.sign.SignOwner;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 /**
  * Represents the farm world.
  */
-public interface FarmWorld extends WorldOwner, Playable, LocationCacher, SignOwner {
+public interface FarmWorld extends WorldOwner, Playable, LocationCacher, SignOwner, Template {
 
     /**
      * Get the name of the farm world
@@ -76,8 +80,13 @@ public interface FarmWorld extends WorldOwner, Playable, LocationCacher, SignOwn
      */
     List<String> getAliases();
 
-
-    // TODO: 25.06.2023 Add JDocs
+    /**
+     * @return the prize to perform an action such as teleporting to the farm world
+     */
     double getPrice();
 
+    @Nullable Location getSpawn();
+    void setSpawn(@Nullable Location location);
+    boolean teleportSpawn(@NotNull Player player);
+    boolean hasSpawn();
 }

@@ -1,9 +1,10 @@
-package at.srsyntax.farmingworld.api.farmworld;
+package at.srsyntax.farmingworld.api.template;
 
-import com.google.gson.Gson;
-import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.util.List;
 
 /*
  * MIT License
@@ -28,29 +29,32 @@ import org.bukkit.Location;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+public interface TemplateRegistry {
 
-/**
- * A class to store a Bukkit location in JSON format and convert it back to a Bukkit location.
- */
-@Getter
-public class LocationCache extends SpawnLocation {
+    /**
+     * Register a template.
+     * @param file - Location where the template is saved
+     * @return an object that represents the template
+     */
+    @NotNull TemplateData register(@NotNull File file);
 
-    protected final String world;
+    /**
+     * Unregister a template.
+     * @param data which is to be unregistered
+     * @return whether the template was successfully deleted
+     */
+    boolean unregister(@NotNull TemplateData data);
 
-    public LocationCache(Location location) {
-        super(location);
-        this.world = location.getWorld().getName();
-    }
+    /**
+     * Receive the template or null if the template is not registered.
+     * @param name of the template
+     * @return the template or null if the template is not registered
+     */
+    @Nullable TemplateData getTemplate(@NotNull String name);
 
-    public static LocationCache fromJson(String json) {
-        return new Gson().fromJson(json, LocationCache.class);
-    }
+    /**
+     * @return a modifiable list of all registered templates
+     */
+    @NotNull List<TemplateData> getTemplates();
 
-    public Location toBukkit() {
-        return new Location(
-                Bukkit.getWorld(this.world),
-                this.x, this.y, this.z,
-                this.yaw, this.pitch
-        );
-    }
 }

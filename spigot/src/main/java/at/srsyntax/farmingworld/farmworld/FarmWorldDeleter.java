@@ -5,7 +5,7 @@ import at.srsyntax.farmingworld.api.event.farmworld.FarmWorldDeletedEvent;
 import at.srsyntax.farmingworld.api.event.farmworld.FarmWorldDisabledEvent;
 import at.srsyntax.farmingworld.api.event.farmworld.FarmWorldEvent;
 import at.srsyntax.farmingworld.database.Database;
-import at.srsyntax.farmingworld.util.FileUtil;
+import at.srsyntax.farmingworld.api.util.file.FileUtil;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -17,7 +17,7 @@ import java.io.IOException;
 /*
  * MIT License
  *
- * Copyright (c) 2022-2023 Marcel Haberl
+ * Copyright (c) 2022-2024 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -103,7 +103,7 @@ public class FarmWorldDeleter {
 
     public void deleteWorld(String worldName) {
         if (worldName == null) return;
-        plugin.getLogger().info("Delete " + worldName + " (F)");
+        plugin.getLogger().info("Delete " + worldName + " (N)");
         FileUtil.deleteFolder(new File(worldName));
     }
 

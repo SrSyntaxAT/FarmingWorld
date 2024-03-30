@@ -1,8 +1,9 @@
 package at.srsyntax.farmingworld.api.farmworld;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 /*
@@ -28,29 +29,34 @@ import org.bukkit.Location;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-/**
- * A class to store a Bukkit location in JSON format and convert it back to a Bukkit location.
- */
+@AllArgsConstructor
 @Getter
-public class LocationCache extends SpawnLocation {
+public class SpawnLocation {
 
-    protected final String world;
+    protected final double x, y, z;
+    protected final float pitch, yaw;
 
-    public LocationCache(Location location) {
-        super(location);
-        this.world = location.getWorld().getName();
+    public SpawnLocation(Location location) {
+        this(
+                location.getX(), location.getY(), location.getZ(),
+                location.getPitch(), location.getYaw()
+        );
     }
 
-    public static LocationCache fromJson(String json) {
-        return new Gson().fromJson(json, LocationCache.class);
+    public static SpawnLocation fromJson(String json) {
+        return new Gson().fromJson(json, SpawnLocation.class);
     }
 
-    public Location toBukkit() {
+    public Location toBukkit(FarmWorld farmWorld) {
         return new Location(
-                Bukkit.getWorld(this.world),
+                farmWorld.getWorld(),
                 this.x, this.y, this.z,
                 this.yaw, this.pitch
         );
+    }
+
+    @Override
+    public String toString() {
+        return new GsonBuilder().disableHtmlEscaping().create().toJson(this);
     }
 }

@@ -1,22 +1,18 @@
-package at.srsyntax.farmingworld.command.farming;
+package at.srsyntax.farmingworld.command;
 
 import at.srsyntax.farmingworld.APIImpl;
 import at.srsyntax.farmingworld.api.handler.HandleException;
 import at.srsyntax.farmingworld.api.handler.economy.Economy;
 import at.srsyntax.farmingworld.api.message.Message;
-import at.srsyntax.farmingworld.command.FarmWorldTeleportCommand;
-import at.srsyntax.farmingworld.command.TabCompleterFilter;
+import at.srsyntax.farmingworld.command.farming.CommandException;
+import at.srsyntax.farmingworld.command.farming.TeleportData;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /*
  * MIT License
@@ -41,14 +37,15 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class FarmingCommand extends FarmWorldTeleportCommand implements TabCompleter, TabCompleterFilter {
+public class RTPCommand extends FarmWorldTeleportCommand implements CommandExecutor {
 
-    public FarmingCommand(APIImpl api, MessageConfig config) {
+    private final boolean fee;
+
+    public RTPCommand(APIImpl api, MessageConfig config, boolean fee) {
         super(api, config, config.getCommand());
+        this.fee = fee;
     }
 
-    //               0           1
-    // farming [world/player] [player]
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         Economy economy = null;
@@ -57,12 +54,14 @@ public class FarmingCommand extends FarmWorldTeleportCommand implements TabCompl
             if (!(commandSender instanceof Player sender))
                 throw new CommandException(new Message(messages.getCommand().getMustBeAPlayer()));
 
-            final TeleportData data = TeleportData.create(commandMessages, commandSender, strings);
+            final var farmworld = api.getFarmWorld(sender.getWorld());
+            if (farmworld == null) throw new CommandException(new Message(messages.getNotOnAFarmWorld()));
+            final TeleportData data = new TeleportData(farmworld, sender);
             checkPermission(sender, data);
 
             if (!data.getFarmWorld().isActive()) throw new HandleException(messages.getCommand().getDisabled());
 
-            economy = api.createEconomy(data.getFarmWorld(), data.getPlayer());
+            economy = fee ? api.createEconomy(data.getFarmWorld(), data.getPlayer()) : null;
             callHandlers(data, economy);
 
             return true;
@@ -77,24 +76,8 @@ public class FarmingCommand extends FarmWorldTeleportCommand implements TabCompl
         return false;
     }
 
-    @Nullable
-    @Override
-    public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        final List<String> result = new ArrayList<>();
-
-        if (strings.length == 1) {
-            final String arg = strings[0];
-            result.addAll(filterOnlinePlayers(arg));
-            result.addAll(filterFarmWorlds(arg));
-        } else if (strings.length == 2) {
-            result.addAll(filterOnlinePlayers(strings[1]));
-        }
-
-        return result;
-    }
-
     @Override
     public void teleport(TeleportData data) {
-        data.getFarmWorld().teleportSpawn(data.getPlayer());
+        data.getFarmWorld().teleport(data.getPlayer());
     }
 }

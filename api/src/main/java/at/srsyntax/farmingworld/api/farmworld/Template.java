@@ -1,9 +1,8 @@
 package at.srsyntax.farmingworld.api.farmworld;
 
-import com.google.gson.Gson;
-import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import at.srsyntax.farmingworld.api.template.TemplateData;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * MIT License
@@ -28,29 +27,26 @@ import org.bukkit.Location;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+public interface Template {
+    /**
+     * @return a random template for the farm world or zero if no template has been registered
+     */
+    @Nullable TemplateData randomTemplate();
 
-/**
- * A class to store a Bukkit location in JSON format and convert it back to a Bukkit location.
- */
-@Getter
-public class LocationCache extends SpawnLocation {
+    /**
+     * Replace the current world with a template.
+     * @param data - The template that will replace the world
+     */
+    void newWorld(@NotNull TemplateData data);
 
-    protected final String world;
+    /**
+     * Replace the next world with a template.
+     * @param data - The template that will replace the world
+     */
+    void newNextWorld(@Nullable TemplateData data);
 
-    public LocationCache(Location location) {
-        super(location);
-        this.world = location.getWorld().getName();
-    }
-
-    public static LocationCache fromJson(String json) {
-        return new Gson().fromJson(json, LocationCache.class);
-    }
-
-    public Location toBukkit() {
-        return new Location(
-                Bukkit.getWorld(this.world),
-                this.x, this.y, this.z,
-                this.yaw, this.pitch
-        );
-    }
+    /**
+     * @return whether the farm world has a template
+     */
+    boolean hasTemplate();
 }

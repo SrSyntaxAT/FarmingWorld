@@ -1,9 +1,11 @@
-package at.srsyntax.farmingworld.api.farmworld;
+package at.srsyntax.farmingworld.api.util.file;
 
-import com.google.gson.Gson;
-import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import at.srsyntax.farmingworld.api.util.file.CopyDirVisitor;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 /*
  * MIT License
@@ -28,29 +30,29 @@ import org.bukkit.Location;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+public class FileUtil {
 
-/**
- * A class to store a Bukkit location in JSON format and convert it back to a Bukkit location.
- */
-@Getter
-public class LocationCache extends SpawnLocation {
+    public static boolean deleteFolder(File folder) {
+        if (!folder.exists()) return false;
 
-    protected final String world;
+        if(folder.isDirectory()) {
+            final File[] files = folder.listFiles();
 
-    public LocationCache(Location location) {
-        super(location);
-        this.world = location.getWorld().getName();
+            if(files != null) {
+                for (File file : files) {
+                    if (file.isDirectory())
+                        deleteFolder(file);
+                    else
+                        file.delete();
+                }
+            }
+        }
+
+        return folder.delete();
     }
 
-    public static LocationCache fromJson(String json) {
-        return new Gson().fromJson(json, LocationCache.class);
-    }
-
-    public Location toBukkit() {
-        return new Location(
-                Bukkit.getWorld(this.world),
-                this.x, this.y, this.z,
-                this.yaw, this.pitch
-        );
+    public static void copy(File src, File target) throws IOException {
+        if (!src.exists()) throw new NullPointerException();
+        Files.walkFileTree(src.toPath(), new CopyDirVisitor(src.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING));
     }
 }

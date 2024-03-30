@@ -4,11 +4,14 @@ import at.srsyntax.farmingworld.FarmingWorldPlugin;
 import at.srsyntax.farmingworld.api.event.farmworld.FarmWorldChangeWorldEvent;
 import at.srsyntax.farmingworld.api.farmworld.Border;
 import at.srsyntax.farmingworld.api.farmworld.FarmWorld;
+import at.srsyntax.farmingworld.api.farmworld.SpawnLocation;
 import at.srsyntax.farmingworld.api.farmworld.sign.SignCache;
 import at.srsyntax.farmingworld.api.handler.cooldown.Cooldown;
 import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
+import at.srsyntax.farmingworld.api.template.TemplateData;
 import at.srsyntax.farmingworld.database.repository.FarmWorldRepository;
+import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -20,13 +23,16 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.FileReader;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 /*
  * MIT License
  *
- * Copyright (c) 2022-2023 Marcel Haberl
+ * Copyright (c) 2022-2024 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -71,6 +77,8 @@ public class FarmWorldImpl implements FarmWorld {
     private transient boolean loaded = false, enabled = false;
     @Getter @Setter private transient LinkedHashMap<String, Location> locations = new LinkedHashMap<>();
     @Getter private transient String oldWorldName;
+    @Getter private List<String> templates;
+    private SpawnLocation spawn;
 
     public FarmWorldImpl(String name, String permission, int cooldown, int timer, double price, World.Environment environment, String generator, Border border, List<String> aliases) {
         this.name = name;
@@ -156,6 +164,44 @@ public class FarmWorldImpl implements FarmWorld {
     }
 
     @Override
+    public @Nullable Location getSpawn() {
+        try {
+            final World world = getWorld();
+            if (world != null) {
+                final var file = new File(world.getWorldFolder(), "spawn.json");
+                if (file.exists()) {
+                    final var location = new Gson().fromJson(new FileReader(file), SpawnLocation.class).toBukkit(this);
+                    if (location != null) {
+                        return location;
+                    }
+                }
+            }
+        } catch (Exception ignored) {}
+        return spawn == null ? null : spawn.toBukkit(this);
+    }
+
+    @Override
+    public void setSpawn(Location location) {
+        this.spawn = location == null ? null : new SpawnLocation(location);
+        save(plugin);
+    }
+
+    @Override
+    public boolean teleportSpawn(@NotNull Player player) {
+        if (!player.isOnline()) return false;
+        var location = getSpawn();
+        if (location == null)
+            location = randomLocation();
+        player.teleport(location);
+        return true;
+    }
+
+    @Override
+    public boolean hasSpawn() {
+        return spawn != null;
+    }
+
+    @Override
     public void setActive(boolean active) {
         if (this.active == active) return;
         this.active = active;
@@ -221,9 +267,10 @@ public class FarmWorldImpl implements FarmWorld {
     @Override
     public void newWorld(@Nullable World nextWorld) {
         final World world = getWorld();
-        oldWorldName = world == null ? null : world.getName();
         data.setCurrentWorldName(nextWorld == null ? null : nextWorld.getName());
         data.setCreated(TimeUnit.MINUTES.toMillis(TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis())));
+
+        Bukkit.getPluginManager().callEvent(new FarmWorldChangeWorldEvent(this, world, getWorld()));
 
         if (locations == null) locations = new LinkedHashMap<>();
         if (!locations.isEmpty()) {
@@ -235,7 +282,6 @@ public class FarmWorldImpl implements FarmWorld {
         if (nextWorld != null && world != null)
             teleport(world.getPlayers());
 
-        Bukkit.getPluginManager().callEvent(new FarmWorldChangeWorldEvent(this, world, getWorld()));
         new FarmWorldDeleter(plugin, this).deleteWorld(world);
         save(plugin);
     }
@@ -258,9 +304,10 @@ public class FarmWorldImpl implements FarmWorld {
 
     @Override
     public void next() {
-        final World nextWorld = hasNext() ? getNextWorld() : generateWorld();
-        newNextWorld(null);
-        next(nextWorld);
+        var world = hasNext() ? getNextWorld() : generateWorld();
+        if (world == null) world = generateWorld();
+        data.setNextWorldName(null);
+        next(world);
     }
 
     @Override
@@ -335,5 +382,29 @@ public class FarmWorldImpl implements FarmWorld {
     @Override
     public List<SignCache> getSigns() {
         return plugin.getSignRegistry().getCaches(this);
+    }
+
+    @Override
+    public boolean hasTemplate() {
+        return templates != null && !templates.isEmpty();
+    }
+
+    @Override
+    public @NotNull TemplateData randomTemplate() {
+        if (!hasTemplate()) throw new NullPointerException();
+        final var template = templates.get(ThreadLocalRandom.current().nextInt(0, templates.size()));;
+        final var data = plugin.getTemplateRegistry().getTemplate(template);
+        if (data == null) throw new NullPointerException();
+        return data;
+    }
+
+    @Override
+    public void newWorld(@NotNull TemplateData data) {
+        newWorld(new FarmWorldLoader(plugin, this).generateWorld(data));
+    }
+
+    @Override
+    public void newNextWorld(TemplateData data) {
+        newNextWorld(new FarmWorldLoader(plugin, this).generateWorld(data));
     }
 }

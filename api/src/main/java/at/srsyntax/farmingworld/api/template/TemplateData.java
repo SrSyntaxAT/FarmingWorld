@@ -1,11 +1,16 @@
-package at.srsyntax.farmingworld.util;
+package at.srsyntax.farmingworld.api.template;
+
+import at.srsyntax.farmingworld.api.util.file.FileUtil;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.io.File;
+import java.io.IOException;
 
 /*
  * MIT License
  *
- * Copyright (c) 2022-2023 Marcel Haberl
+ * Copyright (c) 2022-2024 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,25 +30,21 @@ import java.io.File;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class FileUtil {
+@AllArgsConstructor
+@Getter
+public class TemplateData {
 
-    public static boolean deleteFolder(File folder) {
-        if (!folder.exists()) return false;
+    private final File file;
 
-        if(folder.isDirectory()) {
-            final File[] files = folder.listFiles();
-
-            if(files != null) {
-                for (File file : files) {
-                    if (file.isDirectory())
-                        deleteFolder(file);
-                    else
-                        file.delete();
-                }
-            }
-        }
-
-        return folder.delete();
+    public boolean delete() {
+        return FileUtil.deleteFolder(file);
     }
 
+    public void copy(File target) throws IOException {
+        FileUtil.copy(file, target);
+    }
+
+    public String getName() {
+        return file.getName();
+    }
 }
