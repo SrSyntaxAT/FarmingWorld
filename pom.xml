@@ -6,7 +6,7 @@
 
     <groupId>at.srsyntax.farmworld</groupId>
     <artifactId>farmingworld</artifactId>
-    <version>2.2-SNAPSHOT</version>
+    <version>2.2</version>
     <packaging>pom</packaging>
 
     <modules>
