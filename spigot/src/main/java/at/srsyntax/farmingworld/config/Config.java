@@ -15,7 +15,7 @@ import java.util.Arrays;
 /*
  * MIT License
  *
- * Copyright (c) 2022-2023 Marcel Haberl
+ * Copyright (c) 2022-2024 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -51,13 +51,6 @@ public abstract class Config {
 
         defaultConfig.save(plugin);
         return defaultConfig;
-    }
-
-    public Config update() {
-        return null;
-    }
-    public Config update(String version) {
-        return null;
     }
 
     public void save(Plugin plugin) throws IOException {

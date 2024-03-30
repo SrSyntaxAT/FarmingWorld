@@ -140,28 +140,6 @@ public class PluginConfig extends Config {
         );
     }
 
-    @Override
-    public Config update(String version) {
-        return new PluginConfig(
-                version,
-                refund,
-                countdown,
-                defaultFarmWorld,
-                farmWorlds,
-                blacklist,
-                sign,
-                locationCache,
-                spawnCommandEnabled,
-                spawnType,
-                resetDisplay,
-                spawn,
-                safeTeleport,
-                chunkDeletePeriod,
-                new TicketConfig(),
-                localRTPfee
-        );
-    }
-
     @AllArgsConstructor
     @Getter
     public static class CountdownConfig {

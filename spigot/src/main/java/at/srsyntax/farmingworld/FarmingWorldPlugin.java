@@ -10,6 +10,7 @@ import at.srsyntax.farmingworld.command.SpawnCommand;
 import at.srsyntax.farmingworld.command.admin.AdminCommand;
 import at.srsyntax.farmingworld.command.farming.FarmingCommand;
 import at.srsyntax.farmingworld.config.Config;
+import at.srsyntax.farmingworld.config.ConfigUpdater;
 import at.srsyntax.farmingworld.config.MessageConfig;
 import at.srsyntax.farmingworld.config.PluginConfig;
 import at.srsyntax.farmingworld.database.Database;
@@ -136,12 +137,7 @@ public class FarmingWorldPlugin extends JavaPlugin {
     public void loadConfig() throws IOException {
         messageConfig = Config.load(this, new MessageConfig(), MessageConfig.class);
         pluginConfig = Config.load(this, new PluginConfig(this, getDefaultFallbackLocation()), PluginConfig.class);
-        if (!pluginConfig.getVersion().equalsIgnoreCase(getDescription().getVersion())) {
-            this.pluginConfig = (PluginConfig) pluginConfig.update(getDescription().getVersion());
-            this.messageConfig = (MessageConfig) messageConfig.update();
-            pluginConfig.save(this);
-            messageConfig.save(this);
-        }
+        new ConfigUpdater(this).update();
     }
 
     public void loadFarmWorlds() {

@@ -4,6 +4,7 @@ import at.srsyntax.farmingworld.api.handler.countdown.CountdownMessage;
 import at.srsyntax.farmingworld.api.util.TimeMessages;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import net.md_5.bungee.api.ChatMessageType;
 
 /*
@@ -141,22 +142,6 @@ public class MessageConfig extends Config {
         );
     }
 
-    @Override
-    public Config update() {
-        return new MessageConfig(
-                notEnoughMoney,
-                spawn,
-                countdown,
-                cooldown,
-                command,
-                adminCommand,
-                time,
-                safeTeleport,
-                new BuyTicketCommandMessages(),
-                notOnAFarmWorld
-        );
-    }
-
     @AllArgsConstructor
     @Getter
     public static class CountdownMessages {
@@ -187,7 +172,7 @@ public class MessageConfig extends Config {
     }
 
     @AllArgsConstructor
-    @Getter
+    @Getter @Setter
     public static class AdminCommandMessages {
         private final String isNotPlayer, noPermission, usage;
         private final String setspawn, setspawnError;
@@ -198,7 +183,8 @@ public class MessageConfig extends Config {
         private final String disable, enable;
         private final String[] info;
         private final String infoPlayers, infoSigns;
-        private final String setWorldSpawn, delWorldSpawn;
+        private String setWorldSpawn = "&aWorld spawn was set.";
+        private String delWorldSpawn = "&cWorld spawn has been deleted.";
     }
 
     @AllArgsConstructor
