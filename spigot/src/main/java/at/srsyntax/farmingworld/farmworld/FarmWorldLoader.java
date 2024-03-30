@@ -85,12 +85,11 @@ public class FarmWorldLoader {
     private void loadCurrentWorld() {
         final String worldName = farmWorld.getData().getCurrentWorldName();
         if (worldName != null && (farmWorld.needReset() || farmWorld.needNextWorld())) {
-            final FarmWorldData data = farmWorld.getData();
             new FarmWorldDeleter(plugin, farmWorld).deleteWorld(worldName);
-            data.setCurrentWorldName(null);
+            farmWorld.getData().setCurrentWorldName(null);
             farmWorld.next();
         } else {
-            farmWorld.getData().setCurrentWorldName(generateWorld().getName());
+            generateWorld(farmWorld.getData().getCurrentWorldName());
         }
     }
 

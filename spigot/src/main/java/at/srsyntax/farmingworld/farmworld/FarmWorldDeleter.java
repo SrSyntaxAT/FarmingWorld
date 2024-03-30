@@ -103,7 +103,7 @@ public class FarmWorldDeleter {
 
     public void deleteWorld(String worldName) {
         if (worldName == null) return;
-        plugin.getLogger().info("Delete " + worldName + " (F)");
+        plugin.getLogger().info("Delete " + worldName + " (N)");
         FileUtil.deleteFolder(new File(worldName));
     }
 
