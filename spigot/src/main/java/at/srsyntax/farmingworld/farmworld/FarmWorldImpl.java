@@ -11,6 +11,7 @@ import at.srsyntax.farmingworld.api.handler.countdown.Countdown;
 import at.srsyntax.farmingworld.api.handler.countdown.CountdownCallback;
 import at.srsyntax.farmingworld.api.template.TemplateData;
 import at.srsyntax.farmingworld.database.repository.FarmWorldRepository;
+import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -22,6 +23,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.FileReader;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -162,6 +165,18 @@ public class FarmWorldImpl implements FarmWorld {
 
     @Override
     public @Nullable Location getSpawn() {
+        try {
+            final World world = getWorld();
+            if (world != null) {
+                final var file = new File(world.getWorldFolder(), "spawn.json");
+                if (file.exists()) {
+                    final var location = new Gson().fromJson(new FileReader(file), SpawnLocation.class).toBukkit(this);
+                    if (location != null) {
+                        return location;
+                    }
+                }
+            }
+        } catch (Exception ignored) {}
         return spawn == null ? null : spawn.toBukkit(this);
     }
 
