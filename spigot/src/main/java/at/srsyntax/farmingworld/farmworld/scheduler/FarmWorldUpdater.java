@@ -49,7 +49,10 @@ public class FarmWorldUpdater implements Runnable {
         if (farmWorld.needReset()) {
             farmWorld.next();
             removeUpdater(farmWorld, everySecond);
-        } else if (farmWorld.needNextWorld()) farmWorld.newNextWorld(farmWorld.generateWorld());
+        } else if (farmWorld.needNextWorld())  {
+            scheduler.plugin.getLogger().info("Create new world for " + farmWorld.getName());
+            farmWorld.newNextWorld(farmWorld.generateWorld());
+        }
 
         farmWorld.updateSigns();
         final var displayer = scheduler.plugin.getDisplayRegistry().getDisplayer(farmWorld);
