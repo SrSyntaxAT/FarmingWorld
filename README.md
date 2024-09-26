@@ -88,7 +88,7 @@ The position at which the message is to be sent.
   ],
   "linesWhenInactive": [                # The lines of the sign when the farm world is inactive.
     "&7[&bFarm World&7]",               # Placeholder: %{farm_world} = farm world name
-    "&6%{farm_world}",                  # %{players}    = Players who are on the farm world.
+    "&6%{farm_world}",                  # %{players}    = Players, who are on the farm world.
     "&4&lDISABLED"                      
   ]
 },
