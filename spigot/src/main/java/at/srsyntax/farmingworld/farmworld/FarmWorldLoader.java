@@ -142,15 +142,26 @@ public class FarmWorldLoader {
     }
 
     private void loadLocationCaches() {
+        plugin.getLogger().info("Loading location caches...");
+        if (farmWorld.getWorld() == null) {
+            plugin.getLogger().warning("FW-L@" + farmWorld.getName() + ":LC");
+            return;
+        }
          final Map<String, LocationCache> caches = getLocationRepository().getLocations(farmWorld);
          if (caches != null && !caches.isEmpty()) {
              caches.forEach((id, locationCache) -> {
-                 if (farmWorld.getData() == null || !farmWorld.getData().getCurrentWorldName().equalsIgnoreCase(locationCache.getWorld()))
+                 if (checkLocationCacheWorld(locationCache))
                      getLocationRepository().delete(id);
                  else loadLocation(id, locationCache.toBukkit(), false);
              });
          }
          checkLocations();
+    }
+
+    private boolean checkLocationCacheWorld(LocationCache locationCache) {
+        return farmWorld.getData() == null
+                || locationCache.getWorld() == null
+                || !farmWorld.getData().getCurrentWorldName().equalsIgnoreCase(locationCache.getWorld());
     }
 
     public void checkLocations() {
