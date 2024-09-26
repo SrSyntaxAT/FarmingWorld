@@ -72,8 +72,8 @@ public class Displayer {
         if (registry.getConfig().isChangeBossBarProgress()) {
             final double baseValue = farmWorld.getResetDate() - farmWorld.getCreated();
             final double percentValue = farmWorld.getResetDate() - System.currentTimeMillis();
-            final double progess = 1 - percentValue / baseValue;
-            bossBar.setProgress(progess > 1 ? 1 : progess < 0 ? 0 : progess);
+            final double progress = 1 - percentValue / baseValue;
+            bossBar.setProgress(progress > 1 ? 1 : progress < 0 ? 0 : progress);
         }
     }
 
