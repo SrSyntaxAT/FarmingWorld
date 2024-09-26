@@ -99,6 +99,7 @@ public class SignListeners implements Listener {
         if (!isSign(block)) return;
         final var cache = registry.getCache(block.getLocation());
         if (cache == null) return;
+        event.setCancelled(true);
 
         final var player = event.getPlayer();
         if (hasSignPermission(player) && event.getAction() == Action.LEFT_CLICK_BLOCK && player.getGameMode() == GameMode.CREATIVE) {
