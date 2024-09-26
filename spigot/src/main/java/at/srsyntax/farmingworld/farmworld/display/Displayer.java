@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 /*
  * MIT License
  *
- * Copyright (c) 2022-2023 Marcel Haberl
+ * Copyright (c) 2022-2024 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -72,7 +72,8 @@ public class Displayer {
         if (registry.getConfig().isChangeBossBarProgress()) {
             final double baseValue = farmWorld.getResetDate() - farmWorld.getCreated();
             final double percentValue = farmWorld.getResetDate() - System.currentTimeMillis();
-            bossBar.setProgress(1 - percentValue / baseValue);
+            final double progess = 1 - percentValue / baseValue;
+            bossBar.setProgress(progess > 1 ? 1 : progess < 0 ? 0 : progess);
         }
     }
 
