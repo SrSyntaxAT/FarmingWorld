@@ -10,10 +10,13 @@ import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /*
  * MIT License
@@ -38,7 +41,7 @@ import java.util.ArrayList;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class SpawnCommand extends Command {
+public class SpawnCommand extends Command implements TabCompleter, TabCompleterFilter {
 
     private final FarmingWorldPlugin plugin;
     private final MessageConfig.SpawnMessages spawnMessages;
@@ -95,5 +98,11 @@ public class SpawnCommand extends Command {
                 new Message(throwable.getMessage(), spawnMessages.getMessageType()).send(player);
             }
         };
+    }
+
+    @Nullable
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+        return List.of();
     }
 }
