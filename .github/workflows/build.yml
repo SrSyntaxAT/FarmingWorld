@@ -1,0 +1,26 @@
+name: Build
+on:
+    push:
+        branches:
+            - v2
+    pull_request:
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            
+            - uses: actions/setup-java@v4
+              with:
+                distribution: 'oracle'
+                java-version: '21'
+                cache: 'maven'
+
+            - name: Build
+              run: mvn clean install
+
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                path: spigot/target/farmingworld-*.jar
