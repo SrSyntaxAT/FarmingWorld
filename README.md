@@ -32,7 +32,7 @@ The position at which the message is to be sent.
 
 ```
 {
-"version": "2.2",                     # This value should not be changed.
+"version": "2.2.3",                     # This value should not be changed.
 "refund": 1.0,                          # What percentage the user will be refunded 
                                         # if they purchase a teleport to a farm world, 
                                         # but it is cancelled due to movement or other 
