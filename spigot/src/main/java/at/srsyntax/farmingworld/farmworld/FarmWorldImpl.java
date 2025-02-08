@@ -272,18 +272,28 @@ public class FarmWorldImpl implements FarmWorld {
 
         Bukkit.getPluginManager().callEvent(new FarmWorldChangeWorldEvent(this, world, getWorld()));
 
-        if (locations == null) locations = new LinkedHashMap<>();
-        if (!locations.isEmpty()) {
-            plugin.getDatabase().getLocationRepository().deleteByFarmWorldName(name);
-            locations.clear();
-        }
+        async(() -> {
+            if (locations == null) locations = new LinkedHashMap<>();
+            if (!locations.isEmpty()) {
+                plugin.getDatabase().getLocationRepository().deleteByFarmWorldName(name);
+                locations.clear();
+            }
 
-        new FarmWorldLoader(plugin, this).checkLocations();
-        if (nextWorld != null && world != null)
-            teleport(world.getPlayers());
+            async(() -> {
+                new FarmWorldLoader(plugin, this).checkLocations();
+                if (nextWorld != null && world != null)
+                    teleport(world.getPlayers());
 
-        new FarmWorldDeleter(plugin, this).deleteWorld(world);
-        save(plugin);
+                async(() -> {
+                    new FarmWorldDeleter(plugin, this).deleteWorld(world);
+                    save(plugin);
+                });
+            });
+        });
+    }
+
+    private void async(Runnable runnable) {
+        Bukkit.getScheduler().runTask(plugin, runnable);
     }
 
     @Override
