@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 /*
  * MIT License
  *
- * Copyright (c) 2022-2023 Marcel Haberl
+ * Copyright (c) 2022-2023, 2025 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,4 +31,5 @@ public interface SafeTeleportRegistry extends CountdownRegistry {
     void register(Player player);
     void unregister(Player player, CanceledException.Result result);
     boolean isInvulnerable(Player player);
+    boolean contains(Player player);
 }

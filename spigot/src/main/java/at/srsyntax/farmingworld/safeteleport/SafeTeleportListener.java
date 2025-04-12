@@ -13,7 +13,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 /*
  * MIT License
  *
- * Copyright (c) 2022-2023 Marcel Haberl
+ * Copyright (c) 2022-2023, 2025 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -52,14 +52,17 @@ public class SafeTeleportListener implements Listener {
     @EventHandler
     public void onEntityDamageEvent(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
+        if (!registry.contains(player)) return;
         event.setCancelled(registry.isInvulnerable(player));
     }
 
     @EventHandler
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player damager)) return;
-        if (!(event.getEntity() instanceof Player)) return;
+        if (!registry.contains(damager)) return;
         if (!registry.isInvulnerable(damager)) return;
+
+        if (!(event.getEntity() instanceof Player)) return;
         event.setCancelled(!canDamagePlayers);
     }
 }

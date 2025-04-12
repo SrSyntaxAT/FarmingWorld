@@ -9,6 +9,7 @@ import at.srsyntax.farmingworld.api.handler.countdown.exception.CanceledExceptio
 import at.srsyntax.farmingworld.api.message.Message;
 import at.srsyntax.farmingworld.api.util.SafeTeleportRegistry;
 import at.srsyntax.farmingworld.config.MessageConfig;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
@@ -17,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /*
  * MIT License
  *
- * Copyright (c) 2022-2023 Marcel Haberl
+ * Copyright (c) 2022-2023, 2025 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -97,6 +98,11 @@ public class SafeTeleportRegistryImpl implements SafeTeleportRegistry {
 
     @Override
     public boolean isInvulnerable(Player player) {
+        return countdownMap.containsKey(player);
+    }
+
+    @Override
+    public boolean contains(Player player) {
         return countdownMap.containsKey(player);
     }
 
