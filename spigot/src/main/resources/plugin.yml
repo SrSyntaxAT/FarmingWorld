@@ -6,6 +6,7 @@ api-version: 1.19
 softdepend:
   - Vault
   - My_Worlds
+  - Multiverse-Core
 
 author: SrSyntaxAT
 website: https://srsyntax.at/
