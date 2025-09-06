@@ -49,9 +49,11 @@ public class LocationRandomizerImpl extends LocationRandomizer {
         final boolean nether = world.getEnvironment() == World.Environment.NETHER;
         int x, y, z;
 
+        final var border = getBorder();
+
         do {
-            x = random(border.getCenterX());
-            z = random(border.getCenterZ());
+            x = random(border.getCenterX(), border);
+            z = random(border.getCenterZ(), border);
             y = world.getHighestBlockYAt(x, z);
 
             if (nether)
@@ -96,8 +98,18 @@ public class LocationRandomizerImpl extends LocationRandomizer {
         return block.getY() != 0 && !blacklist.contains(block.getType());
     }
 
-    private int random(int center) {
+    private int random(int center, Border border) {
         final int size = border.getSize()/2;
         return ThreadLocalRandom.current().nextInt(center-size, center+size);
+    }
+
+    private Border getBorder() {
+        if (this.border != null) return this.border;
+        final var world = this.world.getWorldBorder();
+        return new Border(
+                (int) world.getSize(),
+                world.getCenter().getBlockX(),
+                world.getCenter().getBlockZ()
+        );
     }
 }
